@@ -2,8 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:UI.ViewModels"
-             xmlns:enums="clr-namespace:Shared.Enums;assembly=Shared"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib">
+             xmlns:shared="clr-namespace:Shared.Enums;assembly=Shared"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:converters="clr-namespace:UI.Converters">
+    
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -23,27 +25,56 @@
         </StackPanel>
 
         <!-- Events list -->
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding Events}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderBrush="Gray" BorderThickness="1" Margin="5" Padding="10" Width="200" CornerRadius="10" Background="#FAFAFA">
-                        <StackPanel>
-                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14"/>
-                            <TextBlock Text="{Binding Type}" Margin="0 5 0 0"/>
-                            <TextBlock Text="{Binding Date}" Margin="0 5 0 0"/>
-                            <Button Content="Детайли"
-                                    Command="{Binding DataContext.ShowEventDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}" Margin="0 5 0 0"/>
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            <!-- Events Table -->
+            <DataGrid ItemsSource="{Binding Events}" 
+                      SelectedItem="{Binding SelectedEvent}" 
+                      AutoGenerateColumns="False" 
+                      Margin="10"
+                      MouseDoubleClick="DataGrid_MouseDoubleClick"
+                      KeyDown="{Binding KeyDownCommand, Mode=OneWay}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Заглавие" Binding="{Binding Title}" />
+                    <DataGridTextColumn Header="Тип" Binding="{Binding Type}" />
+                    <DataGridTextColumn Header="Дата" Binding="{Binding Date}" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Details/Edit -->
+            <Border Grid.Column="1" Background="#f7f7f7" Padding="10" Visibility="{Binding IsDetailsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel>
+                    <TextBlock FontWeight="Bold" FontSize="16" Text="Детайли за събитието" Margin="0 0 0 10"/>
+
+                    <StackPanel Orientation="Vertical" Margin="0 5">
+                        <TextBlock Text="Заглавие:"/>
+                        <TextBox Text="{Binding EditingEvent.Title}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="0 5">
+                        <TextBlock Text="Описание:"/>
+                        <TextBox Text="{Binding EditingEvent.Description}" AcceptsReturn="True" Height="60"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="0 5">
+                        <TextBlock Text="Дата:"/>
+                        <DatePicker SelectedDate="{Binding EditingEvent.Date}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="0 5">
+                        <TextBlock Text="Тип:"/>
+                        <ComboBox ItemsSource="{Binding Source={x:Static sys:Enum.GetValues, Type={x:Type shared:EventType}}}"
+                                  SelectedItem="{Binding EditingEvent.Type}" />
+                    </StackPanel>
+
+                    <Button Content="Запази" Command="{Binding SaveEventCommand}" Margin="0 10 0 0"/>
+                    <Button Content="Изтрий" Command="{Binding DeleteEventCommand}" Background="Red" Foreground="White" />
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

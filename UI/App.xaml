@@ -4,8 +4,14 @@
              xmlns:local="clr-namespace:UI"
              xmlns:viewmodels="clr-namespace:UI.ViewModels"
                xmlns:views="clr-namespace:UI.Views"
+             xmlns:c="clr-namespace:UI.Converters"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
+
+        <ResourceDictionary>
+            <c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        </ResourceDictionary>
+
         <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
             <views:LoginView />
         </DataTemplate>
@@ -26,6 +32,6 @@
             <views:EventsView />
         </DataTemplate>
 
-
+      
     </Application.Resources>
 </Application>
