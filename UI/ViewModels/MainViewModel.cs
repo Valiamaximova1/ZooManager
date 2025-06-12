@@ -1,0 +1,82 @@
+﻿using BusinessLayer.DTOs;
+using BusinessLayer.Services;
+using BusinessLayer.Services.Interfaces;
+using Data;
+using Data.Repositories;
+using DevExpress.Internal;
+using DevExpress.Xpo;
+using Microsoft.EntityFrameworkCore;
+using Models;
+using System.Windows;
+using UI.ViewModels;
+using UI.Views;
+
+
+
+namespace UI.ViewModels
+{
+
+    public class MainViewModel : BaseViewModel
+    {
+        private BaseViewModel _currentViewModel;
+
+        private readonly IUserService _userService;
+        private readonly IAnimalService _animalService;
+        private readonly IEventService _eventService;
+
+        public MainViewModel()
+        {
+
+            DbInitializer.Initialize();
+
+            var factory = new ZooDbContextFactory();
+            var context = factory.CreateDbContext(Array.Empty<string>());
+
+            var userRepository = new UserRepository(context);
+            var animalRepository = new AnimalRepository(context);
+            var eventRepository = new EventRepository(context);
+
+            _userService = new UserService(userRepository);
+            _animalService = new AnimalService(animalRepository);
+            _eventService = new EventService(eventRepository);
+
+
+            ShowLogin();
+        }
+
+        public BaseViewModel CurrentViewModel
+        {
+            get => _currentViewModel;
+            set
+            {
+                _currentViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        private void ShowLogin()
+        {
+            var loginVM = new LoginViewModel(_userService);
+            //тук му казвам абонирам се за събитие
+            loginVM.LoginSuccessful += OnLoginSuccess;
+            loginVM.NavigateToRegisterRequested += ShowRegister;
+            CurrentViewModel = loginVM;
+        }
+
+        private void ShowRegister()
+        {
+            var registerVM = new RegisterViewModel(_userService);
+            registerVM.NavigateToLoginRequested += ShowLogin;
+            CurrentViewModel = registerVM;
+        }
+
+        private void OnLoginSuccess(UserDto user)
+        {
+            CurrentViewModel = new HomeViewModel(_animalService,_eventService, user);
+
+        }
+    }
+
+
+}

@@ -1,0 +1,33 @@
+﻿using Shared.Enums;
+using Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Data.Repositories
+{
+    public class AnimalRepository : IAnimalRepository
+    {
+        private readonly ZooDbContext _context;
+
+        public AnimalRepository(ZooDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<Animal>> GetAllAsync()
+            => await _context.Animals.ToListAsync();
+
+        public async Task<IEnumerable<Animal>> GetByCategoryAsync(AnimalCategory category)
+            => await _context.Animals
+                             .Where(a => a.Category == category)
+                             .ToListAsync();
+
+        public async Task<Animal> GetByIdAsync(Guid id)
+            => await _context.Animals.FirstOrDefaultAsync(a => a.Id == id);
+    }
+}
