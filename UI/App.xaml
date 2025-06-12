@@ -8,9 +8,10 @@
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
 
+        <!-- 
         <ResourceDictionary>
             <c:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        </ResourceDictionary>
+        </ResourceDictionary>-->
 
         <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
             <views:LoginView />
