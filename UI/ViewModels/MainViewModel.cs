@@ -38,7 +38,7 @@ namespace UI.ViewModels
 
             _userService = new UserService(userRepository);
             _animalService = new AnimalService(animalRepository);
-            _eventService = new EventService(eventRepository);
+            _eventService = new EventService(eventRepository, animalRepository);
 
 
             ShowLogin();

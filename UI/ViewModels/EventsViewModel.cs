@@ -23,7 +23,13 @@ namespace UI.ViewModels
         private readonly IEventService _eventService;
         private readonly IAnimalService _animalService;
 
+        private string _selectedType = "Всички";
+        private DateTime? _selectedDate = null;
+
         public ObservableCollection<EventDto> Events { get; } = new();
+        public ObservableCollection<string> EventTypes { get; } =
+        new ObservableCollection<string>(new[] { "Всички" }.Concat(Enum.GetNames(typeof(EventType))));
+
         public ObservableCollection<AnimalDto> AllAnimals { get; } = new();
         public ObservableCollection<AnimalDto> SelectedAnimals { get; } = new();
 
@@ -34,26 +40,42 @@ namespace UI.ViewModels
         private bool _isEditMode;
 
 
-        public ICommand EditEventCommand { get; }
-        public ICommand DeleteEventCommand { get; }
-        public ICommand SaveEventCommand { get; }
-        public ICommand LoadEventsCommand { get; }
-        public ICommand KeyDownCommand { get; }
-
         public EventsViewModel(IEventService eventService, IAnimalService animalService)
         {
             _eventService = eventService;
             _animalService = animalService;
 
+            SearchCommand = new AsyncDelegateCommand(LoadEventsAsync);
             EditEventCommand = new DelegateCommand(OnEdit);
             DeleteEventCommand = new AsyncDelegateCommand(OnDeleteAsync);
             SaveEventCommand = new AsyncDelegateCommand(OnSaveAsync);
             LoadEventsCommand = new AsyncDelegateCommand(LoadEventsAsync);
             KeyDownCommand = new DelegateCommand<KeyEventArgs>(OnKeyDown);
 
-            _ = LoadEventsAsync();
-            _ = LoadAllAnimalsAsync();
+            LoadEventsAsync();
+            LoadAllAnimalsAsync();
         }
+
+        public string SelectedType
+        {
+            get => _selectedType;
+            set
+            {
+
+                _selectedType = value;
+                OnPropertyChanged();
+            }
+        }
+        public DateTime? SelectedDate
+        {
+            get => _selectedDate;
+            set
+            {
+                _selectedDate = value;
+                OnPropertyChanged();
+            }
+        }
+
         public EventDto SelectedEvent
         {
             get => _selectedEvent;
@@ -96,12 +118,42 @@ namespace UI.ViewModels
             }
         }
 
+        public ICommand SearchCommand { get; }
+        public ICommand EditEventCommand { get; }
+        public ICommand DeleteEventCommand { get; }
+        public ICommand SaveEventCommand { get; }
+        public ICommand LoadEventsCommand { get; }
+        public ICommand KeyDownCommand { get; }
+
+
+      
+
         private async Task LoadEventsAsync()
         {
+
             Events.Clear();
-            var all = await _eventService.GetAllAsync();
-            foreach (var e in all)
-                Events.Add(e);
+            if (SelectedType.Equals("Всички"))
+            {
+                var all = await _eventService.GetAllAsync();
+                foreach (var a in all)
+                    Events.Add(a);
+                SelectedDate = null;
+            }
+            else
+            {
+                if (Enum.TryParse<EventType>(SelectedType, out var type))
+                {
+
+                    var dateToUse = SelectedDate ?? DateTime.Today;
+                    var results = await _eventService.GetFilteredAsync(type, SelectedDate);
+
+                    foreach (var ev in results)
+                        Events.Add(ev);
+                }
+
+            }
+
+
         }
 
         private async Task LoadAllAnimalsAsync()
@@ -173,33 +225,6 @@ namespace UI.ViewModels
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

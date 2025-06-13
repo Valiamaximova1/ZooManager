@@ -28,10 +28,7 @@ namespace UI.ViewModels
         public ObservableCollection<string> Categories { get; } =
       new ObservableCollection<string>(new[] { "Всички" }.Concat(Enum.GetNames(typeof(AnimalCategory))));
 
-        public ICommand SearchCommand { get; }
-        public ICommand PlaySoundCommand { get; }
-        public ICommand ShowAnimalDetailsCommand { get; }
-        public ICommand ClosePopupCommand { get; }
+
 
         public AnimalsViewModel(IAnimalService animalService)
         {
@@ -74,6 +71,10 @@ namespace UI.ViewModels
                 OnPropertyChanged();
             }
         }
+        public ICommand SearchCommand { get; }
+        public ICommand PlaySoundCommand { get; }
+        public ICommand ShowAnimalDetailsCommand { get; }
+        public ICommand ClosePopupCommand { get; }
 
         private async Task<ObservableCollection<AnimalDto>> LoadAnimalsAsync()
         {

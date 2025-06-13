@@ -46,7 +46,7 @@ namespace UI.ViewModels
 
         private void ShowEvents()
         {
-            //CurrentViewModel = new EventsViewModel(_eventService, _animalService);
+            CurrentViewModel = new EventsViewModel(_eventService, _animalService);
         }
     }
 }
