@@ -59,24 +59,24 @@
             BorderBrush="Gray"
             Padding="10"
             Background="#FAFAFA">
-                <StackPanel Width="250">
+                <StackPanel Width="200">
                     <TextBlock Text="Заглавие:" FontWeight="Bold" />
                     <TextBlock Text="{Binding SelectedEvent.Title}" />
 
                     <TextBlock Text="Описание:" FontWeight="Bold" Margin="0 10 0 0" />
                     <TextBlock Text="{Binding SelectedEvent.Description}" 
-                       TextWrapping="Wrap" TextTrimming="None"  Margin="0 0 0 10" />
+                       TextWrapping="Wrap" MaxWidth="180"   />
 
                     <TextBlock Text="Дата:" FontWeight="Bold" Margin="0 10 0 0" />
                     <TextBlock Text="{Binding SelectedEvent.Date, StringFormat=dd.MM.yyyy}" />
 
                     <TextBlock Text="Тип:" FontWeight="Bold" Margin="0 10 0 0" />
                     <TextBlock Text="{Binding SelectedEvent.Type}" />
-                    <TextBlock Text="Животни:" FontWeight="Bold" Margin="0 10 0 0" />
+                    <TextBlock Text="Животни:" FontWeight="Bold" Margin="0 10 0 0"/>
                     <ItemsControl ItemsSource="{Binding SelectedAnimals}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding Name}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

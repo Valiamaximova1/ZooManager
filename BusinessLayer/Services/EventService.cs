@@ -26,9 +26,10 @@ namespace BusinessLayer.Services
 
         public async Task<IEnumerable<EventDto>> GetAllAsync()
         {
-            var events = await _eventRepository.GetAllAsync();
-            return events.Select(a => a.ToDto());
+            var events = await _eventRepository.GetAllAsyncWithAnimals(); // нов метод
+            return events.Select(e => e.ToDto());
         }
+
         public async Task<IEnumerable<EventDto>> GetFilteredAsync(EventType? type, DateTime? date)
         {
             var all = await _eventRepository.GetAllAsync();
@@ -39,29 +40,19 @@ namespace BusinessLayer.Services
                 .Select(e => e.ToDto());
         }
 
+
+
         public async Task UpdateAsync(EventDto dto)
         {
             var existing = await _eventRepository.GetByIdAsync(dto.Id);
             if (existing is null)
-                throw new ArgumentException("Невалидно събитие!");
+                throw new ArgumentException("Събитието не съществува.");
 
-            existing.Title = dto.Title;
-            existing.Type = dto.Type;
-            existing.Description = dto.Description;
-            existing.Date = dto.Date;
-
-            // Обновяване на животните (many-to-many)
-            existing.Animals.Clear();
-            foreach (var animalId in dto.AnimalIds)
-            {
-                var animal = await _animalRepository.GetByIdAsync(animalId);
-                if (animal != null)
-                    existing.Animals.Add(animal);
-            }
+            var allAnimals = await _animalRepository.GetAllAsync();
+            existing.UpdateEntity(dto, allAnimals.ToList());
 
             await _eventRepository.UpdateAsync(existing);
         }
-
 
         public async Task DeleteAsync(Guid id)
         {

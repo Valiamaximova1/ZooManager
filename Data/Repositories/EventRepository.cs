@@ -24,6 +24,10 @@ namespace Data.Repositories
                 .Include(e => e.Animals)
                 .ToListAsync();
         }
+        public async Task<IEnumerable<Event>> GetAllAsyncWithAnimals()
+        {
+            return await _context.Events.Include(e => e.Animals).ToListAsync();
+        }
 
         public async Task<IEnumerable<Event>> GetByTypeAsync(EventType type)
         {
@@ -65,5 +69,10 @@ namespace Data.Repositories
             _context.Events.Remove(ev);
             await _context.SaveChangesAsync();
         }
+        public IQueryable<Event> GetAllWithIncludes()
+        {
+            return _context.Events.Include(e => e.Animals);
+        }
+
     }
 }

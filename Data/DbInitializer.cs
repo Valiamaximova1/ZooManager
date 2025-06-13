@@ -62,6 +62,7 @@ namespace Data
                 Description = "Шоу с папагали и орли – демонстрация на умения и дресура."
             }
         });
+                context.SaveChanges();
             }
 
 
@@ -116,38 +117,42 @@ namespace Data
                     SoundPath = "Sounds\\gushter.mp3"
                 },
             });
+                context.SaveChanges();
             }
-
-
-            var tour = context.Events.FirstOrDefault(e => e.Title == "Обиколка с екскурзовод");
-            var feeding = context.Events.FirstOrDefault(e => e.Title == "Демонстрация по хранене");
-            var birds = context.Events.FirstOrDefault(e => e.Title == "Шоу с птици");
-
-            var lion = context.Animals.FirstOrDefault(a => a.Name == "Лъв");
-            var tiger = context.Animals.FirstOrDefault(a => a.Name == "Тигър");
-            var parrot = context.Animals.FirstOrDefault(a => a.Name == "Папагал");
-            var mosquito = context.Animals.FirstOrDefault(a => a.Name == "Комар");
-
-            if (tour != null && lion != null && parrot != null)
+            if (!context.Animals.Any())
             {
-                tour.Animals.Add(lion);
-                tour.Animals.Add(parrot);
-            }
 
-            if (feeding != null && lion != null && tiger != null)
-            {
-                feeding.Animals.Add(lion);
-                feeding.Animals.Add(tiger);
-            }
+                var tour = context.Events.FirstOrDefault(e => e.Title == "Обиколка с екскурзовод");
+                var feeding = context.Events.FirstOrDefault(e => e.Title == "Демонстрация по хранене");
+                var birds = context.Events.FirstOrDefault(e => e.Title == "Шоу с птици");
 
-            if (birds != null && parrot != null && mosquito != null)
-            {
-                birds.Animals.Add(parrot);
-                birds.Animals.Add(mosquito);
-            }
+                var lion = context.Animals.FirstOrDefault(a => a.Name == "Лъв");
+                var tiger = context.Animals.FirstOrDefault(a => a.Name == "Тигър");
+                var parrot = context.Animals.FirstOrDefault(a => a.Name == "Папагал");
+                var mosquito = context.Animals.FirstOrDefault(a => a.Name == "Комар");
 
-            context.SaveChanges();
+                if (tour != null && lion != null && parrot != null)
+                {
+                    tour.Animals.Add(lion);
+                    tour.Animals.Add(parrot);
+                }
+
+                if (feeding != null && lion != null && tiger != null)
+                {
+                    feeding.Animals.Add(lion);
+                    feeding.Animals.Add(tiger);
+                }
+
+                if (birds != null && parrot != null && mosquito != null)
+                {
+                    birds.Animals.Add(parrot);
+                    birds.Animals.Add(mosquito);
+                }
+
+                context.SaveChanges();
+            }
         }
+
     }
 
 

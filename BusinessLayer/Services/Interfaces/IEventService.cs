@@ -12,7 +12,6 @@ namespace BusinessLayer.Services.Interfaces
     {
         Task<IEnumerable<EventDto>> GetAllAsync();
         Task<IEnumerable<EventDto>> GetFilteredAsync(EventType? type, DateTime? date);
-
         Task UpdateAsync(EventDto dto);
         Task DeleteAsync(Guid id);
     }

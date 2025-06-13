@@ -18,20 +18,48 @@ namespace BusinessLayer.Mappers
                 Title = ev.Title,
                 Description = ev.Description,
                 Date = ev.Date,
-                Type = ev.Type
+                Type = ev.Type,
+                AnimalIds = ev.Animals?.Select(a => a.Id).ToList() ?? new()
             };
         }
 
-        public static Event ToEntity(this EventDto dto)
+
+        public static Event ToEntity(this EventDto dto, List<Animal> animals)
         {
-            return new Event
+            var entity = new Event
             {
                 Id = dto.Id,
                 Title = dto.Title,
                 Description = dto.Description,
                 Date = dto.Date,
-                Type = dto.Type
+                Type = dto.Type,
+                Animals = new List<Animal>()
             };
+
+            foreach (var id in dto.AnimalIds.Distinct())
+            {
+                var animal = animals.FirstOrDefault(a => a.Id == id);
+                if (animal != null)
+                    entity.Animals.Add(animal);
+            }
+
+            return entity;
+        }
+
+        public static void UpdateEntity(this Event entity, EventDto dto, List<Animal> animals)
+        {
+            entity.Title = dto.Title;
+            entity.Description = dto.Description;
+            entity.Date = dto.Date;
+            entity.Type = dto.Type;
+
+            entity.Animals.Clear();
+            foreach (var id in dto.AnimalIds.Distinct())
+            {
+                var animal = animals.FirstOrDefault(a => a.Id == id);
+                if (animal != null)
+                    entity.Animals.Add(animal);
+            }
         }
     }
 }

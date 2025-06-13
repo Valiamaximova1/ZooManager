@@ -53,7 +53,6 @@ namespace UI.ViewModels
             KeyDownCommand = new DelegateCommand<KeyEventArgs>(OnKeyDown);
 
             LoadEventsAsync();
-            LoadAllAnimalsAsync();
         }
 
         public string SelectedType
@@ -84,7 +83,8 @@ namespace UI.ViewModels
                 _selectedEvent = value;
                 OnPropertyChanged();
                 IsDetailsVisible = value != null;
-                LoadSelectedAnimals();
+                LoadSelectedAnimalsAsync();
+                LoadAllAnimalsAsync();
             }
         }
 
@@ -156,24 +156,26 @@ namespace UI.ViewModels
 
         }
 
+        private async Task LoadSelectedAnimalsAsync()
+        {
+            if (SelectedEvent == null || SelectedEvent.AnimalIds == null)
+                return;
+
+            if (AllAnimals.Count == 0)
+                await LoadAllAnimalsAsync();
+
+            SelectedAnimals.Clear();
+
+            foreach (var animal in AllAnimals.Where(a => SelectedEvent.AnimalIds.Contains(a.Id)))
+                SelectedAnimals.Add(animal);
+        }
         private async Task LoadAllAnimalsAsync()
         {
             AllAnimals.Clear();
             var animals = await _animalService.GetAllAsync();
+
             foreach (var animal in animals)
                 AllAnimals.Add(animal);
-        }
-
-        private void LoadSelectedAnimals()
-        {
-            SelectedAnimals.Clear();
-            if (SelectedEvent?.AnimalIds != null)
-            {
-                foreach (var animal in AllAnimals.Where(a => SelectedEvent.AnimalIds.Contains(a.Id)))
-                {
-                    SelectedAnimals.Add(animal);
-                }
-            }
         }
 
         private void OnEdit()
