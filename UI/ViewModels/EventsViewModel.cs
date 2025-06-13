@@ -152,6 +152,8 @@ namespace UI.ViewModels
                 }
 
             }
+            IsEditMode = false;
+
 
 
         }
@@ -192,6 +194,7 @@ namespace UI.ViewModels
                     AnimalIds = SelectedEvent.AnimalIds?.ToList() ?? new()
                 };
                 IsEditMode = true;
+                OnPropertyChanged(nameof(EditingEvent));
             }
         }
 
