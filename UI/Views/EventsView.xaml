@@ -47,6 +47,7 @@
               IsReadOnly="True">
                 <i:Interaction.Behaviors>
                     <behaviors:DataGridDoubleClickBehavior Command="{Binding EditEventCommand}" />
+                    <behaviors:DataGridDeleteKeyBehavior Command="{Binding DeleteEventCommand}" />
                 </i:Interaction.Behaviors>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Заглавие" Binding="{Binding Title}" Width="*" />
@@ -75,7 +76,7 @@
                                     </Setter.Value>
                                 </Setter>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                    <DataTrigger Binding="{Binding  SelectedEvent.IsEditMode}" Value="True">
                                         <Setter Property="ContentTemplate">
                                             <Setter.Value>
                                                 <DataTemplate>
@@ -99,14 +100,14 @@
                             <Style TargetType="ContentControl">
                                 <Setter Property="Content">
                                     <Setter.Value>
-                                        <TextBlock Text="{Binding SelectedEvent.Description}" TextWrapping="Wrap" MaxWidth="180"  />
+                                        <TextBlock Text="{Binding SelectedEvent.Description}" TextWrapping="Wrap"  />
                                     </Setter.Value>
                                 </Setter>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                    <DataTrigger Binding="{Binding  SelectedEvent.IsEditMode}" Value="True">
                                         <Setter Property="Content">
                                             <Setter.Value>
-                                                <TextBox Text="{Binding EditingEvent.Description, Mode=TwoWay}" TextWrapping="Wrap" MaxWidth="180"  AcceptsReturn="True" />
+                                                <TextBox Text="{Binding EditingEvent.Description, Mode=TwoWay}" TextWrapping="Wrap"  AcceptsReturn="True" />
                                             </Setter.Value>
                                         </Setter>
                                     </DataTrigger>
@@ -126,7 +127,7 @@
                                     </Setter.Value>
                                 </Setter>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                    <DataTrigger Binding="{Binding  SelectedEvent.IsEditMode}" Value="True">
                                         <Setter Property="Content">
                                             <Setter.Value>
                                                 <DatePicker SelectedDate="{Binding EditingEvent.Date, Mode=TwoWay}" />
@@ -139,20 +140,25 @@
                     </ContentControl>
 
                     <TextBlock Text="Тип:" FontWeight="Bold" Margin="0 10 0 0" />
+
                     <ContentControl>
                         <ContentControl.Style>
                             <Style TargetType="ContentControl">
+                                <!-- По подразбиране показваме TextBlock -->
                                 <Setter Property="Content">
                                     <Setter.Value>
                                         <TextBlock Text="{Binding SelectedEvent.Type}" />
                                     </Setter.Value>
                                 </Setter>
+
+                                <!-- Когато сме в режим на редакция -->
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                    <DataTrigger Binding="{Binding SelectedEvent.IsEditMode}" Value="True">
                                         <Setter Property="Content">
                                             <Setter.Value>
-                                                <ComboBox ItemsSource="{Binding EventTypes}"
-                                              SelectedItem="{Binding EditingEvent.Type, Mode=TwoWay}" />
+                                                <ComboBox ItemsSource="{Binding EditableEventTypes}"
+                                                              SelectedItem="{Binding EditingEvent.Type, Mode=TwoWay}"
+                                                              Width="150"/>
                                             </Setter.Value>
                                         </Setter>
                                     </DataTrigger>
@@ -160,6 +166,7 @@
                             </Style>
                         </ContentControl.Style>
                     </ContentControl>
+
 
 
                     <TextBlock Text="Животни:" FontWeight="Bold" Margin="0 10 0 0"/>
@@ -175,7 +182,7 @@
                     <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
                         <Button Content="Запази"
                     Command="{Binding SaveEventCommand}"
-                    IsEnabled="{Binding IsEditMode}"
+                    IsEnabled="{Binding  SelectedEvent.IsEditMode}"
                     Margin="0 0 5 0"/>
                         <Button Content="Изтрий"
                     Command="{Binding DeleteEventCommand}"

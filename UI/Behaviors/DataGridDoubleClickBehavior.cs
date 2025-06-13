@@ -28,6 +28,7 @@ namespace UI.Behaviors
 
         private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+          
             if (Command?.CanExecute(null) == true)
                 Command.Execute(null);
         }

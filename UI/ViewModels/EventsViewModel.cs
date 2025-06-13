@@ -26,9 +26,16 @@ namespace UI.ViewModels
         private string _selectedType = "Всички";
         private DateTime? _selectedDate = null;
 
+        public Array EventTypeValues => Enum.GetValues(typeof(EventType));
+
+
         public ObservableCollection<EventDto> Events { get; } = new();
         public ObservableCollection<string> EventTypes { get; } =
         new ObservableCollection<string>(new[] { "Всички" }.Concat(Enum.GetNames(typeof(EventType))));
+        public ObservableCollection<EventType> EditableEventTypes { get; } =
+      new ObservableCollection<EventType>((EventType[])Enum.GetValues(typeof(EventType)));
+
+
 
         public ObservableCollection<AnimalDto> AllAnimals { get; } = new();
         public ObservableCollection<AnimalDto> SelectedAnimals { get; } = new();
@@ -51,6 +58,8 @@ namespace UI.ViewModels
             SaveEventCommand = new AsyncDelegateCommand(OnSaveAsync);
             LoadEventsCommand = new AsyncDelegateCommand(LoadEventsAsync);
             KeyDownCommand = new DelegateCommand<KeyEventArgs>(OnKeyDown);
+
+         
 
             LoadEventsAsync();
         }
@@ -94,6 +103,7 @@ namespace UI.ViewModels
             set
             {
                 _editingEvent = value;
+           
                 OnPropertyChanged();
             }
         }
@@ -152,7 +162,7 @@ namespace UI.ViewModels
                 }
 
             }
-            IsEditMode = false;
+         
 
 
 
@@ -184,6 +194,11 @@ namespace UI.ViewModels
         {
             if (SelectedEvent != null)
             {
+                foreach (var ev in Events)
+                    ev.IsEditMode = false;
+
+                SelectedEvent.IsEditMode = true;
+
                 EditingEvent = new EventDto
                 {
                     Id = SelectedEvent.Id,
@@ -193,8 +208,8 @@ namespace UI.ViewModels
                     Type = SelectedEvent.Type,
                     AnimalIds = SelectedEvent.AnimalIds?.ToList() ?? new()
                 };
-                IsEditMode = true;
                 OnPropertyChanged(nameof(EditingEvent));
+                OnPropertyChanged(nameof(Events));
             }
         }
 
@@ -226,7 +241,7 @@ namespace UI.ViewModels
         {
             if (e.Key == Key.Delete && SelectedEvent != null)
             {
-                _ = OnDeleteAsync();
+                OnDeleteAsync();
             }
         }
     }
