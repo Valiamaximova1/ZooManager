@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interfaces;
+using Models;
 using Shared.Enums;
 using System;
 using System.Collections.Generic;
@@ -71,6 +72,7 @@ namespace UI.ViewModels
                 OnPropertyChanged();
             }
         }
+   
         public ICommand SearchCommand { get; }
         public ICommand PlaySoundCommand { get; }
         public ICommand ShowAnimalDetailsCommand { get; }

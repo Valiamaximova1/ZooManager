@@ -11,7 +11,10 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <converters:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter" />
+        <converters:AnimalSelectionMultiConverter x:Key="AnimalSelectionMultiConverter" />
     </UserControl.Resources>
+
+
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -170,14 +173,54 @@
 
 
                     <TextBlock Text="Животни:" FontWeight="Bold" Margin="0 10 0 0"/>
-                    <ItemsControl ItemsSource="{Binding SelectedAnimals}">
+
+                    <!-- Обновен ContentControl с CheckBox логика за избор на животни -->
+                    <ContentControl>
+                        <ContentControl.Style>
+                            <Style TargetType="ContentControl">
+                                <!-- По подразбиране: списък с имената -->
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <ItemsControl ItemsSource="{Binding SelectedAnimals}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Setter.Value>
+                                </Setter>
+
+                                <!-- В режим на редакция: CheckBox списък -->
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedEvent.IsEditMode}" Value="True">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <ItemsControl ItemsSource="{Binding SelectableAnimals}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <CheckBox Content="{Binding Animal.Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ContentControl.Style>
+                    </ContentControl>
+
+
+                    <!--  <ItemsControl ItemsSource="{Binding SelectedAnimals}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
 
-                     </ItemsControl> 
+                     </ItemsControl>  -->
 
                     <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
                         <Button Content="Запази"

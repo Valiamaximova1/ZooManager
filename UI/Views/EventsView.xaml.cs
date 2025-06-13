@@ -22,7 +22,9 @@ namespace UI.Views
     {
         public EventsView()
         {
+
             InitializeComponent();
+
         }
     }
 }

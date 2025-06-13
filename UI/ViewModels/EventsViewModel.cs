@@ -36,6 +36,7 @@ namespace UI.ViewModels
       new ObservableCollection<EventType>((EventType[])Enum.GetValues(typeof(EventType)));
 
 
+        public ObservableCollection<AnimalSelectableViewModel> SelectableAnimals { get; } = new();
 
         public ObservableCollection<AnimalDto> AllAnimals { get; } = new();
         public ObservableCollection<AnimalDto> SelectedAnimals { get; } = new();
@@ -59,7 +60,7 @@ namespace UI.ViewModels
             LoadEventsCommand = new AsyncDelegateCommand(LoadEventsAsync);
             KeyDownCommand = new DelegateCommand<KeyEventArgs>(OnKeyDown);
 
-         
+
 
             LoadEventsAsync();
         }
@@ -89,11 +90,15 @@ namespace UI.ViewModels
             get => _selectedEvent;
             set
             {
-                _selectedEvent = value;
-                OnPropertyChanged();
-                IsDetailsVisible = value != null;
-                LoadSelectedAnimalsAsync();
-                LoadAllAnimalsAsync();
+                if (_selectedEvent != value)
+                {
+                    _selectedEvent = value;
+                    IsDetailsVisible = value != null;
+                    OnPropertyChanged();
+                    LoadSelectedAnimalsAsync();
+                    LoadAllAnimalsAsync();
+                }
+
             }
         }
 
@@ -103,7 +108,7 @@ namespace UI.ViewModels
             set
             {
                 _editingEvent = value;
-           
+
                 OnPropertyChanged();
             }
         }
@@ -136,7 +141,7 @@ namespace UI.ViewModels
         public ICommand KeyDownCommand { get; }
 
 
-      
+
 
         private async Task LoadEventsAsync()
         {
@@ -162,7 +167,7 @@ namespace UI.ViewModels
                 }
 
             }
-         
+
 
 
 
@@ -208,8 +213,16 @@ namespace UI.ViewModels
                     Type = SelectedEvent.Type,
                     AnimalIds = SelectedEvent.AnimalIds?.ToList() ?? new()
                 };
-                OnPropertyChanged(nameof(EditingEvent));
-                OnPropertyChanged(nameof(Events));
+                LoadSelectableAnimalsAsync();
+                // Това е важното
+                SelectedAnimals.Clear();
+                foreach (var animal in AllAnimals)
+                {
+                    if (EditingEvent.AnimalIds.Contains(animal.Id))
+                        SelectedAnimals.Add(animal);
+                }
+
+
             }
         }
 
@@ -231,10 +244,17 @@ namespace UI.ViewModels
         {
             if (EditingEvent == null) return;
 
+            EditingEvent.AnimalIds = SelectableAnimals
+                .Where(a => a.IsSelected)
+                .Select(a => a.Animal.Id)
+                .ToList();
+
             await _eventService.UpdateAsync(EditingEvent);
             await LoadEventsAsync();
-            SelectedEvent = null;
+            SelectedEvent = Events.FirstOrDefault(e => e.Id == EditingEvent.Id);
             IsEditMode = false;
+            SelectedEvent.IsEditMode = false;
+
         }
 
         private void OnKeyDown(KeyEventArgs e)
@@ -242,6 +262,20 @@ namespace UI.ViewModels
             if (e.Key == Key.Delete && SelectedEvent != null)
             {
                 OnDeleteAsync();
+            }
+        }
+
+        private async Task LoadSelectableAnimalsAsync()
+        {
+            SelectableAnimals.Clear();
+
+            if (AllAnimals.Count == 0)
+                await LoadAllAnimalsAsync();
+
+            foreach (var animal in AllAnimals)
+            {
+                bool isSelected = EditingEvent.AnimalIds.Contains(animal.Id);
+                SelectableAnimals.Add(new AnimalSelectableViewModel(animal, isSelected));
             }
         }
     }
