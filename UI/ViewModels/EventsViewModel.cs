@@ -92,9 +92,13 @@ namespace UI.ViewModels
             {
                 if (_selectedEvent != value)
                 {
+                    foreach (var ev in Events)
+                        ev.IsEditMode = false;
+
                     _selectedEvent = value;
                     IsDetailsVisible = value != null;
                     OnPropertyChanged();
+
                     LoadSelectedAnimalsAsync();
                     LoadAllAnimalsAsync();
                 }
