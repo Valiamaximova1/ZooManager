@@ -58,7 +58,6 @@ namespace UI.ViewModels
             DeleteEventCommand = new AsyncDelegateCommand(OnDeleteAsync);
             SaveEventCommand = new AsyncDelegateCommand(OnSaveAsync);
             LoadEventsCommand = new AsyncDelegateCommand(LoadEventsAsync);
-            KeyDownCommand = new DelegateCommand<KeyEventArgs>(OnKeyDown);
 
 
 
@@ -142,8 +141,6 @@ namespace UI.ViewModels
         public ICommand DeleteEventCommand { get; }
         public ICommand SaveEventCommand { get; }
         public ICommand LoadEventsCommand { get; }
-        public ICommand KeyDownCommand { get; }
-
 
 
 
@@ -261,13 +258,7 @@ namespace UI.ViewModels
 
         }
 
-        private void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete && SelectedEvent != null)
-            {
-                OnDeleteAsync();
-            }
-        }
+       
 
         private async Task LoadSelectableAnimalsAsync()
         {

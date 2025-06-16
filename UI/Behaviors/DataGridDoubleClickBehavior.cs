@@ -17,7 +17,8 @@ namespace UI.Behaviors
         }
 
         protected override void OnAttached()
-        {
+        {  
+            //проверява дали е кликнато два пъти
             AssociatedObject.MouseDoubleClick += OnMouseDoubleClick;
         }
 

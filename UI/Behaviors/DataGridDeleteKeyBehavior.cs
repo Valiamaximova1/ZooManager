@@ -15,17 +15,17 @@ namespace UI.Behaviors
             get => (ICommand)GetValue(CommandProperty);
             set => SetValue(CommandProperty, value);
         }
-
+        //гледа view-то в което е извикано и чака за натискане на бутон
         protected override void OnAttached()
         {
             AssociatedObject.PreviewKeyDown += OnKeyDown;
         }
-
+        //задължително се пише за да не се допуска memory leaks
         protected override void OnDetaching()
         {
             AssociatedObject.PreviewKeyDown -= OnKeyDown;
         }
-
+        //тук се проверява дали е натиснат точно delete и изпълнява подадената от view команда
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete && Command?.CanExecute(null) == true)
