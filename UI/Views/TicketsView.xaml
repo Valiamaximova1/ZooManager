@@ -23,31 +23,35 @@
             <Button Content="Изчисти" Command="{Binding ClearFilterCommand}"/>
         </StackPanel>
 
-        <!-- Ticket list -->
-        <ItemsControl ItemsSource="{Binding Selections}" Grid.Row="1">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderBrush="Gray" BorderThickness="1" Margin="0 0 0 10" Padding="10">
-                        <StackPanel>
-                            <TextBlock Text="{Binding Template.Title}" FontWeight="Bold" FontSize="16"/>
-                            <TextBlock Text="{Binding Template.Description}" FontSize="13"/>
-                            <TextBlock Text="{Binding Template.Price}" FontSize="13"/>
-                            <TextBlock Text="{Binding Template.Type}" FontStyle="Italic" Margin="0,3,0,0"/>
-                            <TextBlock Text="Налични: " FontWeight="SemiBold" Margin="0,3,0,0">
-                                <Run Text="{Binding Template.AvailableQuantity}" />
-                            </TextBlock>
 
-                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                <TextBlock Text="Бройка: " VerticalAlignment="Center"/>
-                                <TextBox Width="50"
-                                         Margin="5 0"
-                                         Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" />
+        <!-- Ticket list with scroll -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding Selections}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="1" Margin="0 0 0 10" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Template.Title}" FontWeight="Bold" FontSize="16"/>
+                                <TextBlock Text="{Binding Template.Description}" FontSize="13"/>
+                                <TextBlock Text="{Binding Template.Price}" FontSize="13"/>
+                                <TextBlock Text="{Binding Template.Type}" FontStyle="Italic" Margin="0,3,0,0"/>
+                                <TextBlock Text="Налични: " FontWeight="SemiBold" Margin="0,3,0,0">
+                            <Run Text="{Binding Template.AvailableQuantity}" />
+                                </TextBlock>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <TextBlock Text="Бройка: " VerticalAlignment="Center"/>
+                                    <TextBox Width="50"
+                                     Margin="5 0"
+                                     Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
 
         <!-- Purchase button -->
         <Button Grid.Row="2"

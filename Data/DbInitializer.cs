@@ -28,6 +28,7 @@ namespace Data
 
         private static void Seed(ZooDbContext context)
         {
+            // 👉 Потребители
             if (!context.Users.Any())
             {
                 context.Users.AddRange(new List<User>
@@ -37,6 +38,7 @@ namespace Data
         });
             }
 
+            // 👉 Събития
             if (!context.Events.Any())
             {
                 context.Events.AddRange(new List<Event>
@@ -57,12 +59,13 @@ namespace Data
                 context.SaveChanges();
             }
 
+            // 👉 Животни
             if (!context.Animals.Any())
             {
                 context.Animals.AddRange(new List<Animal>
         {
-            new Animal { Name = "Лъв", Description = "Царят на джунглата", Category = AnimalCategory.Бозайник, ImagePath = "Images\\lion.jpg", SoundPath = "Sounds/lion.mp3" },
-            new Animal { Name = "Тигър", Description = "такова е ", Category = AnimalCategory.Бозайник, ImagePath = "Images\\tiger.jpg", SoundPath = "Sounds/tiger.mp3" },
+            new Animal { Name = "Лъв", Description = "Царят на джунглата", Category = AnimalCategory.Бозайник, ImagePath = "Images\\lion.jpg", SoundPath = "Sounds\\lion.mp3" },
+            new Animal { Name = "Тигър", Description = "такова е", Category = AnimalCategory.Бозайник, ImagePath = "Images\\tiger.jpg", SoundPath = "Sounds\\tiger.mp3" },
             new Animal { Name = "Папагал", Description = "Пъстър и говорещ", Category = AnimalCategory.Птица, ImagePath = "Images\\parrot.jpg", SoundPath = "Sounds\\parrot.mp3" },
             new Animal { Name = "Цаца", Description = "Описание за цацата", Category = AnimalCategory.Риба, ImagePath = "Images\\caca.jpg", SoundPath = "Sounds\\caca.mp3" },
             new Animal { Name = "Комар", Description = "Мразя ги", Category = AnimalCategory.Насекомо, ImagePath = "Images\\komar.jpg", SoundPath = "Sounds\\komar.mp3" },
@@ -70,124 +73,139 @@ namespace Data
         });
                 context.SaveChanges();
             }
-            context.SaveChanges();
 
-            // 👉 Помощен метод
-            void AddAnimalToEvent(Event ev, Animal animal)
+            // 👉 Връзки Животно <-> Събитие
+            var events = context.Events.Include(e => e.Animals).ToList();
+            var animals = context.Animals.ToList();
+
+            var eventByTitle = events.ToDictionary(e => e.Title);
+            var animalByName = animals.ToDictionary(a => a.Name);
+
+            void AddAnimalToEvent(string eventTitle, string animalName)
             {
-                if (ev != null && animal != null && !ev.Animals.Any(a => a.Id == animal.Id))
+                if (eventByTitle.TryGetValue(eventTitle, out var ev) &&
+                    animalByName.TryGetValue(animalName, out var animal) &&
+                    !ev.Animals.Any(a => a.Id == animal.Id))
                 {
                     ev.Animals.Add(animal);
                 }
             }
-            if (!context.Animals.Any())
-            {
-                // 👉 Извличане на събития
-                var tour = context.Events.FirstOrDefault(e => e.Title == "Обиколка с екскурзовод");
-                var feeding = context.Events.FirstOrDefault(e => e.Title == "Демонстрация по хранене");
-                var birds = context.Events.FirstOrDefault(e => e.Title == "Шоу с птици");
-                var nightSafari = context.Events.FirstOrDefault(e => e.Title == "Нощно сафари");
-                var kidsFarm = context.Events.FirstOrDefault(e => e.Title == "Ферма за деца");
-                var predatorFeeding = context.Events.FirstOrDefault(e => e.Title == "Хранене на хищници");
-                var zoologTalk = context.Events.FirstOrDefault(e => e.Title == "Зоолог-говорител");
-                var miniZoo = context.Events.FirstOrDefault(e => e.Title == "Мини зоопарк за малчугани");
-                var raptorFlight = context.Events.FirstOrDefault(e => e.Title == "Полет на хищни птици");
-                var tropicalNight = context.Events.FirstOrDefault(e => e.Title == "Тропическа нощ");
-                var cookingForAnimals = context.Events.FirstOrDefault(e => e.Title == "Готвим за животните");
-                var volunteerDay = context.Events.FirstOrDefault(e => e.Title == "Ден на доброволеца");
 
-                // 👉 Извличане на животни
-                var lion = context.Animals.FirstOrDefault(a => a.Name == "Лъв");
-                var tiger = context.Animals.FirstOrDefault(a => a.Name == "Тигър");
-                var parrot = context.Animals.FirstOrDefault(a => a.Name == "Папагал");
-                var mosquito = context.Animals.FirstOrDefault(a => a.Name == "Комар");
-                var gushter = context.Animals.FirstOrDefault(a => a.Name == "Гущер");
-                var caca = context.Animals.FirstOrDefault(a => a.Name == "Цаца");
+            // 👉 Реално добавяне на връзки
+            AddAnimalToEvent("Обиколка с екскурзовод", "Лъв");
+            AddAnimalToEvent("Обиколка с екскурзовод", "Папагал");
+            AddAnimalToEvent("Демонстрация по хранене", "Лъв");
+            AddAnimalToEvent("Демонстрация по хранене", "Тигър");
+            AddAnimalToEvent("Шоу с птици", "Папагал");
+            AddAnimalToEvent("Шоу с птици", "Комар");
+            AddAnimalToEvent("Нощно сафари", "Лъв");
+            AddAnimalToEvent("Нощно сафари", "Гущер");
+            AddAnimalToEvent("Ферма за деца", "Папагал");
+            AddAnimalToEvent("Ферма за деца", "Цаца");
+            AddAnimalToEvent("Хранене на хищници", "Лъв");
+            AddAnimalToEvent("Хранене на хищници", "Тигър");
+            AddAnimalToEvent("Зоолог-говорител", "Лъв");
+            AddAnimalToEvent("Зоолог-говорител", "Комар");
+            AddAnimalToEvent("Мини зоопарк за малчугани", "Папагал");
+            AddAnimalToEvent("Мини зоопарк за малчугани", "Цаца");
+            AddAnimalToEvent("Полет на хищни птици", "Папагал");
+            AddAnimalToEvent("Тропическа нощ", "Гущер");
+            AddAnimalToEvent("Тропическа нощ", "Комар");
+            AddAnimalToEvent("Готвим за животните", "Тигър");
+            AddAnimalToEvent("Готвим за животните", "Цаца");
+            AddAnimalToEvent("Ден на доброволеца", "Лъв");
+            AddAnimalToEvent("Ден на доброволеца", "Гущер");
 
-                // 👉 Връзки
-                AddAnimalToEvent(tour, lion);
-                AddAnimalToEvent(tour, parrot);
+            context.SaveChanges();
 
-                AddAnimalToEvent(feeding, lion);
-                AddAnimalToEvent(feeding, tiger);
-
-                AddAnimalToEvent(birds, parrot);
-                AddAnimalToEvent(birds, mosquito);
-
-                AddAnimalToEvent(nightSafari, lion);
-                AddAnimalToEvent(nightSafari, gushter);
-
-                AddAnimalToEvent(kidsFarm, parrot);
-                AddAnimalToEvent(kidsFarm, caca);
-
-                AddAnimalToEvent(predatorFeeding, lion);
-                AddAnimalToEvent(predatorFeeding, tiger);
-
-                AddAnimalToEvent(zoologTalk, lion);
-                AddAnimalToEvent(zoologTalk, mosquito);
-
-                AddAnimalToEvent(miniZoo, parrot);
-                AddAnimalToEvent(miniZoo, caca);
-
-                AddAnimalToEvent(raptorFlight, parrot);
-
-                AddAnimalToEvent(tropicalNight, gushter);
-                AddAnimalToEvent(tropicalNight, mosquito);
-
-                AddAnimalToEvent(cookingForAnimals, tiger);
-                AddAnimalToEvent(cookingForAnimals, caca);
-
-                AddAnimalToEvent(volunteerDay, lion);
-                AddAnimalToEvent(volunteerDay, gushter);
-
-                // 👉 Запазване
-                context.SaveChanges();
-
-            }
+            // 👉 Шаблони за билети
 
             if (!context.TicketTemplates.Any())
             {
-                var event1 = context.Events.FirstOrDefault(e => e.Title == "Обиколка с екскурзовод");
-                var event2 = context.Events.FirstOrDefault(e => e.Title == "Шоу с птици");
+                 var event1 = context.Events.FirstOrDefault(e => e.Title == "Обиколка с екскурзовод");
+            var event2 = context.Events.FirstOrDefault(e => e.Title == "Шоу с птици");
+            var event3 = context.Events.FirstOrDefault(e => e.Title == "Нощно сафари");
+            var event4 = context.Events.FirstOrDefault(e => e.Title == "Ферма за деца");
+            var event5 = context.Events.FirstOrDefault(e => e.Title == "Тропическа нощ");
+            var event6 = context.Events.FirstOrDefault(e => e.Title == "Ден на доброволеца");
 
-                if (event1 != null && event2 != null)
-                {
-                    context.TicketTemplates.AddRange(new List<TicketTemplate>
+            if (event1 != null && event2 != null && event3 != null && event4 != null && event5 != null && event6 != null)
+            {
+                context.TicketTemplates.AddRange(new List<TicketTemplate>
+    {
+        new TicketTemplate
         {
-            new TicketTemplate
-            {
-                Title = "Обикновен билет",
-                Description = "Стандартен билет за обиколка.",
-                Type = TicketType.Редовен,
-                AvailableQuantity = 50,
-                Price = 50,
-                EventId = event1.Id
-            },
-            new TicketTemplate
-            {
-                Title = "VIP билет",
-                Description = "Включва място на първи ред и подарък.",
-                Type = TicketType.Ученически,
-                Price=100,
-                AvailableQuantity = 20,
-                EventId = event2.Id
-            }
-        });
-                    context.SaveChanges();
-                }
+            Title = "Обикновен билет",
+            Description = "Стандартен билет за обиколка.",
+            Type = TicketType.Редовен,
+            AvailableQuantity = 50,
+            Price = 50,
+            EventId = event1.Id
+        },
+        new TicketTemplate
+        {
+            Title = "VIP билет",
+            Description = "Включва място на първи ред и подарък.",
+            Type = TicketType.Ученически,
+            AvailableQuantity = 20,
+            Price = 100,
+            EventId = event2.Id
+        },
+        new TicketTemplate
+        {
+            Title = "Нощен билет",
+            Description = "Достъп до специалното нощно сафари.",
+            Type = TicketType.Редовен,
+            AvailableQuantity = 25,
+            Price = 70,
+            EventId = event3.Id
+        },
+        new TicketTemplate
+        {
+            Title = "Детски билет",
+            Description = "Само за деца под 12 години.",
+            Type = TicketType.Ученически,
+            AvailableQuantity = 50,
+            Price = 20,
+            EventId = event4.Id
+        },
+        new TicketTemplate
+        {
+            Title = "Тропическа разходка",
+            Description = "Екзотична обиколка с музика и светлини.",
+            Type = TicketType.Редовен,
+            AvailableQuantity = 15,
+            Price = 80,
+            EventId = event5.Id
+        },
+        new TicketTemplate
+        {
+            Title = "Билет за доброволци",
+            Description = "Безплатен достъп за доброволци.",
+            Type = TicketType.Редовен,
+            AvailableQuantity = 100,
+            Price = 0,
+            EventId = event6.Id
+        }
+    });
+
+                context.SaveChanges();
             }
 
-            // Добавяне на покупки на билети
+            }
+         
+
+            // 👉 Закупени билети
             if (!context.TicketPurchases.Any())
             {
-                var user1 = context.Users.FirstOrDefault(u => u.Email == "val");
+                var user = context.Users.FirstOrDefault(u => u.Email == "val");
                 var ticketTemplate = context.TicketTemplates.FirstOrDefault(t => t.Title == "Обикновен билет");
 
-                if (user1 != null && ticketTemplate != null)
+                if (user != null && ticketTemplate != null)
                 {
                     context.TicketPurchases.Add(new TicketPurchase
                     {
-                        UserId = user1.Id,
+                        UserId = user.Id,
                         TicketTemplateId = ticketTemplate.Id,
                         Quantity = 2,
                         Price = ticketTemplate.Price,
@@ -198,8 +216,8 @@ namespace Data
                     context.SaveChanges();
                 }
             }
-            context.SaveChanges();
         }
+
 
 
     }
