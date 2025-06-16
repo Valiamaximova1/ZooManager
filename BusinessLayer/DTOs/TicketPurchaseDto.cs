@@ -14,5 +14,6 @@ namespace BusinessLayer.DTOs
         public Guid UserId { get; set; }
         public int Quantity { get; set; }
         public DateTime PurchasedAt { get; set; }
+        public decimal Price { get; set; }
     }
 }

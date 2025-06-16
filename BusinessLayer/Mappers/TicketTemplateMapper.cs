@@ -18,7 +18,8 @@ namespace BusinessLayer.Mappers
                 Title = entity.Title,
                 Description = entity.Description,
                 Type = entity.Type,
-                AvailableQuantity = entity.AvailableQuantity
+                AvailableQuantity = entity.AvailableQuantity,
+                Price = entity.Price
             };
         }
 
@@ -30,7 +31,8 @@ namespace BusinessLayer.Mappers
                 Title = dto.Title,
                 Description = dto.Description,
                 Type = dto.Type,
-                AvailableQuantity = dto.AvailableQuantity
+                AvailableQuantity = dto.AvailableQuantity,
+                Price = dto.Price
             };
         }
     }

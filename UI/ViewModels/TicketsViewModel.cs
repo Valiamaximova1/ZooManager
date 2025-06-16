@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using UI.Commands;
+using UI.Helpers;
 
 namespace UI.ViewModels
 {
@@ -102,10 +103,6 @@ namespace UI.ViewModels
         }
     }
 
-    public class TicketSelection
-    {
-        public TicketTemplateDto Template { get; set; }
-        public int Quantity { get; set; }
-    }
+  
 
 }

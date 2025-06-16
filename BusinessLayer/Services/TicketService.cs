@@ -48,7 +48,9 @@ namespace BusinessLayer.Services
                 TicketTemplateId = templateId,
                 UserId = userId,
                 Quantity = quantity,
-                PurchasedAt = DateTime.Now
+                PurchasedAt = DateTime.Now,
+                Price = template.Price
+
             };
 
             await _purchaseRepo.AddAsync(purchase);
@@ -63,6 +65,7 @@ namespace BusinessLayer.Services
                 .ToList();
         }
 
+    
     }
 
 }

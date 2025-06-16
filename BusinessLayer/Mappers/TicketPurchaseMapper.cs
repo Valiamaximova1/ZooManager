@@ -18,7 +18,8 @@ namespace BusinessLayer.Mappers
                 TicketTemplateId = entity.TicketTemplateId,
                 UserId = entity.UserId,
                 Quantity = entity.Quantity,
-                PurchasedAt = entity.PurchasedAt
+                PurchasedAt = entity.PurchasedAt,
+                Price = entity.Price
             };
         }
 
@@ -30,7 +31,9 @@ namespace BusinessLayer.Mappers
                 TicketTemplateId = dto.TicketTemplateId,
                 UserId = dto.UserId,
                 Quantity = dto.Quantity,
-                PurchasedAt = dto.PurchasedAt
+                PurchasedAt = dto.PurchasedAt,
+                Price = dto.Price
+
             };
         }
     }

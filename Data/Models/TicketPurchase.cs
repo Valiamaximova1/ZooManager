@@ -14,5 +14,7 @@ namespace Models
         public User User { get; set; }
 
         public DateTime PurchasedAt { get; set; }
+
+        public decimal Price { get; set; }
     }
 }

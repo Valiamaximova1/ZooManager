@@ -160,6 +160,7 @@ namespace Data
                 Description = "Стандартен билет за обиколка.",
                 Type = TicketType.Редовен,
                 AvailableQuantity = 50,
+                Price = 50,
                 EventId = event1.Id
             },
             new TicketTemplate
@@ -167,6 +168,7 @@ namespace Data
                 Title = "VIP билет",
                 Description = "Включва място на първи ред и подарък.",
                 Type = TicketType.Ученически,
+                Price=100,
                 AvailableQuantity = 20,
                 EventId = event2.Id
             }
@@ -188,6 +190,7 @@ namespace Data
                         UserId = user1.Id,
                         TicketTemplateId = ticketTemplate.Id,
                         Quantity = 2,
+                        Price = ticketTemplate.Price,
                         PurchasedAt = DateTime.Now.AddDays(-1)
                     });
 

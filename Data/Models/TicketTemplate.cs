@@ -13,8 +13,8 @@ namespace Data.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public TicketType Type { get; set; }
-
         public int AvailableQuantity { get; set; }
+        public decimal Price { get; set; }
 
         public Guid EventId { get; set; }
         public Event Event { get; set; }

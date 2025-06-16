@@ -14,6 +14,7 @@ namespace BusinessLayer.DTOs
         public string Description { get; set; }
         public TicketType Type { get; set; }
         public int AvailableQuantity { get; set; }
+        public decimal Price { get; set; }
     }
 
 }

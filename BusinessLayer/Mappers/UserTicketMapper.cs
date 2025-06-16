@@ -17,7 +17,9 @@ namespace BusinessLayer.Mappers
                 TicketTitle = purchase.TicketTemplate.Title,
                 Type = purchase.TicketTemplate.Type,
                 Quantity = purchase.Quantity,
-                PurchasedAt = purchase.PurchasedAt
+                PurchasedAt = purchase.PurchasedAt,
+                Price = purchase.Price
+
             };
         }
     }

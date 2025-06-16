@@ -31,6 +31,7 @@
                         <StackPanel>
                             <TextBlock Text="{Binding Template.Title}" FontWeight="Bold" FontSize="16"/>
                             <TextBlock Text="{Binding Template.Description}" FontSize="13"/>
+                            <TextBlock Text="{Binding Template.Price}" FontSize="13"/>
                             <TextBlock Text="{Binding Template.Type}" FontStyle="Italic" Margin="0,3,0,0"/>
                             <TextBlock Text="Налични: " FontWeight="SemiBold" Margin="0,3,0,0">
                                 <Run Text="{Binding Template.AvailableQuantity}" />
