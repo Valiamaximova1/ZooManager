@@ -1,10 +1,14 @@
 ﻿using BusinessLayer.DTOs;
+using BusinessLayer.Mappers;
 using BusinessLayer.Services.Interfaces;
+using Data.Models;
+using Data.Repositories;
 using Data.Repositories.Interfaces;
 using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,54 +16,53 @@ namespace BusinessLayer.Services
 {
     public class TicketService : ITicketService
     {
-        private readonly ITicketRepository _ticketRepo;
-        private readonly IEventRepository _eventRepo;
+        private readonly ITicketTemplateRepository _templateRepo;
+        private readonly ITicketPurchaseRepository _purchaseRepo;
 
-        public TicketService(ITicketRepository ticketRepo, IEventRepository eventRepo)
+
+
+        public TicketService(ITicketTemplateRepository templateRepo, ITicketPurchaseRepository purchaseRepo)
         {
-            _ticketRepo = ticketRepo;
-            _eventRepo = eventRepo;
+            _templateRepo = templateRepo;
+            _purchaseRepo = purchaseRepo;
         }
 
-        //public async Task<List<TicketDto>> GetUserTicketsAsync(Guid userId)
-        //{
-        //    var tickets = await _ticketRepo.GetByUserIdAsync(userId);
-        //    return tickets.Select(t => new TicketDto
-        //    {
-        //        Id = t.Id,
-        //        Title = t.Title,
-        //        Description = t.Description,
-        //        Quantity = t.Quantity,
-        //        Type = t.Type,
-        //        EventId = t.EventId,
-        //        EventTitle = t.Event.Title,
-        //        UserId = t.UserId,
-        //        UserEmail = t.User.Email
-        //    }).ToList();
-        //}
+        public async Task<IEnumerable<TicketTemplateDto>> GetAllTemplatesAsync()
+        {
+            var templates = await _templateRepo.GetAllAsync();
+            return templates.Select(TicketTemplateMapper.ToDto);
+        }
 
-        //public async Task BuyTicketAsync(TicketDto dto)
-        //{
-        //    var ev = await _eventRepo.GetByIdAsync(dto.EventId);
-        //    if (ev == null) throw new Exception("Събитието не е намерено.");
+        public async Task PurchaseTicketAsync(Guid userId, Guid templateId, int quantity)
+        {
+            var template = await _templateRepo.GetByIdAsync(templateId);
+            if (template == null || template.AvailableQuantity < quantity)
+                throw new InvalidOperationException("Not enough tickets available.");
 
-        //    if (dto.Quantity <= 0) throw new Exception("Невалидно количество.");
+            template.AvailableQuantity -= quantity;
+            await _templateRepo.UpdateAsync(template);
 
-        //    var ticket = new TicketPurchase
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        Title = dto.Title,
-        //        Description = dto.Description,
-        //        Quantity = dto.Quantity,
-        //        Type = dto.Type,
-        //        EventId = dto.EventId,
-        //        UserId = dto.UserId
-        //    };
+            var purchase = new TicketPurchase
+            {
+                Id = Guid.NewGuid(),
+                TicketTemplateId = templateId,
+                UserId = userId,
+                Quantity = quantity,
+                PurchasedAt = DateTime.Now
+            };
 
-        //    ev.AvailableTickets -= dto.Quantity;
+            await _purchaseRepo.AddAsync(purchase);
+        }
 
-        //    await _ticketRepo.AddAsync(ticket);
-        //    await _ticketRepo.SaveAsync();
-        //}
+        public async Task<List<UserTicketDto>> GetUserTicketsAsync(Guid userId)
+        {
+            var purchases = await _purchaseRepo.GetByUserIdAsync(userId);
+            return purchases
+                .Where(p => p.TicketTemplate != null)
+                .Select(p => UserTicketMapper.ToUserTicketDto(p))
+                .ToList();
+        }
+
     }
+
 }

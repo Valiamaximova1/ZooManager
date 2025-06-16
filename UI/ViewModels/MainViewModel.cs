@@ -23,6 +23,8 @@ namespace UI.ViewModels
         private readonly IUserService _userService;
         private readonly IAnimalService _animalService;
         private readonly IEventService _eventService;
+        private readonly ITicketService _ticketService;
+
         private UserDto _currentUser;
 
 
@@ -37,11 +39,13 @@ namespace UI.ViewModels
             var userRepository = new UserRepository(context);
             var animalRepository = new AnimalRepository(context);
             var eventRepository = new EventRepository(context);
+            var ticketTemplateRepo = new TicketTemplateRepository(context);
+            var ticketPurchaseRepo = new TicketPurchaseRepository(context);
 
             _userService = new UserService(userRepository);
             _animalService = new AnimalService(animalRepository);
             _eventService = new EventService(eventRepository, animalRepository);
-
+            _ticketService = new TicketService(ticketTemplateRepo, ticketPurchaseRepo);
 
             ShowLogin();
         }
@@ -77,8 +81,9 @@ namespace UI.ViewModels
         {
             //CurrentViewModel = new HomeViewModel(_animalService,_eventService, user);
             _currentUser = user;
+            //_userService.SetCurrentUser(user);
 
-            var homeVM = new HomeViewModel(_animalService, _eventService, user);
+            var homeVM = new HomeViewModel(_animalService, _eventService, _ticketService, user);
             //абонирам се за събитие
             homeVM.LogoutRequested += OnLogoutRequested;
 

@@ -34,6 +34,10 @@
         <DataTemplate DataType="{x:Type viewmodels:ProfileViewModel}">
             <views:ProfileView />
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:TicketsViewModel}">
+            <views:TicketsView />
+        </DataTemplate>
     </Application.Resources>
 
 

@@ -13,5 +13,7 @@ namespace BusinessLayer.Services.Interfaces
         Task<UserDto> LoginAsync(UserLoginDto loginDto);
         Task RegisterAsync(UserRegisterDto registerDto);
 
+        UserDto CurrentUser { get; }
+        void SetCurrentUser(UserDto user);
     }
 }

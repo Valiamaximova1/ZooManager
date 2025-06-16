@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="UI.Views.TicketsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:UI.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Filter row -->
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+            <TextBlock Text="Филтър по тип:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox Width="150"
+                      ItemsSource="{Binding TicketTypes}"
+                      SelectedItem="{Binding SelectedType}"
+                      Margin="0,0,10,0"/>
+            <Button Content="Изчисти" Command="{Binding ClearFilterCommand}"/>
+        </StackPanel>
+
+        <!-- Ticket list -->
+        <ItemsControl ItemsSource="{Binding Selections}" Grid.Row="1">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="Gray" BorderThickness="1" Margin="0 0 0 10" Padding="10">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Template.Title}" FontWeight="Bold" FontSize="16"/>
+                            <TextBlock Text="{Binding Template.Description}" FontSize="13"/>
+                            <TextBlock Text="{Binding Template.Type}" FontStyle="Italic" Margin="0,3,0,0"/>
+                            <TextBlock Text="Налични: " FontWeight="SemiBold" Margin="0,3,0,0">
+                                <Run Text="{Binding Template.AvailableQuantity}" />
+                            </TextBlock>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                <TextBlock Text="Бройка: " VerticalAlignment="Center"/>
+                                <TextBox Width="50"
+                                         Margin="5 0"
+                                         Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Purchase button -->
+        <Button Grid.Row="2"
+                Content="Купи избраните"
+                Height="40"
+                HorizontalAlignment="Right"
+                Width="150"
+                Margin="0,10,0,0"
+                Command="{Binding PurchaseCommand}" />
+    </Grid>
+</UserControl>

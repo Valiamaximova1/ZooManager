@@ -7,6 +7,6 @@ namespace Data.Repositories.Interfaces
     {
         Task<User> GetByEmailAsync(string email);
         Task AddAsync(User user);
-
+      
     }
 }

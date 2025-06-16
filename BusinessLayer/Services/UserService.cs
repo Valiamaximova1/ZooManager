@@ -9,10 +9,19 @@ namespace BusinessLayer.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private User _currentUser;
+
+        public UserDto CurrentUser => _currentUser != null ? UserMapper.ToDto(_currentUser) : null;
+
 
         public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
+        }
+
+        public void SetCurrentUser(UserDto userDto)
+        {
+            _currentUser = UserMapper.ToEntity(userDto);
         }
 
         public async Task<UserDto> LoginAsync(UserLoginDto loginDto)

@@ -1,4 +1,6 @@
 ﻿using BusinessLayer.DTOs;
+using Data.Models;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,9 @@ namespace BusinessLayer.Services.Interfaces
 {
     public interface ITicketService
     {
-        //Task<List<TicketDto>> GetUserTicketsAsync(Guid userId);
-        //Task BuyTicketAsync(TicketDto ticketDto);
+        Task<IEnumerable<TicketTemplateDto>> GetAllTemplatesAsync();
+        Task PurchaseTicketAsync(Guid userId, Guid templateId, int quantity);
+        //Task<IEnumerable<TicketPurchaseDto>> GetUserTicketsAsync(Guid userId);
+        Task<List<UserTicketDto>> GetUserTicketsAsync(Guid userId);
     }
 }
