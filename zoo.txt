@@ -248,3 +248,68 @@ CurrentViewModel = new ProfileViewModel(_user, () => LogoutRequested?.Invoke());
 
 
 
+
+🧩 1. Зареждане на налични билети за покупка
+TicketsViewModel се инициализира (в TicketsView.xaml.cs или при навигация).
+
+Той вика TicketService.GetAvailableTicketsAsync().
+
+TicketService взима билетите от TicketTemplateRepository или директно от DbContext, филтрира по AvailableQuantity > 0, и мапва към TicketTemplateDto с помощта на TicketTemplateMapper.
+
+TicketsViewModel записва List<TicketSelection> → това са TicketTemplateDto + Quantity.
+
+👉 Във View (TicketsView.xaml):
+
+Визуализираш ItemsControl върху Selections, всеки Selection съдържа:
+
+Заглавие, описание, цена, тип, наличност;
+
+Поле за въвеждане на бройка (Quantity).
+
+🛒 2. Покупка на билети
+Потребителят натиска бутон „Купи“ → BuyCommand.
+
+Във TicketsViewModel минаваме през всички TicketSelection и подаваме валидните към:
+
+TicketService.PurchaseTicketAsync(templateId, userId, quantity)
+TicketService:
+
+Проверява дали AvailableQuantity >= quantity;
+
+Създава TicketPurchase (Entity);
+
+Намалява наличността от TicketTemplate;
+
+Записва всичко в базата;
+
+Мапва покупката с TicketPurchaseMapper ако ти трябва DTO.
+
+🧾 3. История на купените билети
+Във ProfileViewModel имаш метод LoadUserTickets().
+
+Той вика TicketService.GetUserTickets(userId) → отива до TicketPurchaseRepository и зарежда всички покупки на текущия потребител.
+
+Връща UserTicketDto, получен чрез UserTicketMapper, комбиниращ:
+
+TicketPurchase
+
+TicketTemplate (заглавие, цена)
+
+евентуално Event.Title
+
+👉 Във ProfileView.xaml:
+
+Показваш списък от UserTicketDto в ItemsControl, ListView или DataGrid.
+
+🔄 ОБОБЩЕНИЕ КОЙ С КОГО СИ ГОВОРИ
+Компонент	Вика	Роля
+TicketsViewModel	TicketService	зарежда налични билети, извършва покупка
+ProfileViewModel	TicketService	зарежда мои покупки
+TicketService	Repositories + DbContext	централизира бизнес логиката
+TicketService	Mappers	DTO ↔ Entity
+View	ViewModel	чрез Binding
+Repositories	DbContext	работят с EF Core
+
+
+
+
