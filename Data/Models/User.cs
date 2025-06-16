@@ -12,6 +12,6 @@ namespace Models
         public string PasswordHash { get; set; } 
 
     
-        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+        public ICollection<TicketPurchase> TicketPurchases { get; set; } = new List<TicketPurchase>();
     }
 }

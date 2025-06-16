@@ -9,8 +9,8 @@ namespace Shared.Enums
    public enum TicketType
     {
 
-        Regular,
-        Student,
-        Family
+        Редовен,
+        Ученически,
+        Семеен
     }
 }

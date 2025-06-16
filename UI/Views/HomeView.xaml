@@ -13,6 +13,8 @@
             <Button Content="Животни" Command="{Binding ShowAnimalsCommand}" Margin="0 5"/>
             <Button Content="Събития" Command="{Binding ShowEventsCommand}" Margin="0 5"/>
           <!--     <Button Content="Билети" Command="{Binding ShowTicketsCommand}" Margin="0 5"/> -->
+            <Button Content="Профил" Command="{Binding ShowProfileCommand}" Margin="0 10 0 0"/>
+
         </StackPanel>
 
         <!-- Динамично съдържание -->

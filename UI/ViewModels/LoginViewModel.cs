@@ -28,6 +28,11 @@ namespace UI.ViewModels
             _userService = userService;
             _loginCommand = new AsyncDelegateCommand(LoginAsync, CanLogin);
             NavigateToRegisterCommand = new AsyncDelegateCommand(() => Task.Run(() => NavigateToRegisterRequested?.Invoke()));
+            var savedEmail = Properties.Settings.Default.LastEmail;
+            if (!string.IsNullOrWhiteSpace(savedEmail))
+            {
+                Email = savedEmail;
+            }
         }
 
         public string Email
@@ -64,7 +69,10 @@ namespace UI.ViewModels
                 {
                     Email = Email,
                     Password = Password
+
                 });
+                Properties.Settings.Default.LastEmail = Email;
+                Properties.Settings.Default.Save();
                 LoginSuccessful.Invoke(result);
             }
             catch (Exception)

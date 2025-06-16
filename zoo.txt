@@ -218,3 +218,33 @@ Task UpdateAsync(EventDto eventDto);
            </DataTemplate>
        </ItemsControl.ItemTemplate>
    </ItemsControl>
+
+
+
+Properties.Settings е механизъм в .NET (WPF, WinForms и др.), който позволява да съхраняваш потребителски или приложни настройки, например:
+
+Последно въведено потребителско име
+Предпочитания на потребителя
+Размер и позиция на прозореца
+Тези стойности се пазят локално в AppData, и се запазват автоматично след .Save().
+
+C:\Users\YourUser\AppData\Local\[YourAppName]\[version]\user.config  -> тук се пазят даннните
+
+
+
+
+Цялата верига:
+🔐 MainViewModel зарежда HomeViewModel, подава user
+
+🧭 В HomeViewModel, когато потребителят натисне бутон "Профил":
+CurrentViewModel = new ProfileViewModel(_user, () => LogoutRequested?.Invoke());
+🧑‍💼 ProfileViewModel получава потребителя и логиката за logout.
+
+🔘 При натискане на „Изход“, в ProfileViewModel се извиква onLogout.Invoke()
+
+⚡ Това води до LogoutRequested?.Invoke() в HomeViewModel
+
+🔄 MainViewModel чува LogoutRequested и отива към login:
+
+
+

@@ -23,6 +23,8 @@ namespace UI.ViewModels
         private readonly IUserService _userService;
         private readonly IAnimalService _animalService;
         private readonly IEventService _eventService;
+        private UserDto _currentUser;
+
 
         public MainViewModel()
         {
@@ -73,8 +75,20 @@ namespace UI.ViewModels
 
         private void OnLoginSuccess(UserDto user)
         {
-            CurrentViewModel = new HomeViewModel(_animalService,_eventService, user);
+            //CurrentViewModel = new HomeViewModel(_animalService,_eventService, user);
+            _currentUser = user;
 
+            var homeVM = new HomeViewModel(_animalService, _eventService, user);
+            //абонирам се за събитие
+            homeVM.LogoutRequested += OnLogoutRequested;
+
+            CurrentViewModel = homeVM;
+        }
+
+        private void OnLogoutRequested()
+        {
+            _currentUser = null;
+            ShowLogin(); // връщаме се към login екрана
         }
     }
 

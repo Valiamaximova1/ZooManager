@@ -1,4 +1,5 @@
-﻿using Shared.Enums;
+﻿using Data.Models;
+using Shared.Enums;
 
 
 namespace Models
@@ -14,6 +15,7 @@ namespace Models
         public ICollection<Animal> Animals { get; set; } = new List<Animal>();
 
 
-        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+        public ICollection<TicketTemplate> TicketTemplates { get; set; } = new List<TicketTemplate>();
+
     }
 }

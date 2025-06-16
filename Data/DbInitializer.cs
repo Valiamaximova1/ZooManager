@@ -1,4 +1,5 @@
 ﻿using Data;
+using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Shared.Enums;
@@ -69,67 +70,112 @@ namespace Data
         });
                 context.SaveChanges();
             }
+            context.SaveChanges();
 
 
-            if (!context.Animals.Any())
+            // 👉 ВИНАГИ правим връзките независимо дали има животни
+            var tour = context.Events.FirstOrDefault(e => e.Title == "Обиколка с екскурзовод");
+            var feeding = context.Events.FirstOrDefault(e => e.Title == "Демонстрация по хранене");
+            var birds = context.Events.FirstOrDefault(e => e.Title == "Шоу с птици");
+            var nightSafari = context.Events.FirstOrDefault(e => e.Title == "Нощно сафари");
+            var kidsFarm = context.Events.FirstOrDefault(e => e.Title == "Ферма за деца");
+            var predatorFeeding = context.Events.FirstOrDefault(e => e.Title == "Хранене на хищници");
+            var zoologTalk = context.Events.FirstOrDefault(e => e.Title == "Зоолог-говорител");
+            var miniZoo = context.Events.FirstOrDefault(e => e.Title == "Мини зоопарк за малчугани");
+            var raptorFlight = context.Events.FirstOrDefault(e => e.Title == "Полет на хищни птици");
+            var tropicalNight = context.Events.FirstOrDefault(e => e.Title == "Тропическа нощ");
+            var cookingForAnimals = context.Events.FirstOrDefault(e => e.Title == "Готвим за животните");
+            var volunteerDay = context.Events.FirstOrDefault(e => e.Title == "Ден на доброволеца");
+
+            var lion = context.Animals.FirstOrDefault(a => a.Name == "Лъв");
+            var tiger = context.Animals.FirstOrDefault(a => a.Name == "Тигър");
+            var parrot = context.Animals.FirstOrDefault(a => a.Name == "Папагал");
+            var mosquito = context.Animals.FirstOrDefault(a => a.Name == "Комар");
+            var gushter = context.Animals.FirstOrDefault(a => a.Name == "Гущер");
+            var caca = context.Animals.FirstOrDefault(a => a.Name == "Цаца");
+
+            void AddAnimalToEvent(Event ev, Animal animal)
             {
+                if (ev != null && animal != null && !ev.Animals.Any(a => a.Id == animal.Id))
+                {
+                    ev.Animals.Add(animal);
+                }
+            }
 
-                // 👉 ВИНАГИ правим връзките независимо дали има животни
-                var tour = context.Events.FirstOrDefault(e => e.Title == "Обиколка с екскурзовод");
-                var feeding = context.Events.FirstOrDefault(e => e.Title == "Демонстрация по хранене");
-                var birds = context.Events.FirstOrDefault(e => e.Title == "Шоу с птици");
-                var nightSafari = context.Events.FirstOrDefault(e => e.Title == "Нощно сафари");
-                var kidsFarm = context.Events.FirstOrDefault(e => e.Title == "Ферма за деца");
-                var predatorFeeding = context.Events.FirstOrDefault(e => e.Title == "Хранене на хищници");
-                var zoologTalk = context.Events.FirstOrDefault(e => e.Title == "Зоолог-говорител");
-                var miniZoo = context.Events.FirstOrDefault(e => e.Title == "Мини зоопарк за малчугани");
-                var raptorFlight = context.Events.FirstOrDefault(e => e.Title == "Полет на хищни птици");
-                var tropicalNight = context.Events.FirstOrDefault(e => e.Title == "Тропическа нощ");
-                var cookingForAnimals = context.Events.FirstOrDefault(e => e.Title == "Готвим за животните");
-                var volunteerDay = context.Events.FirstOrDefault(e => e.Title == "Ден на доброволеца");
+            AddAnimalToEvent(tour, lion);
+            AddAnimalToEvent(tour, parrot);
+            AddAnimalToEvent(feeding, lion);
+            AddAnimalToEvent(feeding, tiger);
+            AddAnimalToEvent(birds, parrot);
+            AddAnimalToEvent(birds, mosquito);
+            AddAnimalToEvent(nightSafari, lion);
+            AddAnimalToEvent(nightSafari, gushter);
+            AddAnimalToEvent(kidsFarm, parrot);
+            AddAnimalToEvent(kidsFarm, caca);
+            AddAnimalToEvent(predatorFeeding, lion);
+            AddAnimalToEvent(predatorFeeding, tiger);
+            AddAnimalToEvent(zoologTalk, lion);
+            AddAnimalToEvent(zoologTalk, mosquito);
+            AddAnimalToEvent(miniZoo, parrot);
+            AddAnimalToEvent(miniZoo, caca);
+            AddAnimalToEvent(raptorFlight, parrot);
+            AddAnimalToEvent(tropicalNight, gushter);
+            AddAnimalToEvent(tropicalNight, mosquito);
+            AddAnimalToEvent(cookingForAnimals, tiger);
+            AddAnimalToEvent(cookingForAnimals, caca);
+            AddAnimalToEvent(volunteerDay, lion);
+            AddAnimalToEvent(volunteerDay, gushter);
 
-                var lion = context.Animals.FirstOrDefault(a => a.Name == "Лъв");
-                var tiger = context.Animals.FirstOrDefault(a => a.Name == "Тигър");
-                var parrot = context.Animals.FirstOrDefault(a => a.Name == "Папагал");
-                var mosquito = context.Animals.FirstOrDefault(a => a.Name == "Комар");
-                var gushter = context.Animals.FirstOrDefault(a => a.Name == "Гущер");
-                var caca = context.Animals.FirstOrDefault(a => a.Name == "Цаца");
 
-                // Всички проверки
-                if (tour != null && lion != null) tour.Animals.Add(lion);
-                if (tour != null && parrot != null) tour.Animals.Add(parrot);
+            if (!context.TicketTemplates.Any())
+            {
+                var event1 = context.Events.FirstOrDefault(e => e.Title == "Обиколка с екскурзовод");
+                var event2 = context.Events.FirstOrDefault(e => e.Title == "Шоу с птици");
 
-                if (feeding != null && lion != null) feeding.Animals.Add(lion);
-                if (feeding != null && tiger != null) feeding.Animals.Add(tiger);
+                if (event1 != null && event2 != null)
+                {
+                    context.TicketTemplates.AddRange(new List<TicketTemplate>
+        {
+            new TicketTemplate
+            {
+                Title = "Обикновен билет",
+                Description = "Стандартен билет за обиколка.",
+                Type = TicketType.Редовен,
+                AvailableQuantity = 50,
+                EventId = event1.Id
+            },
+            new TicketTemplate
+            {
+                Title = "VIP билет",
+                Description = "Включва място на първи ред и подарък.",
+                Type = TicketType.Ученически,
+                AvailableQuantity = 20,
+                EventId = event2.Id
+            }
+        });
+                    context.SaveChanges();
+                }
+            }
 
-                if (birds != null && parrot != null) birds.Animals.Add(parrot);
-                if (birds != null && mosquito != null) birds.Animals.Add(mosquito);
+            // Добавяне на покупки на билети
+            if (!context.TicketPurchases.Any())
+            {
+                var user1 = context.Users.FirstOrDefault(u => u.Email == "val");
+                var ticketTemplate = context.TicketTemplates.FirstOrDefault(t => t.Title == "Обикновен билет");
 
-                if (nightSafari != null && lion != null) nightSafari.Animals.Add(lion);
-                if (nightSafari != null && gushter != null) nightSafari.Animals.Add(gushter);
+                if (user1 != null && ticketTemplate != null)
+                {
+                    context.TicketPurchases.Add(new TicketPurchase
+                    {
+                        UserId = user1.Id,
+                        TicketTemplateId = ticketTemplate.Id,
+                        Quantity = 2,
+                        PurchasedAt = DateTime.Now.AddDays(-1)
+                    });
 
-                if (kidsFarm != null && parrot != null) kidsFarm.Animals.Add(parrot);
-                if (kidsFarm != null && caca != null) kidsFarm.Animals.Add(caca);
-
-                if (predatorFeeding != null && lion != null) predatorFeeding.Animals.Add(lion);
-                if (predatorFeeding != null && tiger != null) predatorFeeding.Animals.Add(tiger);
-
-                if (zoologTalk != null && lion != null) zoologTalk.Animals.Add(lion);
-                if (zoologTalk != null && mosquito != null) zoologTalk.Animals.Add(mosquito);
-
-                if (miniZoo != null && parrot != null) miniZoo.Animals.Add(parrot);
-                if (miniZoo != null && caca != null) miniZoo.Animals.Add(caca);
-
-                if (raptorFlight != null && parrot != null) raptorFlight.Animals.Add(parrot);
-
-                if (tropicalNight != null && gushter != null) tropicalNight.Animals.Add(gushter);
-                if (tropicalNight != null && mosquito != null) tropicalNight.Animals.Add(mosquito);
-
-                if (cookingForAnimals != null && tiger != null) cookingForAnimals.Animals.Add(tiger);
-                if (cookingForAnimals != null && caca != null) cookingForAnimals.Animals.Add(caca);
-
-                if (volunteerDay != null && lion != null) volunteerDay.Animals.Add(lion);
-                if (volunteerDay != null && gushter != null) volunteerDay.Animals.Add(gushter);
+                    ticketTemplate.AvailableQuantity -= 2;
+                    context.SaveChanges();
+                }
             }
             context.SaveChanges();
         }
