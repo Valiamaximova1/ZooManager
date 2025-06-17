@@ -17,17 +17,18 @@
               <StackPanel Grid.Column="0" >
              <TextBlock Text="Профил" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
-        <TextBlock Text="Име:" FontWeight="Bold"/>
-        <TextBlock Text="{Binding FirstName}" Margin="0 0 0 10"/>
+                <TextBlock Text="Име:" FontWeight="Bold"/>
+                <TextBlock Text="{Binding FirstName}" Margin="0 0 0 10"/>
 
-        <TextBlock Text="Фамилия:" FontWeight="Bold"/>
-        <TextBlock Text="{Binding LastName}" Margin="0 0 0 10"/>
+                <TextBlock Text="Фамилия:" FontWeight="Bold"/>
+                <TextBlock Text="{Binding LastName}" Margin="0 0 0 10"/>
 
-        <TextBlock Text="Имейл:" FontWeight="Bold"/>
-        <TextBlock Text="{Binding Email}" Margin="0 0 0 20"/>
+                <TextBlock Text="Имейл:" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Email}" Margin="0 0 0 20"/>
 
-     
-        </StackPanel>
+                <Button Content="Изход"  Command="{Binding LogoutCommand}" HorizontalAlignment="Left" Width="100"/>
+
+            </StackPanel>
 
             <StackPanel Grid.Column="1" Width="250" >
                 
@@ -79,6 +80,6 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Button Content="Изход" Command="{Binding LogoutCommand}" Width="100"/>
+       
     </StackPanel>
 </UserControl>
