@@ -14,6 +14,7 @@ namespace UI.ViewModels
         private readonly IAnimalService _animalService;
         private readonly IEventService _eventService;
         private readonly ITicketService _ticketService;
+        private readonly IUserService _userService;
 
 
         private BaseViewModel _currentViewModel;
@@ -22,12 +23,13 @@ namespace UI.ViewModels
 
 
 
-        public HomeViewModel(IAnimalService animalService, IEventService eventService, ITicketService ticketService, UserDto user)
+        public HomeViewModel(IAnimalService animalService, IEventService eventService, ITicketService ticketService, UserDto user, IUserService userService)
         {
             _animalService = animalService;
             _eventService = eventService;
             _ticketService = ticketService;
             _user = user;
+            _userService = userService;
 
             ShowAnimalsCommand = new DelegateCommand(ShowAnimals);
             ShowEventsCommand = new DelegateCommand(ShowEvents);
@@ -36,6 +38,7 @@ namespace UI.ViewModels
 
             // Зареждаме начално екрана с животни
             ShowAnimals();
+         
         }
 
         public BaseViewModel CurrentViewModel
@@ -69,7 +72,7 @@ namespace UI.ViewModels
         private void ShowProfile()
         {
             //LogoutRequested е събитие, декларирано в HomeViewModel
-            CurrentViewModel = new ProfileViewModel(_user, () => LogoutRequested?.Invoke(), _ticketService);
+            CurrentViewModel = new ProfileViewModel(_user, () => LogoutRequested?.Invoke(), _ticketService, _userService);
         }
 
 

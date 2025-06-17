@@ -56,6 +56,17 @@ namespace BusinessLayer.Services
             await _userRepository.AddAsync(newUser);
 
         }
+
+        public async Task<bool> ChangePasswordAsync(string email, string currentPassword, string newPassword)
+        {
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null || user.PasswordHash != currentPassword)
+                return false;
+
+            user.PasswordHash = newPassword;
+            await _userRepository.UpdateAsync(user);
+            return true;
+        }
     }
 
 }

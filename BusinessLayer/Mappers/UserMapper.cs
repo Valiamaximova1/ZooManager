@@ -17,7 +17,8 @@ namespace BusinessLayer.Mappers
                 Id = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
-                LastName = user.LastName
+                LastName = user.LastName,
+                Password = user.PasswordHash
             };
         }
 
@@ -28,7 +29,8 @@ namespace BusinessLayer.Mappers
                 Id = dto.Id,
                 Email = dto.Email,
                 FirstName = dto.FirstName,
-                LastName = dto.LastName
+                LastName = dto.LastName,
+                PasswordHash = dto.Password
             };
         }
     }

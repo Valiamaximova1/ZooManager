@@ -7,7 +7,14 @@
              d:DesignHeight="300" d:DesignWidth="400">
 
     <StackPanel Margin="20">
-        <TextBlock Text="Профил" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+           
+              <StackPanel Grid.Column="0" >
+             <TextBlock Text="Профил" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
 
         <TextBlock Text="Име:" FontWeight="Bold"/>
         <TextBlock Text="{Binding FirstName}" Margin="0 0 0 10"/>
@@ -18,7 +25,41 @@
         <TextBlock Text="Имейл:" FontWeight="Bold"/>
         <TextBlock Text="{Binding Email}" Margin="0 0 0 20"/>
 
-        <TextBlock Text="Купени билети:" FontWeight="Bold" Margin="10 10 0 5"/>
+     
+        </StackPanel>
+
+            <StackPanel Grid.Column="1" Width="250" >
+                
+                <TextBlock Text="Смени парола" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
+                <TextBlock Text="Стара Парола"></TextBlock>
+                <TextBox Text="{Binding CurrentPassword, UpdateSourceTrigger=PropertyChanged}"  Margin="0 5"
+                      FontFamily="Segoe UI"
+                      Background="White"
+                      TextWrapping="NoWrap"
+                      MaxLength="50" />
+
+                <TextBlock Text="Нова Парола"></TextBlock>
+                <TextBox Text="{Binding NewPassword, UpdateSourceTrigger=PropertyChanged}"  Margin="0 5"
+                    FontFamily="Segoe UI"
+                    Background="White"
+                    TextWrapping="NoWrap"
+                    MaxLength="50" />           
+                <TextBlock Text="Повтори Парола"></TextBlock>
+                <TextBox Text="{Binding ConfirmPassword, UpdateSourceTrigger=PropertyChanged}" Margin="0 5"
+                    FontFamily="Segoe UI"
+                    Background="White"
+                    TextWrapping="NoWrap"
+                    MaxLength="50" />
+
+                <Button Content="Запази" Margin="0 10"
+                    Command="{Binding ChangePasswordCommand}" />
+
+            </StackPanel>
+
+        </Grid>
+      
+        
+          <TextBlock Text="Купени билети:" FontWeight="Bold" Margin="10 10 0 5"/>
         <DataGrid ItemsSource="{Binding PurchasedTickets}" 
                   AutoGenerateColumns="False" 
                   IsReadOnly="True" 

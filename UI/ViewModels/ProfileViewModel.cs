@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using UI.Commands;
@@ -17,27 +18,82 @@ namespace UI.ViewModels
     {
         private readonly UserDto _user;
         private readonly Action _onLogout;
+        private string _currentPassword;
+        private string _newPassword;
+        private string _confirmPassword;
 
+        private readonly IUserService _userService;
         private readonly ITicketService _ticketService;
         public ObservableCollection<UserTicketDto> PurchasedTickets { get; set; } = new();
-
+        public ICommand ChangePasswordCommand { get; }
         public ICommand LogoutCommand { get; }
 
-        public ProfileViewModel(UserDto user, Action onLogout, ITicketService ticketService)
+        public ProfileViewModel(UserDto user, Action onLogout, ITicketService ticketService, IUserService userService)
         {
             _user = user;
-            _onLogout = onLogout ;
+            _onLogout = onLogout;
             _ticketService = ticketService;
+            _userService = userService;
             LoadTickets();
 
 
             LogoutCommand = new DelegateCommand(Logout);
+            ChangePasswordCommand = new DelegateCommand(ChangePassword);
         }
 
         public string FirstName => _user.FirstName;
         public string LastName => _user.LastName;
         public string Email => _user.Email;
 
+        public string CurrentPassword
+        {
+            get => _currentPassword;
+            set { _currentPassword = value; OnPropertyChanged(); }
+        }
+
+        public string NewPassword
+        {
+            get => _newPassword;
+            set { _newPassword = value; OnPropertyChanged(); }
+        }
+
+        public string ConfirmPassword
+        {
+            get => _confirmPassword;
+            set { _confirmPassword = value; OnPropertyChanged(); }
+        }
+
+        private async void ChangePassword()
+        {
+            if (string.IsNullOrWhiteSpace(CurrentPassword) ||
+                string.IsNullOrWhiteSpace(NewPassword) ||
+                string.IsNullOrWhiteSpace(ConfirmPassword))
+            {
+                MessageBox.Show("Моля, попълнете всички полета.");
+                return;
+            }
+
+            if (NewPassword != ConfirmPassword)
+            {
+                 MessageBox.Show("Новата парола и потвърждението не съвпадат.");
+                return;
+            }
+
+            bool success = await _userService.ChangePasswordAsync(_user.Email, CurrentPassword, NewPassword);
+
+            if (success)
+            {
+                 MessageBox.Show("Паролата е променена успешно.");
+                CurrentPassword = NewPassword = ConfirmPassword = string.Empty;
+            }
+            else
+            {
+                 MessageBox.Show("Грешна текуща парола.");
+            }
+        }
+
+
+    
         private async void LoadTickets()
         {
             var tickets = await _ticketService.GetUserTicketsAsync(_user.Id);

@@ -83,7 +83,7 @@ namespace UI.ViewModels
             _currentUser = user;
             _userService.SetCurrentUser(user);
 
-            var homeVM = new HomeViewModel(_animalService, _eventService, _ticketService, user);
+            var homeVM = new HomeViewModel(_animalService, _eventService, _ticketService, user, _userService);
             //абонирам се за събитие
             homeVM.LogoutRequested += OnLogoutRequested;
 
