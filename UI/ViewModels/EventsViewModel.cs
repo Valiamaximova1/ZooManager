@@ -77,7 +77,7 @@ namespace UI.ViewModels
 
                 _selectedType = value;
                 OnPropertyChanged();
-                LoadEventsAsync();
+                //LoadEventsAsync();
             }
         }
         public DateTime? SelectedDate
@@ -87,7 +87,7 @@ namespace UI.ViewModels
             {
                 _selectedDate = value;
                 OnPropertyChanged();
-                LoadEventsAsync();
+                //LoadEventsAsync();
             }
         }
 
@@ -173,7 +173,7 @@ namespace UI.ViewModels
 
             if (selectedAnimalIds.Any())
             {
-                events = events.Where(ev => ev.AnimalIds.Any(id => selectedAnimalIds.Contains(id))).ToList();
+                events = events.Where(ev => selectedAnimalIds.All(id => ev.AnimalIds.Contains(id))).ToList();
             }
 
             foreach (var ev in events)
@@ -246,6 +246,19 @@ namespace UI.ViewModels
             SelectedType = "Всички";
             SelectedDate = null;
 
+            foreach (var animal in AnimalFilters)
+            {
+                animal.SelectionChanged = null;
+                animal.IsSelected = false;
+            }
+
+            // Задаваме отново делегатите след изчистването
+            foreach (var animal in AnimalFilters)
+            {
+                animal.SelectionChanged = async () => await LoadEventsAsync();
+            }
+
+
             await LoadAllEventsAsync();
         }
         private async Task LoadAllEventsAsync()
@@ -285,13 +298,14 @@ namespace UI.ViewModels
                 // важен момент – автоматично презарежда списъка при чекване
                 filterItem.SelectionChanged = async () => await LoadEventsAsync();
 
+
                 AnimalFilters.Add(filterItem);
             }
 
             OnPropertyChanged(nameof(AllAnimals));
             OnPropertyChanged(nameof(AnimalFilters));
         }
-
+     
         private void OnEdit()
         {
             if (_selectedEvent != null)
@@ -349,8 +363,7 @@ namespace UI.ViewModels
             await LoadEventsAsync();
             SelectedEvent = Events.FirstOrDefault(eventA => eventA.Id == EditingEvent.Id);
             IsEditMode = false;
-            SelectedEvent.IsEditMode = false;
-
+            
         }
 
 

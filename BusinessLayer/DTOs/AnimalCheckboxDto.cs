@@ -1,13 +1,14 @@
 ﻿using MvvmHelpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.DTOs
 {
-    public class AnimalCheckboxDto : BaseViewModel
+    public class AnimalCheckboxDto : INotifyPropertyChanged
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -18,12 +19,21 @@ namespace BusinessLayer.DTOs
             get => _isSelected;
             set
             {
-                _isSelected = value;
-                OnPropertyChanged();
-                SelectionChanged?.Invoke();
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged(nameof(IsSelected));
+
+                    // Извиква презареждане, ако има делегат
+                    SelectionChanged?.Invoke();
+                }
             }
         }
 
-        public Action SelectionChanged { get; set; } 
+        public Action? SelectionChanged { get; set; }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged(string name) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
