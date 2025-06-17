@@ -37,18 +37,22 @@
                       Width="100" />            
         </StackPanel>
 
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding AnimalFilters}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" Margin="5" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="1" >
-            <ItemsControl  ItemsSource="{Binding AnimalFilters}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <CheckBox Content="{Binding Name}"
-                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                          Margin="5" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        </StackPanel>
+
 
 
         <Grid Grid.Row="2">
