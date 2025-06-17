@@ -29,9 +29,7 @@
                       SelectedItem="{Binding SelectedType}"
                       Width="150"
                       Margin="0 0 10 0" />
-            <Button Content="Търси"
-                    Command="{Binding SearchCommand}"
-                    Width="100" Margin="0 0 10 0" />
+           
             <Button Content="Изчисти"
                       Command="{Binding ClearCommand}"
                       Width="100" />            

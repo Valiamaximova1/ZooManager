@@ -24,6 +24,8 @@ namespace UI.ViewModels
         private readonly IEventService _eventService;
         private readonly IAnimalService _animalService;
 
+        private bool _isClearingFilters = false;
+
         private string _selectedType = "Всички";
         private DateTime? _selectedDate = null;
 
@@ -56,7 +58,7 @@ namespace UI.ViewModels
             _eventService = eventService;
             _animalService = animalService;
 
-            SearchCommand = new AsyncDelegateCommand(LoadEventsAsync);
+          
             ClearCommand = new AsyncDelegateCommand(ClearFilters);
             EditEventCommand = new DelegateCommand(OnEdit);
             DeleteEventCommand = new AsyncDelegateCommand(OnDeleteAsync);
@@ -77,7 +79,11 @@ namespace UI.ViewModels
 
                 _selectedType = value;
                 OnPropertyChanged();
-                //LoadEventsAsync();
+                if (_isClearingFilters == false)
+                {
+                    LoadEventsAsync();
+                }
+
             }
         }
         public DateTime? SelectedDate
@@ -87,7 +93,10 @@ namespace UI.ViewModels
             {
                 _selectedDate = value;
                 OnPropertyChanged();
-                //LoadEventsAsync();
+                if (_isClearingFilters == false)
+                {
+                    LoadEventsAsync();
+                }
             }
         }
 
@@ -106,7 +115,6 @@ namespace UI.ViewModels
                     OnPropertyChanged();
 
                     LoadSelectedAnimalsAsync();
-                    //LoadAllAnimalsAsync();
                 }
 
             }
@@ -143,7 +151,7 @@ namespace UI.ViewModels
             }
         }
 
-        public ICommand SearchCommand { get; }
+      
         public ICommand ClearCommand { get; }
         public ICommand EditEventCommand { get; }
         public ICommand DeleteEventCommand { get; }
@@ -155,9 +163,9 @@ namespace UI.ViewModels
             Events.Clear();
 
             var selectedAnimalIds = AnimalFilters
-    .Where(x => x.IsSelected)
-    .Select(x => x.Id)
-    .ToList();
+                .Where(x => x.IsSelected)
+                .Select(x => x.Id)
+                .ToList();
 
             var events = await _eventService.GetAllAsync();
 
@@ -180,93 +188,68 @@ namespace UI.ViewModels
                 Events.Add(ev);
         }
 
-        //private async Task LoadEventsAsync()
-        //{
-
-        //    Events.Clear();
-
-        //    var selectedAnimalIds = AnimalFilters
-        //        .Where(kvp => kvp.Value)
-        //        .Select(kvp => kvp.Key)
-        //        .ToList();
-
-        //    var events = await _eventService.GetAllAsync();
 
 
-        //    if (SelectedType.Equals("Всички"))
-        //    {
-        //        var dateToUse = SelectedDate ?? DateTime.Today;
-        //        events = await _eventService.GetFilteredDateAsync(SelectedDate);
-
-
-        //        //var allEvents = await _eventService.GetAllAsync();
-        //        //foreach (var ev in results)
-        //        //    Events.Add(ev);
-        //        //SelectedDate = null;
-        //    }
-        //    else if (Enum.TryParse<EventType>(SelectedType, out var type))
-        //    {
-
-        //        var dateToUse = SelectedDate ?? DateTime.Today;
-        //        events = await _eventService.GetFilteredAsync(type, SelectedDate);
-
-        //        //foreach (var ev in results)
-        //        //    Events.Add(ev);
-        //    }
-
-        //    if (selectedAnimalIds.Any())
-        //    {
-        //        events = events.Where(ev =>
-        //            ev.AnimalIds.Any(id => selectedAnimalIds.Contains(id))
-        //        ).ToList();
-        //    }
-
-        //    foreach (var ev in events)
-        //        Events.Add(ev);
-
-        //}
-        //private async Task ClearFilters()
-        //{
-        //    Events.Clear();
-        //    SelectedDate = null;
-        //    SelectedType = "Всички";
-        //    //foreach (var key in AnimalFilters.Keys.ToList())
-        //    //{
-        //    //    AnimalFilters[key] = false;
-        //    //}
-        //    //OnPropertyChanged(nameof(AnimalFilters));
-        //    var allEvents = await _eventService.GetAllAsync();
-        //    foreach (var ev in allEvents)
-        //        Events.Add(ev);
-
-        //}
         private async Task ClearFilters()
         {
-            Events.Clear();
+            _isClearingFilters = true;
+
             SelectedType = "Всички";
             SelectedDate = null;
 
+            // Изключваме делегатите временно и махаме отметките
             foreach (var animal in AnimalFilters)
             {
                 animal.SelectionChanged = null;
                 animal.IsSelected = false;
             }
 
-            // Задаваме отново делегатите след изчистването
+            // Възстановяваме делегатите, но не извикваме LoadEventsAsync вътре!
             foreach (var animal in AnimalFilters)
             {
-                animal.SelectionChanged = async () => await LoadEventsAsync();
+                animal.SelectionChanged = async () =>
+                {
+                    if (!_isClearingFilters)
+                        await LoadEventsAsync();
+                };
             }
 
+            _isClearingFilters = false;
 
-            await LoadAllEventsAsync();
+            // Еднократно зареждане след пълното възстановяване на делегатите
+            await LoadEventsAsync();
         }
-        private async Task LoadAllEventsAsync()
+
+        private async Task LoadAllAnimalsAsync()
         {
             Events.Clear();
-            var events = await _eventService.GetAllAsync();
-            foreach (var ev in events)
-                Events.Add(ev);
+            if (AnimalFilters.Any()) return;
+            var animals = await _animalService.GetAllAsync();
+
+            AllAnimals = new ObservableCollection<AnimalDto>(animals);
+            AnimalFilters.Clear();
+
+            foreach (var animal in animals)
+            {
+                var filterItem = new AnimalCheckboxDto
+                {
+                    Id = animal.Id,
+                    Name = animal.Name
+                };
+
+                // Задаваме делегат за автоматично презареждане при промяна,
+                // но само ако не сме в режим на изчистване
+                filterItem.SelectionChanged = async () =>
+                {
+                    if (!_isClearingFilters)
+                        await LoadEventsAsync();
+                };
+
+                AnimalFilters.Add(filterItem);
+            }
+
+            OnPropertyChanged(nameof(AllAnimals));
+            OnPropertyChanged(nameof(AnimalFilters));
         }
         private async Task LoadSelectedAnimalsAsync()
         {
@@ -281,31 +264,9 @@ namespace UI.ViewModels
             foreach (var animal in AllAnimals.Where(a => SelectedEvent.AnimalIds.Contains(a.Id)))
                 SelectedAnimals.Add(animal);
         }
-        private async Task LoadAllAnimalsAsync()
-        {
-            var animals = await _animalService.GetAllAsync();
-            AllAnimals = new ObservableCollection<AnimalDto>(animals);
-            AnimalFilters.Clear();
-
-            foreach (var animal in animals)
-            {
-                var filterItem = new AnimalCheckboxDto
-                {
-                    Id = animal.Id,
-                    Name = animal.Name,
-                };
-
-                // важен момент – автоматично презарежда списъка при чекване
-                filterItem.SelectionChanged = async () => await LoadEventsAsync();
 
 
-                AnimalFilters.Add(filterItem);
-            }
 
-            OnPropertyChanged(nameof(AllAnimals));
-            OnPropertyChanged(nameof(AnimalFilters));
-        }
-     
         private void OnEdit()
         {
             if (_selectedEvent != null)
@@ -363,7 +324,7 @@ namespace UI.ViewModels
             await LoadEventsAsync();
             SelectedEvent = Events.FirstOrDefault(eventA => eventA.Id == EditingEvent.Id);
             IsEditMode = false;
-            
+
         }
 
 
