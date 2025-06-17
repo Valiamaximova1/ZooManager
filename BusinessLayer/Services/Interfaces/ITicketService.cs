@@ -13,7 +13,6 @@ namespace BusinessLayer.Services.Interfaces
     {
         Task<IEnumerable<TicketTemplateDto>> GetAllTemplatesAsync();
         Task PurchaseTicketAsync(Guid userId, Guid templateId, int quantity);
-        //Task<IEnumerable<TicketPurchaseDto>> GetUserTicketsAsync(Guid userId);
         Task<List<UserTicketDto>> GetUserTicketsAsync(Guid userId);
     }
 }

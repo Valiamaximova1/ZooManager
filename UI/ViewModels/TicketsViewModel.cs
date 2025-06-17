@@ -39,16 +39,16 @@ namespace UI.ViewModels
             }
         }
 
-        public ICommand PurchaseCommand { get; }
-        public ICommand ClearFilterCommand { get; }
+        public AsyncDelegateCommand PurchaseCommand { get; }
+        public DelegateCommand ClearFilterCommand { get; }
 
         public TicketsViewModel(ITicketService ticketService, Guid currentUserId)
         {
             _ticketService = ticketService;
             _currentUserId = currentUserId;
 
-            PurchaseCommand = new AsyncRelayCommand(PurchaseTicketsAsync);
-            ClearFilterCommand = new RelayCommand(() => SelectedType = null);
+            PurchaseCommand = new AsyncDelegateCommand(PurchaseTicketsAsync, CanPurchase);
+            ClearFilterCommand = new DelegateCommand(() => SelectedType = null);
 
             LoadTemplates();
         }
@@ -62,24 +62,48 @@ namespace UI.ViewModels
 
         private void ApplyFilter()
         {
-            var filtered = SelectedType.HasValue
-                ? AllTemplates.Where(t => t.Type == SelectedType.Value)
+            var filteredTickets = SelectedType.HasValue
+                ? AllTemplates.Where(ticket => ticket.Type == SelectedType.Value)
                 : AllTemplates;
 
-            FilteredTemplates = new ObservableCollection<TicketTemplateDto>(filtered);
+            FilteredTemplates = new ObservableCollection<TicketTemplateDto>(filteredTickets);
             OnPropertyChanged(nameof(FilteredTemplates));
 
             Selections = new ObservableCollection<TicketSelection>(
                 FilteredTemplates.Select(t => new TicketSelection { Template = t, Quantity = 0 }));
 
+            foreach (var selection in Selections)
+            {
+                selection.QuantityChanged += () =>
+                {
+                    (PurchaseCommand as AsyncDelegateCommand)?.RaiseCanExecuteChanged();
+                };
+            }
+
             OnPropertyChanged(nameof(Selections));
+            PurchaseCommand.RaiseCanExecuteChanged();
+        }
+
+        private bool CanPurchase()
+        {
+            return Selections.Any(selectElement => selectElement.Quantity > 0);
         }
 
         private async Task PurchaseTicketsAsync()
         {
             try
             {
-                foreach (var selection in Selections.Where(s => s.Quantity > 0))
+                var invalidSelections = Selections
+                    .Where(selectElement => selectElement.Quantity < 0)
+                    .ToList();
+
+                if (invalidSelections.Any())
+                {
+                    MessageBox.Show("Моля, въведете валиден брой билети (положително число) за всеки избор.", "Грешка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                foreach (var selection in Selections.Where(selectElement => selectElement.Quantity > 0))
                 {
                     await _ticketService.PurchaseTicketAsync(
                         _currentUserId,
@@ -89,20 +113,17 @@ namespace UI.ViewModels
                 }
 
                 MessageBox.Show("Успешна покупка!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                LoadTemplates(); // обнови наличностите
+                LoadTemplates();
             }
             catch (InvalidOperationException)
             {
-                MessageBox.Show( "Недостатъчна наличност");
+                MessageBox.Show("Недостатъчна наличност");
             }
             catch (Exception)
             {
                 MessageBox.Show("Възникна неочаквана грешка.", "Грешка");
             }
-        
         }
     }
-
-  
 
 }

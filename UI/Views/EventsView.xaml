@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <converters:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter" />
-        <converters:AnimalSelectionMultiConverter x:Key="AnimalSelectionMultiConverter" />
+        <!-- <converters:AnimalSelectionMultiConverter x:Key="AnimalSelectionMultiConverter" /> -->
     </UserControl.Resources>
 
 
@@ -22,7 +22,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Filters -->
         <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
             <DatePicker SelectedDate="{Binding SelectedDate}" Margin="0 0 10 0" />
             <ComboBox ItemsSource="{Binding EventTypes}"
@@ -34,14 +33,12 @@
                     Width="100" />
         </StackPanel>
 
-        <!-- Events list -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding IsDetailsVisible, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter='*;3*'}"/>
                 <ColumnDefinition Width="{Binding IsDetailsVisible, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter='0;*'}"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Таблица със събития -->
             <DataGrid ItemsSource="{Binding Events}"
               SelectedItem="{Binding SelectedEvent, Mode=TwoWay}"
               AutoGenerateColumns="False"
@@ -59,7 +56,6 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <!-- Панел с детайли -->
             <Border Grid.Column="1"
             Visibility="{Binding IsDetailsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
             BorderThickness="1"
@@ -95,9 +91,6 @@
 
 
                     <TextBlock Text="Описание:" FontWeight="Bold" Margin="0 10 0 0" />
-                    <!--   <TextBlock Text="{Binding SelectedEvent.Description}" 
-                       TextWrapping="Wrap" MaxWidth="180"   /> -->
-
                     <ContentControl>
                         <ContentControl.Style>
                             <Style TargetType="ContentControl">
@@ -147,14 +140,12 @@
                     <ContentControl>
                         <ContentControl.Style>
                             <Style TargetType="ContentControl">
-                                <!-- По подразбиране показваме TextBlock -->
                                 <Setter Property="Content">
                                     <Setter.Value>
                                         <TextBlock Text="{Binding SelectedEvent.Type}" />
                                     </Setter.Value>
                                 </Setter>
 
-                                <!-- Когато сме в режим на редакция -->
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding SelectedEvent.IsEditMode}" Value="True">
                                         <Setter Property="Content">
@@ -174,11 +165,9 @@
 
                     <TextBlock Text="Животни:" FontWeight="Bold" Margin="0 10 0 0"/>
 
-                    <!-- Обновен ContentControl с CheckBox логика за избор на животни -->
                     <ContentControl>
                         <ContentControl.Style>
                             <Style TargetType="ContentControl">
-                                <!-- По подразбиране: списък с имената -->
                                 <Setter Property="Content">
                                     <Setter.Value>
                                         <ItemsControl ItemsSource="{Binding SelectedAnimals}">
@@ -191,7 +180,6 @@
                                     </Setter.Value>
                                 </Setter>
 
-                                <!-- В режим на редакция: CheckBox списък -->
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding SelectedEvent.IsEditMode}" Value="True">
                                         <Setter Property="Content">
@@ -212,16 +200,6 @@
                         </ContentControl.Style>
                     </ContentControl>
 
-
-                    <!--  <ItemsControl ItemsSource="{Binding SelectedAnimals}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-
-                     </ItemsControl>  -->
-
                     <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
                         <Button Content="Запази"
                     Command="{Binding SaveEventCommand}"
@@ -234,51 +212,5 @@
                 </StackPanel>
             </Border>
         </Grid>
-
-
-        <!-- Таблица със събития
-            <DataGrid ItemsSource="{Binding Events}"
-                      SelectedItem="{Binding SelectedEvent, Mode=TwoWay}"
-                      AutoGenerateColumns="False"
-                      Margin="0 0 10 0"
-                      Grid.Column="0"
-                      IsReadOnly="True">
-                <i:Interaction.Behaviors>
-                    <behaviors:DataGridDoubleClickBehavior Command="{Binding EditEventCommand}" />
-                    <behaviors:DataGridDeleteKeyBehavior Command="{Binding DeleteEventCommand}" />
-                </i:Interaction.Behaviors>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Заглавие" Binding="{Binding Title}" Width="*" />
-                    <DataGridTextColumn Header="Тип" Binding="{Binding Type}" Width="*" />
-                    <DataGridTextColumn Header="Дата" Binding="{Binding Date, StringFormat=dd.MM.yyyy}" Width="*" />
-                </DataGrid.Columns>
-            </DataGrid> -->
-
-            <!-- Детайли / Редакция 
-            <Border Grid.Column="1"
-                    Visibility="{Binding IsDetailsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
-                    BorderThickness="1"
-                    BorderBrush="Gray"
-                    Padding="10">
-                <StackPanel Width="300">
-                    <TextBlock Text="Заглавие:" FontWeight="Bold" />
-                    <TextBox Text="{Binding EditingEvent.Title}" IsEnabled="{Binding IsEditMode}" />
-
-                    <TextBlock Text="Описание:" FontWeight="Bold" Margin="0 10 0 0" />
-                    <TextBox Text="{Binding EditingEvent.Description}" Height="60" AcceptsReturn="True" IsEnabled="{Binding IsEditMode}" />
-
-                    <TextBlock Text="Дата:" FontWeight="Bold" Margin="0 10 0 0" />
-                    <DatePicker SelectedDate="{Binding EditingEvent.Date}" IsEnabled="{Binding IsEditMode}" />
-
-                    <TextBlock Text="Тип:" FontWeight="Bold" Margin="0 10 0 0" />
-                    <ComboBox ItemsSource="{Binding Types}" SelectedItem="{Binding EditingEvent.Type}" IsEnabled="{Binding IsEditMode}" />
-
-                    <Button Content="Запази" Command="{Binding SaveEventCommand}" Margin="0 10 0 0"
-                            Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" />
-
-                    <Button Content="Изтрий" Command="{Binding DeleteEventCommand}" Margin="0 5 0 0" />
-                </StackPanel>
-            </Border>-->
-       
     </Grid>
 </UserControl>

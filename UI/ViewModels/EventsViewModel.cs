@@ -169,9 +169,6 @@ namespace UI.ViewModels
 
             }
 
-
-
-
         }
 
         private async Task LoadSelectedAnimalsAsync()
@@ -246,13 +243,13 @@ namespace UI.ViewModels
             if (EditingEvent == null) return;
 
             EditingEvent.AnimalIds = SelectableAnimals
-                .Where(a => a.IsSelected)
-                .Select(a => a.Animal.Id)
+                .Where(animal => animal.IsSelected)
+                .Select(animal => animal.Animal.Id)
                 .ToList();
 
             await _eventService.UpdateAsync(EditingEvent);
             await LoadEventsAsync();
-            SelectedEvent = Events.FirstOrDefault(e => e.Id == EditingEvent.Id);
+            SelectedEvent = Events.FirstOrDefault(eventA => eventA.Id == EditingEvent.Id);
             IsEditMode = false;
             SelectedEvent.IsEditMode = false;
 
@@ -274,126 +271,4 @@ namespace UI.ViewModels
             }
         }
     }
-
-
-
-
-
-    //public class EventsViewModel : BaseViewModel
-    //{
-    //    private readonly IEventService _eventService;
-    //    private EventDto _selectedEvent;
-    //    private string _selectedType = "Всички";
-    //    private DateTime? _selectedDate = null;
-    //    private bool _isPopupOpen;
-
-    //    public ObservableCollection<EventDto> Events { get; } = new();
-
-    //    public ObservableCollection<string> EventTypes { get; } =
-    //    new ObservableCollection<string>(new[] { "Всички" }.Concat(Enum.GetNames(typeof(EventType))));
-
-    //    public ICommand SearchCommand { get; }
-    //    public ICommand ShowEventDetailsCommand { get; }
-    //    public ICommand DeleteEventCommand { get; }
-    //    public ICommand ClosePopupCommand { get; }
-
-
-    //    public EventsViewModel(IEventService eventService)
-    //    {
-    //        _eventService = eventService;
-
-    //        SearchCommand = new AsyncDelegateCommand(LoadEventsAsync);
-    //        //ShowEventDetailsCommand = new DelegateCommand<EventDto>(ShowEventDetails);
-    //        DeleteEventCommand = new AsyncDelegateCommand(DeleteEventAsync);
-    //        ClosePopupCommand = new DelegateCommand(() => IsPopupOpen = false);
-
-    //        _ = LoadEventsAsync();
-    //    }
-    //    public string SelectedType
-    //    {
-    //        get => _selectedType;
-    //        set
-    //        {
-
-    //            _selectedType = value;
-    //            OnPropertyChanged();
-    //        }
-    //    }
-    //    public DateTime? SelectedDate
-    //    {
-    //        get => _selectedDate;
-    //        set
-    //        {
-    //            _selectedDate = value;
-    //            OnPropertyChanged();
-    //        }
-    //    }
-    //    public bool IsPopupOpen
-    //    {
-    //        get => _isPopupOpen;
-    //        set
-    //        {
-    //            _isPopupOpen = value;
-    //            OnPropertyChanged();
-    //        }
-    //    }
-    //    public EventDto SelectedEvent
-    //    {
-    //        get => _selectedEvent;
-    //        set
-    //        {
-    //            _selectedEvent = value;
-    //            OnPropertyChanged();
-    //        }
-    //    }
-
-
-    //    private async Task LoadEventsAsync()
-    //    {
-
-    //        Events.Clear();
-    //        if (SelectedType.Equals("Всички"))
-    //        {
-    //            var all = await _eventService.GetAllAsync();
-    //            foreach (var a in all)
-    //                Events.Add(a);
-    //            SelectedDate = null;
-    //        }
-    //        else
-    //        {
-    //            if (Enum.TryParse<EventType>(SelectedType, out var type))
-    //            {
-
-    //                var dateToUse = SelectedDate ?? DateTime.Today;
-    //                var results = await _eventService.GetFilteredAsync(type, SelectedDate);
-
-    //                foreach (var ev in results)
-    //                    Events.Add(ev);
-    //            }
-
-    //        }
-
-
-    //    }
-
-    //    private async Task DeleteEventAsync()
-    //    {
-    //        if (SelectedEvent == null) return;
-
-    //        var result = MessageBox.Show("Сигурни ли сте, че искате да изтриете това събитие?", "Изтриване", MessageBoxButton.YesNo);
-    //        if (result == MessageBoxResult.Yes)
-    //        {
-    //            await _eventService.DeleteAsync(SelectedEvent.Id);
-    //            await LoadEventsAsync();
-    //        }
-    //    }
-
-    //    //private void ShowEventDetails(Events eventt)
-    //    //{
-    //    //    //SelectedAnimal = animal;
-    //    //    //IsPopupOpen = true;
-    //    //}
-
-    //    }
-
 }

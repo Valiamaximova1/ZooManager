@@ -13,7 +13,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Filter row -->
         <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
             <TextBlock Text="Филтър по тип:" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <ComboBox Width="150"
@@ -23,8 +22,6 @@
             <Button Content="Изчисти" Command="{Binding ClearFilterCommand}"/>
         </StackPanel>
 
-
-        <!-- Ticket list with scroll -->
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
             <ItemsControl ItemsSource="{Binding Selections}">
                 <ItemsControl.ItemTemplate>
@@ -53,7 +50,6 @@
         </ScrollViewer>
 
 
-        <!-- Purchase button -->
         <Button Grid.Row="2"
                 Content="Купи избраните"
                 Height="40"

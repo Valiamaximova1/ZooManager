@@ -81,7 +81,7 @@ namespace UI.ViewModels
         {
             //CurrentViewModel = new HomeViewModel(_animalService,_eventService, user);
             _currentUser = user;
-            //_userService.SetCurrentUser(user);
+            _userService.SetCurrentUser(user);
 
             var homeVM = new HomeViewModel(_animalService, _eventService, _ticketService, user);
             //абонирам се за събитие

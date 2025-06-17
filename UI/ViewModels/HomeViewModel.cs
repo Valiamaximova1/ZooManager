@@ -15,15 +15,9 @@ namespace UI.ViewModels
         private readonly IEventService _eventService;
         private readonly ITicketService _ticketService;
 
-        public ICommand ShowAnimalsCommand { get; }
-        public ICommand ShowEventsCommand { get; }
-        public ICommand ShowTicketsCommand { get; }
-        public ICommand ShowProfileCommand { get; }
-        
 
         private BaseViewModel _currentViewModel;
         private readonly UserDto _user;
-
         public event Action LogoutRequested;
 
 
@@ -52,7 +46,13 @@ namespace UI.ViewModels
                 _currentViewModel = value;
                 OnPropertyChanged();
             }
-        }
+        } 
+        public ICommand ShowAnimalsCommand { get; }
+        public ICommand ShowEventsCommand { get; }
+        public ICommand ShowTicketsCommand { get; }
+        public ICommand ShowProfileCommand { get; }
+
+        
         private void ShowAnimals()
         {
             CurrentViewModel = new AnimalsViewModel(_animalService);

@@ -27,8 +27,8 @@ namespace Data.Repositories
         public async Task<IEnumerable<TicketPurchase>> GetByUserIdAsync(Guid userId)
         {
             return await _context.TicketPurchases
-                .Where(p => p.UserId == userId)
-                .Include(p => p.TicketTemplate)
+                .Where(purchase => purchase.UserId == userId)
+                .Include(purchase => purchase.TicketTemplate)
                 .ToListAsync();
         }
     }

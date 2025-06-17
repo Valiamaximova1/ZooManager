@@ -8,7 +8,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Меню -->
         <StackPanel Grid.Column="0" Background="#EEE" Margin="10">
             <Button Content="Животни" Command="{Binding ShowAnimalsCommand}" Margin="0 5"/>
             <Button Content="Събития" Command="{Binding ShowEventsCommand}" Margin="0 5"/>
@@ -17,7 +16,7 @@
 
         </StackPanel>
 
-        <!-- Динамично съдържание -->
+    
         <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}" />
     </Grid>
 

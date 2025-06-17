@@ -21,12 +21,12 @@ namespace Data.Repositories
 
         public async Task<List<TicketTemplate>> GetAllAsync()
         {
-            return await _context.TicketTemplates.Include(t => t.Event).ToListAsync();
+            return await _context.TicketTemplates.Include(ticket => ticket.Event).ToListAsync();
         }
 
         public async Task<TicketTemplate> GetByIdAsync(Guid id)
         {
-            return await _context.TicketTemplates.Include(t => t.Event).FirstOrDefaultAsync(t => t.Id == id);
+            return await _context.TicketTemplates.Include(ticket => ticket.Event).FirstOrDefaultAsync(ticket => ticket.Id == id);
         }
 
         public async Task UpdateAsync(TicketTemplate template)

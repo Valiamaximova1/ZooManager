@@ -28,7 +28,7 @@ namespace Data
 
         private static void Seed(ZooDbContext context)
         {
-            // 👉 Потребители
+           
             if (!context.Users.Any())
             {
                 context.Users.AddRange(new List<User>
@@ -38,7 +38,7 @@ namespace Data
         });
             }
 
-            // 👉 Събития
+    
             if (!context.Events.Any())
             {
                 context.Events.AddRange(new List<Event>
@@ -59,7 +59,7 @@ namespace Data
                 context.SaveChanges();
             }
 
-            // 👉 Животни
+     
             if (!context.Animals.Any())
             {
                 context.Animals.AddRange(new List<Animal>
@@ -74,24 +74,24 @@ namespace Data
                 context.SaveChanges();
             }
 
-            // 👉 Връзки Животно <-> Събитие
-            var events = context.Events.Include(e => e.Animals).ToList();
+         
+            var events = context.Events.Include(ev => ev.Animals).ToList();
             var animals = context.Animals.ToList();
 
-            var eventByTitle = events.ToDictionary(e => e.Title);
-            var animalByName = animals.ToDictionary(a => a.Name);
+            var eventByTitle = events.ToDictionary(ev => ev.Title);
+            var animalByName = animals.ToDictionary(animal => animal.Name);
 
             void AddAnimalToEvent(string eventTitle, string animalName)
             {
                 if (eventByTitle.TryGetValue(eventTitle, out var ev) &&
                     animalByName.TryGetValue(animalName, out var animal) &&
-                    !ev.Animals.Any(a => a.Id == animal.Id))
+                    !ev.Animals.Any(an => an.Id == animal.Id))
                 {
                     ev.Animals.Add(animal);
                 }
             }
 
-            // 👉 Реално добавяне на връзки
+         
             AddAnimalToEvent("Обиколка с екскурзовод", "Лъв");
             AddAnimalToEvent("Обиколка с екскурзовод", "Папагал");
             AddAnimalToEvent("Демонстрация по хранене", "Лъв");
@@ -118,87 +118,83 @@ namespace Data
 
             context.SaveChanges();
 
-            // 👉 Шаблони за билети
-
             if (!context.TicketTemplates.Any())
             {
-                 var event1 = context.Events.FirstOrDefault(e => e.Title == "Обиколка с екскурзовод");
-            var event2 = context.Events.FirstOrDefault(e => e.Title == "Шоу с птици");
-            var event3 = context.Events.FirstOrDefault(e => e.Title == "Нощно сафари");
-            var event4 = context.Events.FirstOrDefault(e => e.Title == "Ферма за деца");
-            var event5 = context.Events.FirstOrDefault(e => e.Title == "Тропическа нощ");
-            var event6 = context.Events.FirstOrDefault(e => e.Title == "Ден на доброволеца");
+                var event1 = context.Events.FirstOrDefault(e => e.Title == "Обиколка с екскурзовод");
+                var event2 = context.Events.FirstOrDefault(e => e.Title == "Шоу с птици");
+                var event3 = context.Events.FirstOrDefault(e => e.Title == "Нощно сафари");
+                var event4 = context.Events.FirstOrDefault(e => e.Title == "Ферма за деца");
+                var event5 = context.Events.FirstOrDefault(e => e.Title == "Тропическа нощ");
+                var event6 = context.Events.FirstOrDefault(e => e.Title == "Ден на доброволеца");
 
-            if (event1 != null && event2 != null && event3 != null && event4 != null && event5 != null && event6 != null)
-            {
-                context.TicketTemplates.AddRange(new List<TicketTemplate>
-    {
-        new TicketTemplate
-        {
-            Title = "Обикновен билет",
-            Description = "Стандартен билет за обиколка.",
-            Type = TicketType.Редовен,
-            AvailableQuantity = 50,
-            Price = 50,
-            EventId = event1.Id
-        },
-        new TicketTemplate
-        {
-            Title = "VIP билет",
-            Description = "Включва място на първи ред и подарък.",
-            Type = TicketType.Ученически,
-            AvailableQuantity = 20,
-            Price = 100,
-            EventId = event2.Id
-        },
-        new TicketTemplate
-        {
-            Title = "Нощен билет",
-            Description = "Достъп до специалното нощно сафари.",
-            Type = TicketType.Редовен,
-            AvailableQuantity = 25,
-            Price = 70,
-            EventId = event3.Id
-        },
-        new TicketTemplate
-        {
-            Title = "Детски билет",
-            Description = "Само за деца под 12 години.",
-            Type = TicketType.Ученически,
-            AvailableQuantity = 50,
-            Price = 20,
-            EventId = event4.Id
-        },
-        new TicketTemplate
-        {
-            Title = "Тропическа разходка",
-            Description = "Екзотична обиколка с музика и светлини.",
-            Type = TicketType.Редовен,
-            AvailableQuantity = 15,
-            Price = 80,
-            EventId = event5.Id
-        },
-        new TicketTemplate
-        {
-            Title = "Билет за доброволци",
-            Description = "Безплатен достъп за доброволци.",
-            Type = TicketType.Редовен,
-            AvailableQuantity = 100,
-            Price = 0,
-            EventId = event6.Id
-        }
-    });
+                if (event1 != null && event2 != null && event3 != null && event4 != null && event5 != null && event6 != null)
+                {
+                    context.TicketTemplates.AddRange(new List<TicketTemplate>
+                {
+                    new TicketTemplate
+                    {
+                        Title = "Обикновен билет",
+                        Description = "Стандартен билет за обиколка.",
+                        Type = TicketType.Редовен,
+                        AvailableQuantity = 50,
+                        Price = 50,
+                        EventId = event1.Id
+                    },
+                    new TicketTemplate
+                    {
+                        Title = "VIP билет",
+                        Description = "Включва място на първи ред и подарък.",
+                        Type = TicketType.Ученически,
+                        AvailableQuantity = 20,
+                        Price = 100,
+                        EventId = event2.Id
+                    },
+                    new TicketTemplate
+                    {
+                        Title = "Нощен билет",
+                        Description = "Достъп до специалното нощно сафари.",
+                        Type = TicketType.Редовен,
+                        AvailableQuantity = 25,
+                        Price = 70,
+                        EventId = event3.Id
+                    },
+                    new TicketTemplate
+                    {
+                        Title = "Детски билет",
+                        Description = "Само за деца под 12 години.",
+                        Type = TicketType.Ученически,
+                        AvailableQuantity = 50,
+                        Price = 20,
+                        EventId = event4.Id
+                    },
+                    new TicketTemplate
+                    {
+                        Title = "Тропическа разходка",
+                        Description = "Екзотична обиколка с музика и светлини.",
+                        Type = TicketType.Редовен,
+                        AvailableQuantity = 15,
+                        Price = 80,
+                        EventId = event5.Id
+                    },
+                    new TicketTemplate
+                    {
+                        Title = "Билет за доброволци",
+                        Description = "Безплатен достъп за доброволци.",
+                        Type = TicketType.Редовен,
+                        AvailableQuantity = 100,
+                        Price = 0,
+                        EventId = event6.Id
+                    }
+                });
 
-                context.SaveChanges();
+                    context.SaveChanges();
+                }
+
             }
 
-            }
-         
-
-            // 👉 Закупени билети
             if (!context.TicketPurchases.Any())
             {
-                var user = context.Users.FirstOrDefault(u => u.Email == "val");
+                var user = context.Users.FirstOrDefault(user => user.Email == "val");
                 var ticketTemplate = context.TicketTemplates.FirstOrDefault(t => t.Title == "Обикновен билет");
 
                 if (user != null && ticketTemplate != null)

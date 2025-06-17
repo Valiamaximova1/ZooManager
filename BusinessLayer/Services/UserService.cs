@@ -37,7 +37,7 @@ namespace BusinessLayer.Services
         {
             //тук връща грешка 
             if (registerDto.Password != registerDto.ConfirmPassword)
-                throw new ArgumentException("Паролите не съвпаат");
+                throw new ArgumentException("Паролите не съвпадат");
 
             var existingUser = await _userRepository.GetByEmailAsync(registerDto.Email);
 

@@ -21,35 +21,35 @@ namespace Data.Repositories
         public async Task<IEnumerable<Event>> GetAllAsync()
         {
             return await _context.Events
-                .Include(e => e.Animals)
+                .Include(ev => ev.Animals)
                 .ToListAsync();
         }
         public async Task<IEnumerable<Event>> GetAllAsyncWithAnimals()
         {
-            return await _context.Events.Include(e => e.Animals).ToListAsync();
+            return await _context.Events.Include(ev => ev.Animals).ToListAsync();
         }
 
         public async Task<IEnumerable<Event>> GetByTypeAsync(EventType type)
         {
             return await _context.Events
-                .Include(e => e.Animals)
-                .Where(e => e.Type == type)
+                .Include(ev => ev.Animals)
+                .Where(ev => ev.Type == type)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Event>> GetByDateAsync(DateTime date)
         {
             return await _context.Events
-                .Include(e => e.Animals)
-                .Where(e => e.Date.Date == date.Date)
+                .Include(ev => ev.Animals)
+                .Where(ev => ev.Date.Date == date.Date)
                 .ToListAsync();
         }
 
         public async Task<Event> GetByIdAsync(Guid id)
         {
             return await _context.Events
-                .Include(e => e.Animals)
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .Include(ev => ev.Animals)
+                .FirstOrDefaultAsync(ev => ev.Id == id);
         }
 
         public async Task AddAsync(Event ev)

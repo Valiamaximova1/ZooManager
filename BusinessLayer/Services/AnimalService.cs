@@ -23,13 +23,13 @@ namespace BusinessLayer.Services
         public async Task<IEnumerable<AnimalDto>> GetAllAsync()
         {
             var animals = await _repository.GetAllAsync();
-            return animals.Select(a => a.ToDto());
+            return animals.Select(animal => animal.ToDto());
         }
 
         public async Task<IEnumerable<AnimalDto>> GetByCategoryAsync(AnimalCategory category)
         {
             var animals = await _repository.GetByCategoryAsync(category);
-            return animals.Select(a => a.ToDto());
+            return animals.Select(animal => animal.ToDto());
         }
 
         public async Task<AnimalDto> GetByIdAsync(Guid id)

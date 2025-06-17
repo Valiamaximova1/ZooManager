@@ -24,10 +24,10 @@ namespace Data.Repositories
 
         public async Task<IEnumerable<Animal>> GetByCategoryAsync(AnimalCategory category)
             => await _context.Animals
-                             .Where(a => a.Category == category)
+                             .Where(animal => animal.Category == category)
                              .ToListAsync();
 
         public async Task<Animal> GetByIdAsync(Guid id)
-            => await _context.Animals.FirstOrDefaultAsync(a => a.Id == id);
+            => await _context.Animals.FirstOrDefaultAsync(animal => animal.Id == id);
     }
 }

@@ -7,7 +7,7 @@ namespace UI.Converters
 {
     public class BoolToGridLengthConverter : IValueConverter
     {
-        // ConverterParameter: "WidthWhenFalse;WidthWhenTrue" – напр. "*;3*"
+        // ConverterParameter: "WidthWhenFalse; WidthWhenTrue" – напр. "*;3*"
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (parameter is string param && param.Contains(";"))

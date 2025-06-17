@@ -26,17 +26,17 @@ namespace BusinessLayer.Services
 
         public async Task<IEnumerable<EventDto>> GetAllAsync()
         {
-            var events = await _eventRepository.GetAllAsyncWithAnimals(); // нов метод
-            return events.Select(e => e.ToDto());
+            var events = await _eventRepository.GetAllAsyncWithAnimals(); 
+            return events.Select(eventA => eventA.ToDto());
         }
 
         public async Task<IEnumerable<EventDto>> GetFilteredAsync(EventType? type, DateTime? date)
         {
-            var all = await _eventRepository.GetAllAsync();
+            var allfilterEvents = await _eventRepository.GetAllAsync();
 
-            return all
-                .Where(e => (!type.HasValue || e.Type == type.Value)
-                          && (!date.HasValue || e.Date.Date == date.Value.Date))
+            return allfilterEvents
+                .Where(eventFilter => (!type.HasValue || eventFilter.Type == type.Value)
+                          && (!date.HasValue || eventFilter.Date.Date == date.Value.Date))
                 .Select(e => e.ToDto());
         }
 

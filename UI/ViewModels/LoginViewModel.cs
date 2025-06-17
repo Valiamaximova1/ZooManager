@@ -80,10 +80,6 @@ namespace UI.ViewModels
                 MessageBox.Show("Невалидни данни за вход");
             }
 
-
-
-
-
         }
         private bool CanLogin()
         {

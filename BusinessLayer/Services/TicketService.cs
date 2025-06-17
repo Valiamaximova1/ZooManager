@@ -37,7 +37,7 @@ namespace BusinessLayer.Services
         {
             var template = await _templateRepo.GetByIdAsync(templateId);
             if (template == null || template.AvailableQuantity < quantity)
-                throw new InvalidOperationException("Not enough tickets available.");
+                throw new InvalidOperationException("Няма налични билети.");
 
             template.AvailableQuantity -= quantity;
             await _templateRepo.UpdateAsync(template);
@@ -60,8 +60,8 @@ namespace BusinessLayer.Services
         {
             var purchases = await _purchaseRepo.GetByUserIdAsync(userId);
             return purchases
-                .Where(p => p.TicketTemplate != null)
-                .Select(p => UserTicketMapper.ToUserTicketDto(p))
+                .Where(purchases => purchases.TicketTemplate != null)
+                .Select(purchases => UserTicketMapper.ToUserTicketDto(purchases))
                 .ToList();
         }
 

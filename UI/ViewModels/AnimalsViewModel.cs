@@ -84,15 +84,15 @@ namespace UI.ViewModels
 
             if (SelectedCategory.Equals("Всички"))
             {
-                var all = await _animalService.GetAllAsync();
-                foreach (var a in all) Animals.Add(a);
+                var allAnimals = await _animalService.GetAllAsync();
+                foreach (var animal in allAnimals) Animals.Add(animal);
             }
             else
             {
                 if (Enum.TryParse<AnimalCategory>(SelectedCategory, out var category))
                 {
-                    var filtered = await _animalService.GetByCategoryAsync(category);
-                    foreach (var a in filtered) Animals.Add(a);
+                    var filteredAnimals = await _animalService.GetByCategoryAsync(category);
+                    foreach (var animal in filteredAnimals) Animals.Add(animal);
                 }
             }
 
