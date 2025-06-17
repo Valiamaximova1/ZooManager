@@ -19,7 +19,7 @@ namespace BusinessLayer.DTOs
         public string SoundPath { get; set; }
         public AnimalCategory Category { get; set; }
 
-
+        public bool isCheckedAnimal;
         public string FullImagePath
         {
             get

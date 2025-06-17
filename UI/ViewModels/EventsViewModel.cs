@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using UI.Commands;
+using static DevExpress.Xpo.Helpers.CannotLoadObjectsHelper;
 
 namespace UI.ViewModels
 {
@@ -38,7 +39,9 @@ namespace UI.ViewModels
 
         public ObservableCollection<AnimalSelectableViewModel> SelectableAnimals { get; } = new();
 
-        public ObservableCollection<AnimalDto> AllAnimals { get; } = new();
+        public ObservableCollection<AnimalDto> AllAnimals { get; set; } = new();
+        public ObservableCollection<AnimalCheckboxDto> AnimalFilters { get; } = new();
+
         public ObservableCollection<AnimalDto> SelectedAnimals { get; } = new();
 
         private EventDto _selectedEvent;
@@ -54,15 +57,17 @@ namespace UI.ViewModels
             _animalService = animalService;
 
             SearchCommand = new AsyncDelegateCommand(LoadEventsAsync);
+            ClearCommand = new AsyncDelegateCommand(ClearFilters);
             EditEventCommand = new DelegateCommand(OnEdit);
             DeleteEventCommand = new AsyncDelegateCommand(OnDeleteAsync);
             SaveEventCommand = new AsyncDelegateCommand(OnSaveAsync);
             LoadEventsCommand = new AsyncDelegateCommand(LoadEventsAsync);
 
-
-
+            LoadAllAnimalsAsync();
             LoadEventsAsync();
         }
+
+
 
         public string SelectedType
         {
@@ -72,6 +77,7 @@ namespace UI.ViewModels
 
                 _selectedType = value;
                 OnPropertyChanged();
+                LoadEventsAsync();
             }
         }
         public DateTime? SelectedDate
@@ -81,6 +87,7 @@ namespace UI.ViewModels
             {
                 _selectedDate = value;
                 OnPropertyChanged();
+                LoadEventsAsync();
             }
         }
 
@@ -99,7 +106,7 @@ namespace UI.ViewModels
                     OnPropertyChanged();
 
                     LoadSelectedAnimalsAsync();
-                    LoadAllAnimalsAsync();
+                    //LoadAllAnimalsAsync();
                 }
 
             }
@@ -137,40 +144,117 @@ namespace UI.ViewModels
         }
 
         public ICommand SearchCommand { get; }
+        public ICommand ClearCommand { get; }
         public ICommand EditEventCommand { get; }
         public ICommand DeleteEventCommand { get; }
         public ICommand SaveEventCommand { get; }
         public ICommand LoadEventsCommand { get; }
 
-
-
         private async Task LoadEventsAsync()
         {
-
             Events.Clear();
-            if (SelectedType.Equals("Всички"))
+
+            var selectedAnimalIds = AnimalFilters
+    .Where(x => x.IsSelected)
+    .Select(x => x.Id)
+    .ToList();
+
+            var events = await _eventService.GetAllAsync();
+
+            if (_selectedType != "Всички" && Enum.TryParse<EventType>(_selectedType, out var type))
             {
-                var all = await _eventService.GetAllAsync();
-                foreach (var a in all)
-                    Events.Add(a);
-                SelectedDate = null;
-            }
-            else
-            {
-                if (Enum.TryParse<EventType>(SelectedType, out var type))
-                {
-
-                    var dateToUse = SelectedDate ?? DateTime.Today;
-                    var results = await _eventService.GetFilteredAsync(type, SelectedDate);
-
-                    foreach (var ev in results)
-                        Events.Add(ev);
-                }
-
+                events = events.Where(ev => ev.Type == type).ToList();
             }
 
+            if (_selectedDate.HasValue)
+            {
+                events = events.Where(ev => ev.Date.Date == _selectedDate.Value.Date).ToList();
+            }
+
+            if (selectedAnimalIds.Any())
+            {
+                events = events.Where(ev => ev.AnimalIds.Any(id => selectedAnimalIds.Contains(id))).ToList();
+            }
+
+            foreach (var ev in events)
+                Events.Add(ev);
         }
 
+        //private async Task LoadEventsAsync()
+        //{
+
+        //    Events.Clear();
+
+        //    var selectedAnimalIds = AnimalFilters
+        //        .Where(kvp => kvp.Value)
+        //        .Select(kvp => kvp.Key)
+        //        .ToList();
+
+        //    var events = await _eventService.GetAllAsync();
+
+
+        //    if (SelectedType.Equals("Всички"))
+        //    {
+        //        var dateToUse = SelectedDate ?? DateTime.Today;
+        //        events = await _eventService.GetFilteredDateAsync(SelectedDate);
+
+
+        //        //var allEvents = await _eventService.GetAllAsync();
+        //        //foreach (var ev in results)
+        //        //    Events.Add(ev);
+        //        //SelectedDate = null;
+        //    }
+        //    else if (Enum.TryParse<EventType>(SelectedType, out var type))
+        //    {
+
+        //        var dateToUse = SelectedDate ?? DateTime.Today;
+        //        events = await _eventService.GetFilteredAsync(type, SelectedDate);
+
+        //        //foreach (var ev in results)
+        //        //    Events.Add(ev);
+        //    }
+
+        //    if (selectedAnimalIds.Any())
+        //    {
+        //        events = events.Where(ev =>
+        //            ev.AnimalIds.Any(id => selectedAnimalIds.Contains(id))
+        //        ).ToList();
+        //    }
+
+        //    foreach (var ev in events)
+        //        Events.Add(ev);
+
+        //}
+        //private async Task ClearFilters()
+        //{
+        //    Events.Clear();
+        //    SelectedDate = null;
+        //    SelectedType = "Всички";
+        //    //foreach (var key in AnimalFilters.Keys.ToList())
+        //    //{
+        //    //    AnimalFilters[key] = false;
+        //    //}
+        //    //OnPropertyChanged(nameof(AnimalFilters));
+        //    var allEvents = await _eventService.GetAllAsync();
+        //    foreach (var ev in allEvents)
+        //        Events.Add(ev);
+
+        //}
+        private async Task ClearFilters()
+        {
+            Events.Clear();
+            SelectedType = "Всички";
+            SelectedDate = null;
+
+            await LoadAllEventsAsync();
+        }
+        private async Task LoadAllEventsAsync()
+        {
+            Events.Clear();
+            var events = await _eventService.GetAllAsync();
+            foreach (var ev in events)
+                Events.Add(ev);
+        }
         private async Task LoadSelectedAnimalsAsync()
         {
             if (SelectedEvent == null || SelectedEvent.AnimalIds == null)
@@ -186,42 +270,56 @@ namespace UI.ViewModels
         }
         private async Task LoadAllAnimalsAsync()
         {
-            AllAnimals.Clear();
             var animals = await _animalService.GetAllAsync();
+            AllAnimals = new ObservableCollection<AnimalDto>(animals);
+            AnimalFilters.Clear();
 
             foreach (var animal in animals)
-                AllAnimals.Add(animal);
+            {
+                var filterItem = new AnimalCheckboxDto
+                {
+                    Id = animal.Id,
+                    Name = animal.Name,
+                };
+
+                // важен момент – автоматично презарежда списъка при чекване
+                filterItem.SelectionChanged = async () => await LoadEventsAsync();
+
+                AnimalFilters.Add(filterItem);
+            }
+
+            OnPropertyChanged(nameof(AllAnimals));
+            OnPropertyChanged(nameof(AnimalFilters));
         }
 
         private void OnEdit()
         {
-            if (SelectedEvent != null)
+            if (_selectedEvent != null)
             {
                 foreach (var ev in Events)
                     ev.IsEditMode = false;
 
-                SelectedEvent.IsEditMode = true;
+                _selectedEvent.IsEditMode = true;
 
                 EditingEvent = new EventDto
                 {
-                    Id = SelectedEvent.Id,
-                    Title = SelectedEvent.Title,
-                    Description = SelectedEvent.Description,
-                    Date = SelectedEvent.Date,
-                    Type = SelectedEvent.Type,
-                    AnimalIds = SelectedEvent.AnimalIds?.ToList() ?? new()
+                    Id = _selectedEvent.Id,
+                    Title = _selectedEvent.Title,
+                    Description = _selectedEvent.Description,
+                    Date = _selectedEvent.Date,
+                    Type = _selectedEvent.Type,
+                    AnimalIds = _selectedEvent.AnimalIds?.ToList() ?? new()
                 };
                 LoadSelectableAnimalsAsync();
-                // Това е важното
+                //    // Това е важното
                 SelectedAnimals.Clear();
                 foreach (var animal in AllAnimals)
                 {
                     if (EditingEvent.AnimalIds.Contains(animal.Id))
                         SelectedAnimals.Add(animal);
                 }
-
-
             }
+
         }
 
         private async Task OnDeleteAsync()
@@ -255,7 +353,7 @@ namespace UI.ViewModels
 
         }
 
-       
+
 
         private async Task LoadSelectableAnimalsAsync()
         {

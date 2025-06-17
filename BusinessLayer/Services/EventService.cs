@@ -6,6 +6,7 @@ using Data.Repositories.Interfaces;
 using Shared.Enums;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,8 @@ namespace BusinessLayer.Services
         private readonly IEventRepository _eventRepository;
         private readonly IAnimalRepository _animalRepository;
 
+
+
         public EventService(IEventRepository eventRepository, IAnimalRepository animalRepository)
         {
             _eventRepository = eventRepository;
@@ -26,7 +29,7 @@ namespace BusinessLayer.Services
 
         public async Task<IEnumerable<EventDto>> GetAllAsync()
         {
-            var events = await _eventRepository.GetAllAsyncWithAnimals(); 
+            var events = await _eventRepository.GetAllAsyncWithAnimals();
             return events.Select(eventA => eventA.ToDto());
         }
 
@@ -38,6 +41,33 @@ namespace BusinessLayer.Services
                 .Where(eventFilter => (!type.HasValue || eventFilter.Type == type.Value)
                           && (!date.HasValue || eventFilter.Date.Date == date.Value.Date))
                 .Select(e => e.ToDto());
+        }
+
+
+
+        public async Task<IEnumerable<EventDto>> GetFilteredDateAsync(DateTime? date)
+        {
+            var allfilterEvents = await _eventRepository.GetAllAsync();
+
+            return allfilterEvents
+                .Where(eventFilter => (!date.HasValue || eventFilter.Date.Date == date.Value.Date))
+                .Select(e => e.ToDto());
+        }
+
+        public async Task<IEnumerable<EventDto>> GetFilteredCombinedAsync(EventType? type, DateTime? date, List<Guid> animalIds)
+        {
+            var events = await _eventRepository.GetAllAsync();
+
+            if (type.HasValue)
+                events = events.Where(e => e.Type == type.Value);
+
+            if (date.HasValue)
+                events = events.Where(e => e.Date.Date == date.Value.Date);
+
+            if (animalIds != null && animalIds.Any())
+                events = events.Where(e => e.Animals.Any(a => animalIds.Contains(a.Id)));
+
+            return events.Select(e => e.ToDto());
         }
 
 
@@ -62,5 +92,6 @@ namespace BusinessLayer.Services
 
             await _eventRepository.DeleteAsync(entity);
         }
+
     }
 }

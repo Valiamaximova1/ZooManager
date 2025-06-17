@@ -19,6 +19,7 @@
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -30,10 +31,27 @@
                       Margin="0 0 10 0" />
             <Button Content="Търси"
                     Command="{Binding SearchCommand}"
-                    Width="100" />
+                    Width="100" Margin="0 0 10 0" />
+            <Button Content="Изчисти"
+                      Command="{Binding ClearCommand}"
+                      Width="100" />            
         </StackPanel>
 
-        <Grid Grid.Row="1">
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" >
+            <ItemsControl  ItemsSource="{Binding AnimalFilters}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Content="{Binding Name}"
+                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                          Margin="5" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        </StackPanel>
+
+
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding IsDetailsVisible, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter='*;3*'}"/>
                 <ColumnDefinition Width="{Binding IsDetailsVisible, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter='0;*'}"/>
