@@ -8,6 +8,7 @@ using Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,8 @@ namespace UI.ViewModels
         private readonly IAnimalService _animalService;
 
         private bool _isClearingFilters = false;
+        private bool _isRightClickSelection = false;
+
 
         private string _selectedType = "Всички";
         private DateTime? _selectedDate = null;
@@ -111,12 +114,17 @@ namespace UI.ViewModels
                         ev.IsEditMode = false;
 
                     _selectedEvent = value;
-                    IsDetailsVisible = value != null;
+
+                    // показвай детайли само ако не е от десен клик
+                    IsDetailsVisible = !_isRightClickSelection && value != null;
+
                     OnPropertyChanged();
 
-                    LoadSelectedAnimalsAsync();
-                }
+                    if (!_isRightClickSelection)
+                        LoadSelectedAnimalsAsync();
 
+                    _isRightClickSelection = false; // винаги нулираме след това
+                }
             }
         }
 
@@ -151,12 +159,19 @@ namespace UI.ViewModels
             }
         }
 
-      
+        public void SetRightClickSelection()
+        {
+            _isRightClickSelection = true;
+        }
+
+
+
         public ICommand ClearCommand { get; }
         public ICommand EditEventCommand { get; }
         public ICommand DeleteEventCommand { get; }
         public ICommand SaveEventCommand { get; }
         public ICommand LoadEventsCommand { get; }
+
 
         private async Task LoadEventsAsync()
         {
@@ -269,6 +284,7 @@ namespace UI.ViewModels
 
         private void OnEdit()
         {
+         
             if (_selectedEvent != null)
             {
                 foreach (var ev in Events)
