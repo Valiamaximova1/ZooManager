@@ -94,16 +94,20 @@ namespace UI.ViewModels
             try
             {
                 var invalidSelections = Selections
-                    .Where(selectElement => selectElement.Quantity < 0)
-                    .ToList();
+                   .Where(s =>
+                       s.Quantity < 0 ||
+                       s.Quantity > s.Template.AvailableQuantity
+                   )
+                   .ToList();
 
                 if (invalidSelections.Any())
                 {
-                    MessageBox.Show("Моля, въведете валиден брой билети (положително число) за всеки избор.", "Грешка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
+                    foreach (var s in Selections)
+                        s.Quantity = 0;
 
-                foreach (var selection in Selections.Where(selectElement => selectElement.Quantity > 0))
+                    throw new InvalidOperationException();
+                }
+                foreach (var selection in Selections.Where(s => s.Quantity > 0))
                 {
                     await _ticketService.PurchaseTicketAsync(
                         _currentUserId,
@@ -117,13 +121,15 @@ namespace UI.ViewModels
             }
             catch (InvalidOperationException)
             {
-                MessageBox.Show("Недостатъчна наличност");
+                MessageBox.Show("Невалидно количество",
+                    "Грешка", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (Exception)
             {
-                MessageBox.Show("Възникна неочаквана грешка.", "Грешка");
+                MessageBox.Show("Възникна неочаквана грешка.", "Грешка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
     }
 
 }

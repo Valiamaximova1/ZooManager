@@ -11,7 +11,6 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <converters:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter" />
-        <!-- <converters:AnimalSelectionMultiConverter x:Key="AnimalSelectionMultiConverter" /> -->
     </UserControl.Resources>
 
 
@@ -24,7 +23,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
-            <DatePicker SelectedDate="{Binding SelectedDate}" Margin="0 0 10 0" />
+            <DatePicker SelectedDate="{Binding SelectedDate }" SelectedDateFormat="Short"
+        Language="bg-BG" Margin="0 0 10 0" />
             <ComboBox ItemsSource="{Binding EventTypes}"
                       SelectedItem="{Binding SelectedType}"
                       Width="150"
@@ -146,7 +146,9 @@
                                     <DataTrigger Binding="{Binding  SelectedEvent.IsEditMode}" Value="True">
                                         <Setter Property="Content">
                                             <Setter.Value>
-                                                <DatePicker SelectedDate="{Binding EditingEvent.Date, Mode=TwoWay}" />
+
+                                                <DatePicker SelectedDate="{Binding EditingEvent.Date, Mode=TwoWay}"
+                                                    SelectedDateFormat="Short"  Language="bg-BG" />
                                             </Setter.Value>
                                         </Setter>
                                     </DataTrigger>

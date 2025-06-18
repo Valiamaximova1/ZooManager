@@ -4,6 +4,8 @@
              xmlns:vm="clr-namespace:UI.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+
              mc:Ignorable="d">
 
     <Grid Margin="20">
@@ -32,16 +34,18 @@
                                 <TextBlock Text="{Binding Template.Description}" FontSize="13"/>
                                 <TextBlock Text="{Binding Template.Price}" FontSize="13"/>
                                 <TextBlock Text="{Binding Template.Type}" FontStyle="Italic" Margin="0,3,0,0"/>
-                                <TextBlock Text="Налични: " FontWeight="SemiBold" Margin="0,3,0,0">
-                            <Run Text="{Binding Template.AvailableQuantity}" />
-                                </TextBlock>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <TextBlock Text="Бройка: " VerticalAlignment="Center"/>
-                                    <TextBox Width="50"
-                                     Margin="5 0"
-                                     Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" />
-                                </StackPanel>
+                                 <TextBlock Text="Налични: " FontWeight="SemiBold" Margin="0,3,0,0">
+                                     <Run Text="{Binding Template.AvailableQuantity}" />
+                                </TextBlock>
+                                
+                                <xctk:IntegerUpDown
+                                    Width="60"
+                                    Margin="5 0"
+                                    Minimum="0"
+                                     AllowTextInput="True" 
+                                    Value="{Binding Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
                             </StackPanel>
                         </Border>
                     </DataTemplate>

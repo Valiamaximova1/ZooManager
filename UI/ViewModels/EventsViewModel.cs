@@ -36,7 +36,7 @@ namespace UI.ViewModels
         public ObservableCollection<string> EventTypes { get; } =
         new ObservableCollection<string>(new[] { "Всички" }.Concat(Enum.GetNames(typeof(EventType))));
         public ObservableCollection<EventType> EditableEventTypes { get; } =
-      new ObservableCollection<EventType>((EventType[])Enum.GetValues(typeof(EventType)));
+         new ObservableCollection<EventType>((EventType[])Enum.GetValues(typeof(EventType)));
 
 
         public ObservableCollection<AnimalSelectableViewModel> SelectableAnimals { get; } = new();
