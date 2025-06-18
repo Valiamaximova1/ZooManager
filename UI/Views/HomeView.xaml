@@ -8,13 +8,78 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" Background="#EEE" Margin="10">
-            <Button Content="Животни" Command="{Binding ShowAnimalsCommand}" Margin="0 5"/>
-            <Button Content="Събития" Command="{Binding ShowEventsCommand}" Margin="0 5"/>
-            <Button Content="Билети" Command="{Binding ShowTicketsCommand}" Margin="0 5"/> 
-            <Button Content="Профил" Command="{Binding ShowProfileCommand}" Margin="0 10 0 0"/>
+        <StackPanel Grid.Column="0"  Background="#EEE"  >
+            <StackPanel Margin="15">
+
+                <Button Content="Животни" Command="{Binding ShowAnimalsCommand}"
+                        Margin="0 5">   
+                    <Button.Style>
+                    <Style TargetType="Button">
+                            <Setter Property="Background" Value="White"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedTab}" Value="Animals">
+                                <Setter Property="Background" Value="CornflowerBlue"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button Content="Събития" Command="{Binding ShowEventsCommand}"
+                    Margin="0 5">
+                <Button.Style>
+                    <Style TargetType="Button">
+                            <Setter Property="Background" Value="White"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedTab}" Value="Events">
+                                <Setter Property="Background" Value="CornflowerBlue"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button Content="Билети" Command="{Binding ShowTicketsCommand}"
+                    Margin="0 5">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedTab}" Value="Tickets">
+                                <Setter Property="Background" Value="CornflowerBlue"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button Content="Профил" Command="{Binding ShowProfileCommand}"
+                    Margin="0 10 0 0">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedTab}" Value="Profile">
+                                <Setter Property="Background" Value="CornflowerBlue"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            </StackPanel>
+           
 
         </StackPanel>
+
+
 
     
         <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}" />

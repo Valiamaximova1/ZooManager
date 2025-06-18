@@ -16,6 +16,7 @@ namespace UI.ViewModels
         private readonly ITicketService _ticketService;
         private readonly IUserService _userService;
 
+        private string _selectedTab;
 
         private BaseViewModel _currentViewModel;
         private readonly UserDto _user;
@@ -49,7 +50,18 @@ namespace UI.ViewModels
                 _currentViewModel = value;
                 OnPropertyChanged();
             }
-        } 
+        }
+
+        public string SelectedTab
+        {
+            get => _selectedTab;
+            set
+            {
+                _selectedTab = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand ShowAnimalsCommand { get; }
         public ICommand ShowEventsCommand { get; }
         public ICommand ShowTicketsCommand { get; }
@@ -59,20 +71,24 @@ namespace UI.ViewModels
         private void ShowAnimals()
         {
             CurrentViewModel = new AnimalsViewModel(_animalService);
+            SelectedTab = "Animals";
         }
 
         private void ShowEvents()
         {
             CurrentViewModel = new EventsViewModel(_eventService, _animalService);
+            SelectedTab = "Events";
         }
         private void ShowTickets()
         {
             CurrentViewModel = new TicketsViewModel(_ticketService, _user.Id);
+            SelectedTab = "Tickets";
         }
         private void ShowProfile()
         {
             //LogoutRequested е събитие, декларирано в HomeViewModel
             CurrentViewModel = new ProfileViewModel(_user, () => LogoutRequested?.Invoke(), _ticketService, _userService);
+            SelectedTab = "Profile";
         }
 
 
