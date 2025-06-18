@@ -49,6 +49,7 @@ namespace UI.ViewModels
             EditAnimalCommand = new DelegateCommand<AnimalDto>(ShowEditPopup);
 
             OpenAddAnimalCommand = new DelegateCommand(() => AddAnimalRequested?.Invoke());
+            DeleteAnimalCommand = new DelegateCommand<AnimalDto>(async (animal) => await OnDeleteAnimalAsync(animal));
 
             CloseEditPopupCommand = new DelegateCommand(() => IsEditPopupOpen = false);
 
@@ -63,6 +64,7 @@ namespace UI.ViewModels
         public ICommand AddAnimalPageCommand { get; }
         public ICommand OpenAddAnimalCommand { get; }
         public ICommand CloseEditPopupCommand { get; }
+        public ICommand DeleteAnimalCommand { get; }
 
         public AnimalDto SelectedAnimal
         {
@@ -106,7 +108,17 @@ namespace UI.ViewModels
         public string SelectedCategory { get; set; } = "Всички";
 
 
+        private async Task OnDeleteAnimalAsync(AnimalDto animal)
+        {
+            if (animal == null) return;
 
+            var result = MessageBox.Show($"Сигурни ли сте, че искате да изтриете {animal.Name}?", "Изтриване", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                await _animalService.DeleteAsync(animal.Id);
+                Animals.Remove(animal);
+            }
+        }
         public async Task<ObservableCollection<AnimalDto>> LoadAnimalsAsync()
         {
             Animals.Clear();

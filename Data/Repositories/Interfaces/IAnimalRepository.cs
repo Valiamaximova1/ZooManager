@@ -15,5 +15,6 @@ namespace Data.Repositories.Interfaces
         Task<Animal> GetByIdAsync(Guid id);
         Task SaveChangesAsync();
         Task AddAsync(Animal animal);
+        Task DeleteAsync(Animal animal);
     }
 }

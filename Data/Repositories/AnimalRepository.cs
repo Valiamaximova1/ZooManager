@@ -41,5 +41,10 @@ namespace Data.Repositories
         {
             await _context.Animals.AddAsync(animal);
         }
+        public async Task DeleteAsync(Animal animal)
+        {
+            _context.Animals.Remove(animal);
+            await _context.SaveChangesAsync();
+        }
     }
 }

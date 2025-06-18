@@ -61,7 +61,14 @@ namespace BusinessLayer.Services
             await _repository.AddAsync(entity);
             await _repository.SaveChangesAsync();
         }
-
+        public async Task DeleteAsync(Guid id)
+        {
+            var animal = await _repository.GetByIdAsync(id);
+            if (animal != null)
+            {
+                await _repository.DeleteAsync(animal);
+            }
+        }
     }
 
 }

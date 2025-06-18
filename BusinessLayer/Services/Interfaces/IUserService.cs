@@ -16,6 +16,6 @@ namespace BusinessLayer.Services.Interfaces
         UserDto CurrentUser { get; }
         void SetCurrentUser(UserDto user);
         Task<bool> ChangePasswordAsync(String email, string currentPassword, string newPassword);
-       
+        
     }
 }

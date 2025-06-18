@@ -16,6 +16,7 @@ namespace BusinessLayer.Services.Interfaces
         Task<AnimalDto> GetByIdAsync(Guid id);
         Task UpdateAsync(AnimalDto animal);
         Task CreateAsync(AnimalDto animalDto);
+        Task DeleteAsync(Guid id);
     }
 
 }
