@@ -16,6 +16,12 @@ namespace UI.ViewModels
         private readonly ITicketService _ticketService;
         private readonly IUserService _userService;
 
+
+        private AnimalsViewModel _animalViewModel;
+        private EventsViewModel _eventViewModel;
+        private TicketsViewModel _ticketViewModel;
+        private ProfileViewModel _profileViewModel;
+
         private string _selectedTab;
 
         private BaseViewModel _currentViewModel;
@@ -39,7 +45,7 @@ namespace UI.ViewModels
 
             // Зареждаме начално екрана с животни
             ShowAnimals();
-         
+
         }
 
         public BaseViewModel CurrentViewModel
@@ -67,27 +73,41 @@ namespace UI.ViewModels
         public ICommand ShowTicketsCommand { get; }
         public ICommand ShowProfileCommand { get; }
 
-        
+
         private void ShowAnimals()
         {
-            CurrentViewModel = new AnimalsViewModel(_animalService);
+            if (_animalViewModel == null)
+            {
+                _animalViewModel = new AnimalsViewModel(_animalService);
+            }
+            CurrentViewModel = _animalViewModel;
             SelectedTab = "Animals";
         }
 
         private void ShowEvents()
         {
-            CurrentViewModel = new EventsViewModel(_eventService, _animalService);
+            if (_eventViewModel == null)
+            {
+                _eventViewModel = new EventsViewModel(_eventService, _animalService);
+            }
+            CurrentViewModel = _eventViewModel;
             SelectedTab = "Events";
         }
         private void ShowTickets()
         {
-            CurrentViewModel = new TicketsViewModel(_ticketService, _user.Id);
+            if (_ticketViewModel == null)
+                _ticketViewModel = new TicketsViewModel(_ticketService, _user.Id);
+
+            CurrentViewModel = _ticketViewModel;
             SelectedTab = "Tickets";
         }
         private void ShowProfile()
         {
-            //LogoutRequested е събитие, декларирано в HomeViewModel
-            CurrentViewModel = new ProfileViewModel(_user, () => LogoutRequested?.Invoke(), _ticketService, _userService);
+            if (_profileViewModel == null)
+                //LogoutRequested е събитие, декларирано в HomeViewModel
+                _profileViewModel = new ProfileViewModel(_user, () => LogoutRequested?.Invoke(), _ticketService, _userService);
+
+            CurrentViewModel = _profileViewModel;
             SelectedTab = "Profile";
         }
 
