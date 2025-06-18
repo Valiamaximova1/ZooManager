@@ -38,6 +38,14 @@
         <DataTemplate DataType="{x:Type viewmodels:TicketsViewModel}">
             <views:TicketsView />
         </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewmodels:AnimalEditViewModel}">
+            <views:AnimalEditView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:AddAnimalViewModel}">
+            <views:AddAnimalView />
+        </DataTemplate>
     </Application.Resources>
 
 

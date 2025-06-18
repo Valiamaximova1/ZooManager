@@ -18,7 +18,12 @@
                       ItemsSource="{Binding Categories}"
                       SelectedItem="{Binding SelectedCategory}" 
                       Margin="0 0 10 0" />
-            <Button Content="Търси" Command="{Binding SearchCommand}" />
+            <Button Content="Търси" Command="{Binding SearchCommand}"  />
+            <Button Content="Добави животно"
+                Command="{Binding OpenAddAnimalCommand}"
+               HorizontalAlignment="Right"
+               Margin="10 0 0 0"/>       
+
         </StackPanel>
 
         <ScrollViewer Grid.Row="1">
@@ -33,6 +38,8 @@
                     <DataTemplate>
                         <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Margin="10" Padding="10" Width="200">
                             <StackPanel>
+                                <Image Source="{Binding FullImagePath}" Width="200" Height="200" Stretch="UniformToFill" Margin="0 0 0 10"/>
+
                                 <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" />
                                 <TextBlock Text="{Binding Category}" Margin="0 5 0 5" />
                                 <Button Content="Пусни звук" 
@@ -40,6 +47,9 @@
                                         CommandParameter="{Binding}" />
                                 <Button Content="Детайли"
                                         Command="{Binding DataContext.ShowAnimalDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Margin="0 5 0 0" />
+                                <Button Content="Редакция"
+                                        Command="{Binding DataContext.EditAnimalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}" Margin="0 5 0 0" />
                             </StackPanel>
                         </Border>
@@ -50,5 +60,9 @@
         <Popup IsOpen="{Binding IsPopupOpen}" StaysOpen="False" Placement="Center">
             <views:AnimalDetailsView DataContext="{Binding}" />
         </Popup>
+        <Popup IsOpen="{Binding IsEditPopupOpen}" StaysOpen="False" Placement="Center">
+            <ContentControl Content="{Binding EditViewModel}" />
+        </Popup>
+
     </Grid>
 </UserControl>

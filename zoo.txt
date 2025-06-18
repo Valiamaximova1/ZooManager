@@ -310,6 +310,10 @@ TicketService	Mappers	DTO ↔ Entity
 View	ViewModel	чрез Binding
 Repositories	DbContext	работят с EF Core
 
-
+Margin
+Left,
+Top,
+Right,
+Bottom
 
 

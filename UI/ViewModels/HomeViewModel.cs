@@ -43,6 +43,7 @@ namespace UI.ViewModels
             ShowTicketsCommand = new DelegateCommand(ShowTickets);
             ShowProfileCommand = new DelegateCommand(ShowProfile);
 
+            ShowAddAnimalCommand = new DelegateCommand(ShowAddAnimalPage);
             // Зареждаме начално екрана с животни
             ShowAnimals();
 
@@ -72,6 +73,7 @@ namespace UI.ViewModels
         public ICommand ShowEventsCommand { get; }
         public ICommand ShowTicketsCommand { get; }
         public ICommand ShowProfileCommand { get; }
+        public ICommand ShowAddAnimalCommand { get; }
 
 
         private void ShowAnimals()
@@ -79,6 +81,7 @@ namespace UI.ViewModels
             if (_animalViewModel == null)
             {
                 _animalViewModel = new AnimalsViewModel(_animalService);
+                _animalViewModel.AddAnimalRequested += ShowAddAnimalPage;
             }
             CurrentViewModel = _animalViewModel;
             SelectedTab = "Animals";
@@ -86,10 +89,10 @@ namespace UI.ViewModels
 
         private void ShowEvents()
         {
-            if (_eventViewModel == null)
-            {
+            //if (_eventViewModel == null)
+            //{
                 _eventViewModel = new EventsViewModel(_eventService, _animalService);
-            }
+            //}
             CurrentViewModel = _eventViewModel;
             SelectedTab = "Events";
         }
@@ -112,6 +115,21 @@ namespace UI.ViewModels
         }
 
 
+        private void ShowAddAnimalPage()
+        {
+            var addViewModel = new AddAnimalViewModel(_animalService, async () =>
+            {
+                // Презареждаме списъка с животни
+                if (_animalViewModel == null)
+                    _animalViewModel = new AnimalsViewModel(_animalService);
+                else
+                    await _animalViewModel.LoadAnimalsAsync(); 
 
+                CurrentViewModel = _animalViewModel;
+            });
+
+            CurrentViewModel = addViewModel;
+           
+        }
     }
 }

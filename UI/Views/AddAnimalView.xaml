@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="UI.Views.AddAnimalView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:UI.Views"
+             xmlns:viewmodels="clr-namespace:UI.ViewModels">
+    <Grid Margin="20">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Width="300">
+            <TextBlock Text="Добави животно" FontSize="20" Margin="0 0 0 20"/>
+
+            <TextBlock Text="Име"/>
+            <TextBox Text="{Binding NewAnimal.Name}"  Margin="0 5"/>
+            <TextBlock Text="Описание"/>
+            <TextBox Text="{Binding NewAnimal.Description}" AcceptsReturn="True" Height="80" Margin="0 5"/>
+
+            <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding NewAnimal.Category}" Margin="0 5"/>
+
+            <Button Content="Избери снимка" Command="{Binding BrowseImageCommand}" Margin="0 5"/>
+            <Button Content="Избери звук" Command="{Binding BrowseSoundCommand}" Margin="0 5"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 10">
+                <Button Content="Назад" Command="{Binding GoBackCommand}" Width="100" Margin="5"/>
+                <Button Content="Запази" Command="{Binding SaveCommand}" Width="100" Margin="5"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -24,11 +24,7 @@ namespace BusinessLayer.DTOs
         {
             get
             {
-                return System.IO.Path.Combine(
-                    System.AppDomain.CurrentDomain.BaseDirectory,
-                    "Assets",
-                    ImagePath.Replace("/", System.IO.Path.DirectorySeparatorChar.ToString())
-                );
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", ImagePath);
             }
         }
     }

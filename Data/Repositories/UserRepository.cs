@@ -32,11 +32,11 @@ namespace Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        //public async Task UpdateAsync(Event ev)
-        //{
-        //    _context.Events.Update(ev);
-        //    await _context.SaveChangesAsync();
-        //}
+        public async Task<User> GetByIdAsync(Guid id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+        }
+
 
     }
 }

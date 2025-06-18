@@ -28,6 +28,18 @@ namespace Data.Repositories
                              .ToListAsync();
 
         public async Task<Animal> GetByIdAsync(Guid id)
-            => await _context.Animals.FirstOrDefaultAsync(animal => animal.Id == id);
+        {
+            return await _context.Animals.FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+        public async Task AddAsync(Animal animal)
+        {
+            await _context.Animals.AddAsync(animal);
+        }
     }
 }

@@ -13,5 +13,7 @@ namespace Data.Repositories.Interfaces
         Task<IEnumerable<Animal>> GetAllAsync();
         Task<IEnumerable<Animal>> GetByCategoryAsync(AnimalCategory category);
         Task<Animal> GetByIdAsync(Guid id);
+        Task SaveChangesAsync();
+        Task AddAsync(Animal animal);
     }
 }

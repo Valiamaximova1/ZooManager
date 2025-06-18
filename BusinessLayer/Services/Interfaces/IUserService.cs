@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace BusinessLayer.Services.Interfaces
         UserDto CurrentUser { get; }
         void SetCurrentUser(UserDto user);
         Task<bool> ChangePasswordAsync(String email, string currentPassword, string newPassword);
+       
     }
 }

@@ -18,7 +18,7 @@ namespace BusinessLayer.Mappers
                 Name = animal.Name,
                 Description = animal.Description,
                 ImagePath = animal.ImagePath,
-                SoundPath = $"Assets/{animal.SoundPath}",
+                SoundPath = animal.SoundPath,
                 Category = animal.Category
             };
         }
@@ -30,10 +30,21 @@ namespace BusinessLayer.Mappers
                 Id = dto.Id,
                 Name = dto.Name,
                 Description = dto.Description,
-                ImagePath = dto.ImagePath,
-                SoundPath = dto.SoundPath,
+                ImagePath = CleanAssetPath(dto.ImagePath),
+                SoundPath = CleanAssetPath(dto.SoundPath),
                 Category = dto.Category
             };
+        }
+        private static string CleanAssetPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return null;
+
+            // Премахва "Assets/" или "Assets\"
+            var cleaned = path.Replace("\\", "/");
+            if (cleaned.StartsWith("Assets/"))
+                cleaned = cleaned.Substring("Assets/".Length);
+
+            return cleaned;
         }
     }
 

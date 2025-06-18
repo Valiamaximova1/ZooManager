@@ -1,8 +1,10 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Mappers;
 using BusinessLayer.Services.Interfaces;
-using Shared.Enums;
+using Data.Repositories;
 using Data.Repositories.Interfaces;
+using Models;
+using Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,29 @@ namespace BusinessLayer.Services
             var animal = await _repository.GetByIdAsync(id);
             return animal.ToDto();
         }
+
+        public async Task UpdateAsync(AnimalDto animal)
+        {
+            var existingAnimal = await _repository.GetByIdAsync(animal.Id);
+            if (existingAnimal != null)
+            {
+                existingAnimal.Name = animal.Name;
+                existingAnimal.Description = animal.Description;
+                existingAnimal.Category = animal.Category;
+                existingAnimal.ImagePath = animal.ImagePath;
+                existingAnimal.SoundPath = animal.SoundPath;
+
+                await _repository.SaveChangesAsync(); 
+            }
+        }
+
+        public async Task CreateAsync(AnimalDto animalDto)
+        {
+            var entity = animalDto.ToEntity(); // използваш вече съществуващия мапър
+            await _repository.AddAsync(entity);
+            await _repository.SaveChangesAsync();
+        }
+
     }
 
 }
