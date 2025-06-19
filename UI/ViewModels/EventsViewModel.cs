@@ -1,21 +1,11 @@
 ﻿using BusinessLayer.DTOs;
-using BusinessLayer.Services;
 using BusinessLayer.Services.Interfaces;
-using DevExpress.Xpo.DB;
-using Microsoft.Extensions.Logging;
-using Models;
 using Shared.Enums;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using UI.Commands;
-using static DevExpress.Xpo.Helpers.CannotLoadObjectsHelper;
 
 namespace UI.ViewModels
 {
@@ -25,9 +15,11 @@ namespace UI.ViewModels
         private readonly IEventService _eventService;
         private readonly IAnimalService _animalService;
 
+        private bool _isPopupOpen;
+
         private bool _isClearingFilters = false;
         private bool _isRightClickSelection = false;
-
+        //private DispatcherTimer _animalsReloadTimer;
 
         private string _selectedType = "Всички";
         private DateTime? _selectedDate = null;
@@ -61,7 +53,7 @@ namespace UI.ViewModels
             _eventService = eventService;
             _animalService = animalService;
 
-          
+
             ClearCommand = new AsyncDelegateCommand(ClearFilters);
             EditEventCommand = new DelegateCommand(OnEdit);
             DeleteEventCommand = new AsyncDelegateCommand(OnDeleteAsync);
@@ -70,10 +62,18 @@ namespace UI.ViewModels
 
             LoadAllAnimalsAsync();
             LoadEventsAsync();
+            StartAnimalAutoReload(1000);
         }
 
-
-
+        public bool IsPopupOpen
+        {
+            get => _isPopupOpen;
+            set
+            {
+                _isPopupOpen = value;
+                OnPropertyChanged();
+            }
+        }
         public string SelectedType
         {
             get => _selectedType;
@@ -234,14 +234,15 @@ namespace UI.ViewModels
             // Еднократно зареждане след пълното възстановяване на делегатите
             await LoadEventsAsync();
         }
-
         private async Task LoadAllAnimalsAsync()
         {
-            Events.Clear();
-            if (AnimalFilters.Any()) return;
             var animals = await _animalService.GetAllAsync();
 
             AllAnimals = new ObservableCollection<AnimalDto>(animals);
+            OnPropertyChanged(nameof(AllAnimals));
+
+            // Обнови AnimalFilters, като запазиш избора
+            var previouslySelected = AnimalFilters.Where(a => a.IsSelected).Select(a => a.Id).ToHashSet();
             AnimalFilters.Clear();
 
             foreach (var animal in animals)
@@ -249,11 +250,10 @@ namespace UI.ViewModels
                 var filterItem = new AnimalCheckboxDto
                 {
                     Id = animal.Id,
-                    Name = animal.Name
+                    Name = animal.Name,
+                    IsSelected = previouslySelected.Contains(animal.Id)
                 };
 
-                // Задаваме делегат за автоматично презареждане при промяна,
-                // но само ако не сме в режим на изчистване
                 filterItem.SelectionChanged = async () =>
                 {
                     if (!_isClearingFilters)
@@ -263,9 +263,40 @@ namespace UI.ViewModels
                 AnimalFilters.Add(filterItem);
             }
 
-            OnPropertyChanged(nameof(AllAnimals));
             OnPropertyChanged(nameof(AnimalFilters));
         }
+
+        //private async Task LoadAllAnimalsAsync()
+        //{
+        //    Events.Clear();
+        //    if (AnimalFilters.Any()) return;
+        //    var animals = await _animalService.GetAllAsync();
+
+        //    AllAnimals = new ObservableCollection<AnimalDto>(animals);
+        //    AnimalFilters.Clear();
+
+        //    foreach (var animal in animals)
+        //    {
+        //        var filterItem = new AnimalCheckboxDto
+        //        {
+        //            Id = animal.Id,
+        //            Name = animal.Name
+        //        };
+
+        //        // Задаваме делегат за автоматично презареждане при промяна,
+        //        // но само ако не сме в режим на изчистване
+        //        filterItem.SelectionChanged = async () =>
+        //        {
+        //            if (!_isClearingFilters)
+        //                await LoadEventsAsync();
+        //        };
+
+        //        AnimalFilters.Add(filterItem);
+        //    }
+
+        //    OnPropertyChanged(nameof(AllAnimals));
+        //    OnPropertyChanged(nameof(AnimalFilters));
+        //}
         private async Task LoadSelectedAnimalsAsync()
         {
             if (SelectedEvent == null || SelectedEvent.AnimalIds == null)
@@ -280,11 +311,9 @@ namespace UI.ViewModels
                 SelectedAnimals.Add(animal);
         }
 
-
-
         private void OnEdit()
         {
-         
+
             if (_selectedEvent != null)
             {
                 foreach (var ev in Events)
@@ -343,8 +372,6 @@ namespace UI.ViewModels
 
         }
 
-
-
         private async Task LoadSelectableAnimalsAsync()
         {
             SelectableAnimals.Clear();
@@ -358,5 +385,24 @@ namespace UI.ViewModels
                 SelectableAnimals.Add(new AnimalSelectableViewModel(animal, isSelected));
             }
         }
+
+        private DispatcherTimer _animalReloadTimer;
+
+        public void StartAnimalAutoReload(int intervalMilliseconds = 3000)
+        {
+            _animalReloadTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(intervalMilliseconds)
+            };
+
+            _animalReloadTimer.Tick += async (s, e) =>
+            {
+                await LoadAllAnimalsAsync();
+            };
+
+            _animalReloadTimer.Start();
+        }
+
+
     }
 }

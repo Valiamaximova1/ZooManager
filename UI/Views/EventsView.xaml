@@ -12,6 +12,7 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <converters:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter" />
+        
     </UserControl.Resources>
 
 
@@ -35,6 +36,8 @@
                       Command="{Binding ClearCommand}"
                       Width="100" />            
         </StackPanel>
+
+
 
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding AnimalFilters}">
@@ -67,29 +70,22 @@
               Grid.Column="0"
               IsReadOnly="True">
                 <i:Interaction.Behaviors>
+                    <behaviors:DataGridRightClickPopupBehavior />
                     <behaviors:DataGridDoubleClickBehavior Command="{Binding EditEventCommand}" />
                     <behaviors:DataGridDeleteKeyBehavior Command="{Binding DeleteEventCommand}" />
                 </i:Interaction.Behaviors>
-                
-                
+
+
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Заглавие" Binding="{Binding Title}" Width="*" />
                     <DataGridTextColumn Header="Тип" Binding="{Binding Type}" Width="*" />
                     <DataGridTextColumn Header="Дата" Binding="{Binding Date, StringFormat=dd.MM.yyyy}" Width="*" />
                 </DataGrid.Columns>
-                
-                <DataGrid.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Редактирай"
-                      Command="{Binding EditEventCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
-                        <MenuItem Header="Изтрий"
-                      Command="{Binding DeleteEventCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
-                    </ContextMenu>
-                </DataGrid.ContextMenu>
 
 
+               
 
-                
+
             </DataGrid>
 
             <Border Grid.Column="1"
@@ -250,6 +246,24 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
+
+            <Popup x:Name="RightClickPopup"
+           Placement="Mouse"
+           StaysOpen="False"
+           AllowsTransparency="True"
+           IsOpen="{Binding IsPopupOpen, Mode=TwoWay}">
+                <Border Background="White" Padding="5" BorderBrush="Gray" BorderThickness="1">
+                    <StackPanel>
+                        <Button Content="Редактирай"
+                        Command="{Binding EditEventCommand}"
+                        CommandParameter="{Binding SelectedEvent}" />
+                        <Button Content="Изтрий"
+                        Command="{Binding DeleteEventCommand}"
+                        CommandParameter="{Binding SelectedEvent}" />
+                    </StackPanel>
+                </Border>
+            </Popup>
         </Grid>
+        
     </Grid>
 </UserControl>

@@ -89,10 +89,10 @@ namespace UI.ViewModels
 
         private void ShowEvents()
         {
-            //if (_eventViewModel == null)
-            //{
+            if (_eventViewModel == null)
+            {
                 _eventViewModel = new EventsViewModel(_eventService, _animalService);
-            //}
+            }
             CurrentViewModel = _eventViewModel;
             SelectedTab = "Events";
         }
@@ -106,7 +106,7 @@ namespace UI.ViewModels
         }
         private void ShowProfile()
         {
-            if (_profileViewModel == null)
+            //if (_profileViewModel == null)
                 //LogoutRequested е събитие, декларирано в HomeViewModel
                 _profileViewModel = new ProfileViewModel(_user, () => LogoutRequested?.Invoke(), _ticketService, _userService);
 
