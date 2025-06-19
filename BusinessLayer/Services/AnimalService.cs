@@ -57,7 +57,7 @@ namespace BusinessLayer.Services
 
         public async Task CreateAsync(AnimalDto animalDto)
         {
-            var entity = animalDto.ToEntity(); // използваш вече съществуващия мапър
+            var entity = animalDto.ToEntity(); 
             await _repository.AddAsync(entity);
             await _repository.SaveChangesAsync();
         }

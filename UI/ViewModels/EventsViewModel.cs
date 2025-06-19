@@ -391,15 +391,25 @@ namespace UI.ViewModels
         {
             try
             {
-                var exporter = new ExcelExporter();
+                var saveDialog = new Microsoft.Win32.SaveFileDialog
+                {
+                    Title = "Избери място за запис на Excel файл",
+                    Filter = "Excel файлове (*.xlsx)|*.xlsx",
+                    FileName = "EventsExport.xlsx"
+                };
 
-                string startupPath = AppDomain.CurrentDomain.BaseDirectory;
-                string solutionPath = Path.GetFullPath(Path.Combine(startupPath, @"..\..\..\.."));
-                string filePath = Path.Combine(solutionPath, "EventsExport.xlsx");
+                if (saveDialog.ShowDialog() == true)
+                {
+                    var exporter = new ExcelExporter();
 
-                await exporter.ExportEventsToExcel(FilteredEvents, filePath);
+                    //string startupPath = AppDomain.CurrentDomain.BaseDirectory;
+                    //string solutionPath = Path.GetFullPath(Path.Combine(startupPath, @"..\..\..\.."));
+                    //string filePath = Path.Combine(solutionPath, "EventsExport.xlsx");
 
-                MessageBox.Show("Успешен експорт на събития!", "Excel", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await exporter.ExportEventsToExcel(FilteredEvents, saveDialog.FileName);
+
+                    MessageBox.Show("Успешен експорт на събития!", "Excel", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {

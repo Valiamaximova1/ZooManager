@@ -39,21 +39,53 @@ namespace UI.ViewModels
             GoBackCommand = new DelegateCommand(() => _goBack?.Invoke());
         }
 
+        //private void BrowseImage()
+        //{
+        //    var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Images|*.jpg;*.png" };
+        //    if (dialog.ShowDialog() != true)
+        //        return;
+
+        //    var fileName = Path.GetFileName(dialog.FileName);
+        //    string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\.."));
+        //    string destDir = Path.Combine(projectRoot, "Assets", "Images");
+        //    Directory.CreateDirectory(destDir);
+
+        //    string destPath = Path.Combine(destDir, fileName);
+        //    File.Copy(dialog.FileName, destPath, true);
+
+        //    _imagePath = Path.Combine("Images", fileName);
+        //    NewAnimal.ImagePath = _imagePath;
+        //    OnPropertyChanged(nameof(NewAnimal));
+        //}
         private void BrowseImage()
         {
             var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Images|*.jpg;*.png" };
             if (dialog.ShowDialog() != true)
                 return;
-            
+
             var fileName = Path.GetFileName(dialog.FileName);
             string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\.."));
             string destDir = Path.Combine(projectRoot, "Assets", "Images");
             Directory.CreateDirectory(destDir);
 
             string destPath = Path.Combine(destDir, fileName);
+            string relativePath;
+
+            // Проверка за съществуващ файл и създаване на уникално име, ако е нужно
+            if (File.Exists(destPath))
+            {
+                string uniqueName = Path.GetFileNameWithoutExtension(fileName) + "_" + Guid.NewGuid() + Path.GetExtension(fileName);
+                destPath = Path.Combine(destDir, uniqueName);
+                relativePath = Path.Combine("Images", uniqueName);
+            }
+            else
+            {
+                relativePath = Path.Combine("Images", fileName);
+            }
+
             File.Copy(dialog.FileName, destPath, true);
 
-            _imagePath = Path.Combine("Images", fileName);
+            _imagePath = relativePath;
             NewAnimal.ImagePath = _imagePath;
             OnPropertyChanged(nameof(NewAnimal));
         }
@@ -61,21 +93,55 @@ namespace UI.ViewModels
         private void BrowseSound()
         {
             var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Audio|*.mp3;*.wav" };
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() != true)
+                return;
+
+            var fileName = Path.GetFileName(dialog.FileName);
+            string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\.."));
+            string destDir = Path.Combine(projectRoot, "Assets", "Sounds");
+            Directory.CreateDirectory(destDir);
+
+            string destPath = Path.Combine(destDir, fileName);
+            string relativePath;
+
+            // Проверка за съществуващ файл и създаване на уникално име, ако е нужно
+            if (File.Exists(destPath))
             {
-                var fileName = Path.GetFileName(dialog.FileName);
-                string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\.."));
-                string destDir = Path.Combine(projectRoot, "Assets", "Sounds");
-                Directory.CreateDirectory(destDir);
-
-                string destPath = Path.Combine(destDir, fileName);
-                File.Copy(dialog.FileName, destPath, true);
-
-                _soundPath = Path.Combine("Sounds", fileName);
-                NewAnimal.SoundPath = _soundPath;
-                OnPropertyChanged(nameof(NewAnimal));
+                string uniqueName = Path.GetFileNameWithoutExtension(fileName) + "_" + Guid.NewGuid() + Path.GetExtension(fileName);
+                destPath = Path.Combine(destDir, uniqueName);
+                relativePath = Path.Combine("Sounds", uniqueName);
             }
+            else
+            {
+                relativePath = Path.Combine("Sounds", fileName);
+            }
+
+            File.Copy(dialog.FileName, destPath, true);
+
+            _soundPath = relativePath;
+            NewAnimal.SoundPath = _soundPath;
+            OnPropertyChanged(nameof(NewAnimal));
         }
+
+
+        //private void BrowseSound()
+        //{
+        //    var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Audio|*.mp3;*.wav" };
+        //    if (dialog.ShowDialog() == true)
+        //    {
+        //        var fileName = Path.GetFileName(dialog.FileName);
+        //        string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\.."));
+        //        string destDir = Path.Combine(projectRoot, "Assets", "Sounds");
+        //        Directory.CreateDirectory(destDir);
+
+        //        string destPath = Path.Combine(destDir, fileName);
+        //        File.Copy(dialog.FileName, destPath, true);
+
+        //        _soundPath = Path.Combine("Sounds", fileName);
+        //        NewAnimal.SoundPath = _soundPath;
+        //        OnPropertyChanged(nameof(NewAnimal));
+        //    }
+        //}
 
         private async Task SaveAsync()
         {

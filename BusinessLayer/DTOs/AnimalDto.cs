@@ -24,6 +24,9 @@ namespace BusinessLayer.DTOs
         {
             get
             {
+                if (string.IsNullOrEmpty(ImagePath))
+                    return null;
+
                 return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", ImagePath);
             }
         }
