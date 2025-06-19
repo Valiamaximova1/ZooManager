@@ -1,10 +1,12 @@
 ﻿using BusinessLayer.DTOs;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace BusinessLayer.Mappers
 {
@@ -19,7 +21,9 @@ namespace BusinessLayer.Mappers
                 Description = ev.Description,
                 Date = ev.Date,
                 Type = ev.Type,
-                AnimalIds = ev.Animals?.Select(a => a.Id).ToList() ?? new()
+                AnimalIds = ev.Animals?.Select(a => a.Id).ToList() ?? new(),
+                AnimalNames = ev.Animals?.Select(a => a.Name).ToList() ?? new(),
+                TicketCount = ev.TicketTemplates?.Sum(t => t.AvailableQuantity) ?? 0
             };
         }
 
@@ -33,7 +37,7 @@ namespace BusinessLayer.Mappers
                 Description = dto.Description,
                 Date = dto.Date,
                 Type = dto.Type,
-                Animals = new List<Animal>()
+                Animals = new List<Animal>(),
             };
 
             foreach (var id in dto.AnimalIds.Distinct())

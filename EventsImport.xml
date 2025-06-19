@@ -1,0 +1,27 @@
+<Events>
+  <Event>
+    <Title>Нз1</Title>
+    <Type>Образователни</Type>
+    <Date>2025-07-10</Date>
+    <Description>Жирафите и тяхната екосистема</Description>
+  </Event>
+  <Event>
+    <Title>Нз2</Title>
+    <Type>Турове</Type>
+    <Date>2025-07-11</Date>
+    <Description>Разходка с водач вечерно време</Description>
+  </Event>
+    <Event>
+    <Title>Нз3</Title>
+    <Type>Шоу</Type>
+    <Date>2025-06-20</Date>
+    <Description>unicorn day</Description>
+  </Event>
+      <Event>
+    <Title>Нз4</Title>
+    <Type>Шоу</Type>
+    <Date>2025-06-20</Date>
+    <Description>u11111111</Description>
+  </Event>
+</Events>
+

@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="DevExpress.Xpo" Version="24.2.7" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />

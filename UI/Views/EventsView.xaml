@@ -11,8 +11,6 @@
     
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <converters:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter" />
-        
     </UserControl.Resources>
 
 
@@ -34,7 +32,13 @@
            
             <Button Content="Изчисти"
                       Command="{Binding ClearCommand}"
-                      Width="100" />            
+                      Width="100"  Margin="0 0 10 0"  />
+
+            <Button Content="Експортирай в Excel" Command="{Binding ExportCommand}"  Margin="0 0 10 0" />
+            
+            <Button Content="Импортирай" Command="{Binding ImportCommand}" />
+
+
         </StackPanel>
 
 
@@ -48,7 +52,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" Margin="5" />
+                        <CheckBox Content="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsChecked="{Binding IsSelected}" Margin="5" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -59,8 +63,8 @@
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding IsDetailsVisible, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter='*;3*'}"/>
-                <ColumnDefinition Width="{Binding IsDetailsVisible, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter='0;*'}"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <DataGrid ItemsSource="{Binding Events}"
@@ -254,10 +258,10 @@
            IsOpen="{Binding IsPopupOpen, Mode=TwoWay}">
                 <Border Background="White" Padding="5" BorderBrush="Gray" BorderThickness="1">
                     <StackPanel>
-                        <Button Content="Редактирай"
+                        <Button Content="Редактирай" Margin="5"
                         Command="{Binding EditEventCommand}"
                         CommandParameter="{Binding SelectedEvent}" />
-                        <Button Content="Изтрий"
+                        <Button Content="Изтрий" Margin="5"
                         Command="{Binding DeleteEventCommand}"
                         CommandParameter="{Binding SelectedEvent}" />
                     </StackPanel>

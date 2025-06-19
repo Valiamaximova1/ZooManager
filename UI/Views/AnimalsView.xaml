@@ -40,20 +40,20 @@
                             <Grid>
                                 <!-- Delete Button -->
                                 <Button Content="✖"
-                    Width="25" Height="25"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Background="Transparent"
-                    Foreground="Red"
-                    BorderThickness="0"
-                    FontWeight="Bold"
-                    ToolTip="Изтрий животното"
-                    Command="{Binding DataContext.DeleteAnimalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                    CommandParameter="{Binding}" />
+                                    Width="25" Height="25"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Background="Transparent"
+                                    Foreground="Red"
+                                    BorderThickness="0"
+                                    FontWeight="Bold"
+                                    ToolTip="Изтрий животното"
+                                    Command="{Binding DataContext.DeleteAnimalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}" /> 
 
-                                <!-- Rest of content -->
+                             
                                 <StackPanel Margin="0 20 0 0">
-                                    <!-- Leave space for ✖ -->
+                                    
                                     <Image Source="{Binding FullImagePath}" Width="200" Height="200" Stretch="UniformToFill" Margin="0 0 0 10"/>
                                     <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" />
                                     <TextBlock Text="{Binding Category}" Margin="0 5 0 5" />
@@ -66,9 +66,10 @@
                         Command="{Binding DataContext.ShowAnimalDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         CommandParameter="{Binding}" Margin="0 5 0 0" />
 
-                                    <Button Content="Редакция"
-                        Command="{Binding DataContext.EditAnimalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        CommandParameter="{Binding}" Margin="0 5 0 0" />
+                                    <Button 
+                                        Content="Редакция"
+                                        Command="{Binding DataContext.EditAnimalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Margin="0 5 0 0" />
                                 </StackPanel>
                             </Grid>
                         </Border>

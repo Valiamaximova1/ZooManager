@@ -42,20 +42,20 @@ namespace UI.ViewModels
         private void BrowseImage()
         {
             var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Images|*.jpg;*.png" };
-            if (dialog.ShowDialog() == true)
-            {
-                var fileName = Path.GetFileName(dialog.FileName);
-                string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\.."));
-                string destDir = Path.Combine(projectRoot, "Assets", "Images");
-                Directory.CreateDirectory(destDir);
+            if (dialog.ShowDialog() != true)
+                return;
+            
+            var fileName = Path.GetFileName(dialog.FileName);
+            string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\.."));
+            string destDir = Path.Combine(projectRoot, "Assets", "Images");
+            Directory.CreateDirectory(destDir);
 
-                string destPath = Path.Combine(destDir, fileName);
-                File.Copy(dialog.FileName, destPath, true);
+            string destPath = Path.Combine(destDir, fileName);
+            File.Copy(dialog.FileName, destPath, true);
 
-                _imagePath = Path.Combine("Images", fileName);
-                NewAnimal.ImagePath = _imagePath;
-                OnPropertyChanged(nameof(NewAnimal));
-            }
+            _imagePath = Path.Combine("Images", fileName);
+            NewAnimal.ImagePath = _imagePath;
+            OnPropertyChanged(nameof(NewAnimal));
         }
 
         private void BrowseSound()

@@ -1,7 +1,10 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interfaces;
+using Data;
+using Shared;
 using Shared.Enums;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -32,6 +35,7 @@ namespace UI.ViewModels
         new ObservableCollection<string>(new[] { "Всички" }.Concat(Enum.GetNames(typeof(EventType))));
         public ObservableCollection<EventType> EditableEventTypes { get; } =
          new ObservableCollection<EventType>((EventType[])Enum.GetValues(typeof(EventType)));
+        public List<EventDto> FilteredEvents { get; private set; } = new();
 
 
         public ObservableCollection<AnimalSelectableViewModel> SelectableAnimals { get; } = new();
@@ -59,6 +63,8 @@ namespace UI.ViewModels
             DeleteEventCommand = new AsyncDelegateCommand(OnDeleteAsync);
             SaveEventCommand = new AsyncDelegateCommand(OnSaveAsync);
             LoadEventsCommand = new AsyncDelegateCommand(LoadEventsAsync);
+            ExportCommand = new AsyncDelegateCommand(onExport);
+            ImportCommand = new AsyncDelegateCommand(OnImport);
 
             LoadAllAnimalsAsync();
             LoadEventsAsync();
@@ -171,6 +177,8 @@ namespace UI.ViewModels
         public ICommand DeleteEventCommand { get; }
         public ICommand SaveEventCommand { get; }
         public ICommand LoadEventsCommand { get; }
+        public ICommand ExportCommand { get; }
+        public ICommand ImportCommand { get; }
 
 
         private async Task LoadEventsAsync()
@@ -198,6 +206,10 @@ namespace UI.ViewModels
             {
                 events = events.Where(ev => selectedAnimalIds.All(id => ev.AnimalIds.Contains(id))).ToList();
             }
+
+
+            FilteredEvents = events.ToList();
+
 
             foreach (var ev in events)
                 Events.Add(ev);
@@ -234,6 +246,7 @@ namespace UI.ViewModels
             // Еднократно зареждане след пълното възстановяване на делегатите
             await LoadEventsAsync();
         }
+
         private async Task LoadAllAnimalsAsync()
         {
             var animals = await _animalService.GetAllAsync();
@@ -266,37 +279,7 @@ namespace UI.ViewModels
             OnPropertyChanged(nameof(AnimalFilters));
         }
 
-        //private async Task LoadAllAnimalsAsync()
-        //{
-        //    Events.Clear();
-        //    if (AnimalFilters.Any()) return;
-        //    var animals = await _animalService.GetAllAsync();
 
-        //    AllAnimals = new ObservableCollection<AnimalDto>(animals);
-        //    AnimalFilters.Clear();
-
-        //    foreach (var animal in animals)
-        //    {
-        //        var filterItem = new AnimalCheckboxDto
-        //        {
-        //            Id = animal.Id,
-        //            Name = animal.Name
-        //        };
-
-        //        // Задаваме делегат за автоматично презареждане при промяна,
-        //        // но само ако не сме в режим на изчистване
-        //        filterItem.SelectionChanged = async () =>
-        //        {
-        //            if (!_isClearingFilters)
-        //                await LoadEventsAsync();
-        //        };
-
-        //        AnimalFilters.Add(filterItem);
-        //    }
-
-        //    OnPropertyChanged(nameof(AllAnimals));
-        //    OnPropertyChanged(nameof(AnimalFilters));
-        //}
         private async Task LoadSelectedAnimalsAsync()
         {
             if (SelectedEvent == null || SelectedEvent.AnimalIds == null)
@@ -313,7 +296,6 @@ namespace UI.ViewModels
 
         private void OnEdit()
         {
-
             if (_selectedEvent != null)
             {
                 foreach (var ev in Events)
@@ -330,9 +312,11 @@ namespace UI.ViewModels
                     Type = _selectedEvent.Type,
                     AnimalIds = _selectedEvent.AnimalIds?.ToList() ?? new()
                 };
+
                 LoadSelectableAnimalsAsync();
                 //    // Това е важното
                 SelectedAnimals.Clear();
+
                 foreach (var animal in AllAnimals)
                 {
                     if (EditingEvent.AnimalIds.Contains(animal.Id))
@@ -401,6 +385,62 @@ namespace UI.ViewModels
             };
 
             _animalReloadTimer.Start();
+        }
+
+        private async Task onExport()
+        {
+            try
+            {
+                var exporter = new ExcelExporter();
+
+                string startupPath = AppDomain.CurrentDomain.BaseDirectory;
+                string solutionPath = Path.GetFullPath(Path.Combine(startupPath, @"..\..\..\.."));
+                string filePath = Path.Combine(solutionPath, "EventsExport.xlsx");
+
+                await exporter.ExportEventsToExcel(FilteredEvents, filePath);
+
+                MessageBox.Show("Успешен експорт на събития!", "Excel", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Грешка при експортиране: {ex.Message}", "Грешка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async Task OnImport()
+        {
+
+            var openDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Избери XML файл за импортиране",
+                Filter = "XML файлове (*.xml)|*.xml"
+            };
+
+            if (openDialog.ShowDialog() == true)
+            {
+                var importer = new XmlImporter();
+                string result = await Task.Run(() => importer.ImportEventsFromXml(openDialog.FileName, FilteredEvents));
+
+                if (result == "OK")
+                {
+                    LoadEventsAsync();
+                    MessageBox.Show("Импортирането от XML завърши успешно.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(result, "Грешка при импортиране", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+
+
+
+
+
+            //string startupPath = AppDomain.CurrentDomain.BaseDirectory;
+            //string solutionPath = Path.GetFullPath(Path.Combine(startupPath, @"..\..\..\.."));
+            //string xmlPath = Path.Combine(solutionPath, "EventsImport.xml");
+
+
         }
 
 

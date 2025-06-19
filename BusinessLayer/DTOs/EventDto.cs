@@ -27,6 +27,9 @@ namespace BusinessLayer.DTOs
 
         private List<Guid> _animalIds = new();
 
+        public List<string> AnimalNames { get; set; } = new();
+
+        public int TicketCount { get; set; }
 
         public string Title
         {

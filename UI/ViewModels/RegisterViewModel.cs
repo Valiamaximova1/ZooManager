@@ -119,6 +119,8 @@ namespace UI.ViewModels
                     ConfirmPassword = ConfirmPassword
                 });
                 MessageBox.Show("Успешна регистрация!");
+                Properties.Settings.Default.LastEmail = string.Empty;
+                Properties.Settings.Default.Save();
                 NavigateToLoginRequested.Invoke();
             }
             catch (Exception)
