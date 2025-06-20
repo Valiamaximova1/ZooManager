@@ -28,7 +28,7 @@ namespace BusinessLayer.DTOs
 
         private List<Guid> _animalIds = new();
 
-        //public List<string> AnimalNames { get; set; } = new();
+        public List<string> AnimalNamesCollection { get; set; } = new();
 
          public static Dictionary<Guid, string> AnimalLookup { get; set; } = new();
         public List<string> AnimalNames =>

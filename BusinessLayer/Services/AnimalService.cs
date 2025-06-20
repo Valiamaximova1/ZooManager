@@ -64,6 +64,7 @@ namespace BusinessLayer.Services
             var entity = animalDto.ToEntity(); 
             await _repository.AddAsync(entity);
             await _repository.SaveChangesAsync();
+            animalDto = entity.ToDto();
             AnimalChanged?.Invoke(this, new AnimalChangedEventArgs(animalDto, AnimalChangeType.Added));
         }
         public async Task DeleteAsync(Guid id)

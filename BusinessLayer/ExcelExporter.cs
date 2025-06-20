@@ -34,7 +34,7 @@ namespace Shared
                 worksheet.Cell(row, 2).Value = ev.Type.ToString();
                 worksheet.Cell(row, 3).Value = ev.Date.ToShortDateString();
                 worksheet.Cell(row, 4).Value = ev.Description;
-                worksheet.Cell(row, 5).Value = string.Join(", ", ev.AnimalNames);
+                worksheet.Cell(row, 5).Value = string.Join(", ", ev.AnimalNamesCollection);
                 worksheet.Cell(row, 6).Value = ev.TicketCount;
 
                 row++;

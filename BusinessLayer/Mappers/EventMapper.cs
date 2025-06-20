@@ -23,7 +23,7 @@ namespace BusinessLayer.Mappers
                 Date = ev.Date,
                 Type = ev.Type,
                 AnimalIds = ev.Animals?.Select(a => a.Id).ToList() ?? new(),
-                //AnimalNames = ev.Animals?.Select(a => a.Name).ToList() ?? new(),
+                AnimalNamesCollection = ev.Animals?.Select(a => a.Name).ToList() ?? new(),
                  TicketCount = ev.TicketTemplates?.Sum(t => t.AvailableQuantity) ?? 0
             };
         }
