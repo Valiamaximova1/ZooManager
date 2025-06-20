@@ -11,6 +11,7 @@ namespace BusinessLayer.Services.Interfaces
 {
     public interface IAnimalService
     {
+        public event Action AnimalsChanged;
         Task<IEnumerable<AnimalDto>> GetAllAsync();
         Task<IEnumerable<AnimalDto>> GetByCategoryAsync(AnimalCategory category);
         Task<AnimalDto> GetByIdAsync(Guid id);

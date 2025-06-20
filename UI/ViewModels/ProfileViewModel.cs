@@ -24,7 +24,7 @@ namespace UI.ViewModels
 
         private readonly IUserService _userService;
         private readonly ITicketService _ticketService;
-        public ObservableCollection<UserTicketDto> PurchasedTickets { get; set; } = new();
+        private ObservableCollection<UserTicketDto> _purchasedTickets;
         public ICommand ChangePasswordCommand { get; }
         public ICommand LogoutCommand { get; }
 
@@ -32,10 +32,11 @@ namespace UI.ViewModels
         {
             _user = user;
             _onLogout = onLogout;
+             _userService = userService;
             _ticketService = ticketService;
-            _userService = userService;
-            LoadTickets();
+            _ticketService.TicketsChanged += async () => await LoadTickets();
 
+            Task.Run(LoadTickets);
 
             LogoutCommand = new DelegateCommand(Logout);
             ChangePasswordCommand = new DelegateCommand(ChangePassword);
@@ -61,6 +62,15 @@ namespace UI.ViewModels
         {
             get => _confirmPassword;
             set { _confirmPassword = value; OnPropertyChanged(); }
+        }
+        public ObservableCollection<UserTicketDto> PurchasedTickets
+        {
+            get => _purchasedTickets;
+            set
+            {
+                _purchasedTickets = value;
+                OnPropertyChanged();
+            }
         }
 
         private async void ChangePassword()
@@ -94,7 +104,7 @@ namespace UI.ViewModels
 
 
     
-        private async void LoadTickets()
+        private async  Task LoadTickets()
         {
             var tickets = await _ticketService.GetUserTicketsAsync(_user.Id);
             PurchasedTickets = new ObservableCollection<UserTicketDto>(tickets);

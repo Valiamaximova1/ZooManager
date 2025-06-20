@@ -69,6 +69,7 @@ namespace UI.ViewModels
             get => _isPopupOpen;
             set { _isPopupOpen = value; OnPropertyChanged(); }
         }
+        public string SelectedCategory { get; set; } = "Всички";
 
         public bool IsEditPopupOpen
         {
@@ -97,7 +98,7 @@ namespace UI.ViewModels
                 OnPropertyChanged();
             }
         }
-        public string SelectedCategory { get; set; } = "Всички";
+       
 
         private async Task OnDeleteAnimalAsync(AnimalDto animal)
         {

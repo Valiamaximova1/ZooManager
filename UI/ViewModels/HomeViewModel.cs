@@ -106,9 +106,11 @@ namespace UI.ViewModels
         }
         private void ShowProfile()
         {
-            //if (_profileViewModel == null)
+            if (_profileViewModel == null)
+            {
                 //LogoutRequested е събитие, декларирано в HomeViewModel
                 _profileViewModel = new ProfileViewModel(_user, () => LogoutRequested?.Invoke(), _ticketService, _userService);
+            }
 
             CurrentViewModel = _profileViewModel;
             SelectedTab = "Profile";
@@ -119,17 +121,17 @@ namespace UI.ViewModels
         {
             var addViewModel = new AddAnimalViewModel(_animalService, async () =>
             {
-                // Презареждаме списъка с животни
+
                 if (_animalViewModel == null)
                     _animalViewModel = new AnimalsViewModel(_animalService);
                 else
-                    await _animalViewModel.LoadAnimalsAsync(); 
+                    await _animalViewModel.LoadAnimalsAsync();
 
                 CurrentViewModel = _animalViewModel;
             });
 
             CurrentViewModel = addViewModel;
-           
+
         }
     }
 }

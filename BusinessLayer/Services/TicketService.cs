@@ -19,7 +19,7 @@ namespace BusinessLayer.Services
         private readonly ITicketTemplateRepository _templateRepo;
         private readonly ITicketPurchaseRepository _purchaseRepo;
 
-
+        public event Action TicketsChanged;
 
         public TicketService(ITicketTemplateRepository templateRepo, ITicketPurchaseRepository purchaseRepo)
         {
@@ -54,6 +54,7 @@ namespace BusinessLayer.Services
             };
 
             await _purchaseRepo.AddAsync(purchase);
+            TicketsChanged?.Invoke();
         }
 
         public async Task<List<UserTicketDto>> GetUserTicketsAsync(Guid userId)

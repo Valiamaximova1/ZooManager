@@ -17,6 +17,8 @@ namespace BusinessLayer.Services
     {
         private readonly IAnimalRepository _repository;
 
+        public event Action AnimalsChanged;
+
         public AnimalService(IAnimalRepository repository)
         {
             _repository = repository;
@@ -51,7 +53,8 @@ namespace BusinessLayer.Services
                 existingAnimal.ImagePath = animal.ImagePath;
                 existingAnimal.SoundPath = animal.SoundPath;
 
-                await _repository.SaveChangesAsync(); 
+                await _repository.SaveChangesAsync();
+                AnimalsChanged?.Invoke();
             }
         }
 
@@ -60,6 +63,7 @@ namespace BusinessLayer.Services
             var entity = animalDto.ToEntity(); 
             await _repository.AddAsync(entity);
             await _repository.SaveChangesAsync();
+            AnimalsChanged?.Invoke();
         }
         public async Task DeleteAsync(Guid id)
         {
@@ -67,6 +71,7 @@ namespace BusinessLayer.Services
             if (animal != null)
             {
                 await _repository.DeleteAsync(animal);
+                AnimalsChanged?.Invoke();
             }
         }
     }

@@ -31,17 +31,19 @@ namespace UI.ViewModels
 
 
         public ObservableCollection<EventDto> Events { get; } = new();
+
         public ObservableCollection<string> EventTypes { get; } =
         new ObservableCollection<string>(new[] { "Всички" }.Concat(Enum.GetNames(typeof(EventType))));
+
         public ObservableCollection<EventType> EditableEventTypes { get; } =
          new ObservableCollection<EventType>((EventType[])Enum.GetValues(typeof(EventType)));
-        public List<EventDto> FilteredEvents { get; private set; } = new();
 
+        public List<EventDto> FilteredEvents { get; private set; } = new();
 
         public ObservableCollection<AnimalSelectableViewModel> SelectableAnimals { get; } = new();
 
-        public ObservableCollection<AnimalDto> AllAnimals { get; set; } = new();
-        public ObservableCollection<AnimalCheckboxDto> AnimalFilters { get; } = new();
+        private ObservableCollection<AnimalDto> _allAnimals;
+        private ObservableCollection<AnimalCheckboxDto> _animalFilters = new();
 
         public ObservableCollection<AnimalDto> SelectedAnimals { get; } = new();
 
@@ -56,7 +58,7 @@ namespace UI.ViewModels
         {
             _eventService = eventService;
             _animalService = animalService;
-
+            _animalService.AnimalsChanged += async () => await LoadAllAnimalsAsync();
 
             ClearCommand = new AsyncDelegateCommand(ClearFilters);
             EditEventCommand = new DelegateCommand(OnEdit);
@@ -66,7 +68,7 @@ namespace UI.ViewModels
             ExportCommand = new AsyncDelegateCommand(onExport);
             ImportCommand = new AsyncDelegateCommand(OnImport);
 
-            LoadAllAnimalsAsync();
+            Task.Run(LoadAllAnimalsAsync);
             LoadEventsAsync();
         }
 
@@ -164,12 +166,26 @@ namespace UI.ViewModels
             }
         }
 
-        public void SetRightClickSelection()
+        public ObservableCollection<AnimalDto> AllAnimals
         {
-            _isRightClickSelection = true;
+            get => _allAnimals;
+            set
+            {
+                _allAnimals = value;
+                OnPropertyChanged();
+            }
         }
-
-
+        public ObservableCollection<AnimalCheckboxDto> AnimalFilters
+        {
+            get => _animalFilters;
+            set
+            {
+                _animalFilters = value;
+                OnPropertyChanged();
+            }
+        }
+     
+      
 
         public ICommand ClearCommand { get; }
         public ICommand EditEventCommand { get; }
@@ -221,39 +237,24 @@ namespace UI.ViewModels
             SelectedType = "Всички";
             SelectedDate = null;
 
-            // Изключваме делегатите временно и махаме отметките
             foreach (var animal in AnimalFilters)
             {
-                animal.SelectionChanged = null;
                 animal.IsSelected = false;
-            }
-
-            // Възстановяваме делегатите, но не извикваме LoadEventsAsync вътре!
-            foreach (var animal in AnimalFilters)
-            {
-                animal.SelectionChanged = async () =>
-                {
-                    if (!_isClearingFilters)
-                        await LoadEventsAsync();
-                };
             }
 
             _isClearingFilters = false;
 
-            // Еднократно зареждане след пълното възстановяване на делегатите
             await LoadEventsAsync();
         }
+
 
         private async Task LoadAllAnimalsAsync()
         {
             var animals = await _animalService.GetAllAsync();
-
             AllAnimals = new ObservableCollection<AnimalDto>(animals);
-            OnPropertyChanged(nameof(AllAnimals));
 
-            // Обнови AnimalFilters, като запазиш избора
             var previouslySelected = AnimalFilters.Where(a => a.IsSelected).Select(a => a.Id).ToHashSet();
-            AnimalFilters.Clear();
+            var filters = new ObservableCollection<AnimalCheckboxDto>();
 
             foreach (var animal in animals)
             {
@@ -270,12 +271,11 @@ namespace UI.ViewModels
                         await LoadEventsAsync();
                 };
 
-                AnimalFilters.Add(filterItem);
+                filters.Add(filterItem);
             }
 
-            OnPropertyChanged(nameof(AnimalFilters));
+            AnimalFilters = filters;
         }
-
 
         private async Task LoadSelectedAnimalsAsync()
         {
@@ -367,7 +367,7 @@ namespace UI.ViewModels
             }
         }
 
-       
+
         private async Task onExport()
         {
             try
