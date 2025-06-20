@@ -3,6 +3,7 @@ using BusinessLayer.Mappers;
 using BusinessLayer.Services.Interfaces;
 using Data.Repositories;
 using Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Shared.Enums;
 using System;
 using System.Collections.Generic;
@@ -74,15 +75,36 @@ namespace BusinessLayer.Services
 
         public async Task UpdateAsync(EventDto dto)
         {
-            var existing = await _eventRepository.GetByIdAsync(dto.Id);
-            if (existing is null)
+            // Зареждаме събитието с животните му (това е важно, иначе .Clear() няма ефект)
+            var existing = await _eventRepository.GetByIdWithAnimalsAsync(dto.Id);
+            if (existing == null)
                 throw new ArgumentException("Събитието не съществува.");
 
-            var allAnimals = await _animalRepository.GetAllAsync();
-            existing.UpdateEntity(dto, allAnimals.ToList());
+            // Зареждаме само нужните животни от базата, и то без tracking
+            var animalIds = dto.AnimalIds.Distinct().ToList();
+            var animalsToAttach = await _animalRepository
+                .GetAll()
+                .Where(a => animalIds.Contains(a.Id))
+                .ToListAsync();
 
+            // Обновяваме свойствата и many-to-many връзките
+            existing.Title = dto.Title;
+            existing.Description = dto.Description;
+            existing.Date = dto.Date;
+            existing.Type = dto.Type;
+
+            // Обновяваме връзките: изчистваме и добавяме само нужните животни
+            existing.Animals.Clear();
+            foreach (var animal in animalsToAttach)
+            {
+                existing.Animals.Add(animal);
+            }
+
+            // Запис в базата
             await _eventRepository.UpdateAsync(existing);
         }
+
+
 
         public async Task DeleteAsync(Guid id)
         {

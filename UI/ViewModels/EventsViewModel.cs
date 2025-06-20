@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using BusinessLayer.Events;
 using BusinessLayer.Services.Interfaces;
 using Data;
 using Shared;
@@ -58,10 +59,11 @@ namespace UI.ViewModels
         {
             _eventService = eventService;
             _animalService = animalService;
-            _animalService.AnimalsChanged += async () => await LoadAllAnimalsAsync();
+            _animalService.AnimalChanged += async (sender, args) => await HandleAnimalChangeAsync(args);
+
 
             ClearCommand = new AsyncDelegateCommand(ClearFilters);
-            EditEventCommand = new DelegateCommand(OnEdit);
+            EditEventCommand = new AsyncDelegateCommand(OnEdit);
             DeleteEventCommand = new AsyncDelegateCommand(OnDeleteAsync);
             SaveEventCommand = new AsyncDelegateCommand(OnSaveAsync);
             LoadEventsCommand = new AsyncDelegateCommand(LoadEventsAsync);
@@ -184,8 +186,8 @@ namespace UI.ViewModels
                 OnPropertyChanged();
             }
         }
-     
-      
+
+
 
         public ICommand ClearCommand { get; }
         public ICommand EditEventCommand { get; }
@@ -261,8 +263,7 @@ namespace UI.ViewModels
                 var filterItem = new AnimalCheckboxDto
                 {
                     Id = animal.Id,
-                    Name = animal.Name,
-                    IsSelected = previouslySelected.Contains(animal.Id)
+                    Name = animal.Name
                 };
 
                 filterItem.SelectionChanged = async () =>
@@ -271,10 +272,15 @@ namespace UI.ViewModels
                         await LoadEventsAsync();
                 };
 
+                // след като е зададен SelectionChanged — сетваме IsSelected
+                filterItem.IsSelected = previouslySelected.Contains(animal.Id);
+
                 filters.Add(filterItem);
             }
 
+
             AnimalFilters = filters;
+            //UpdateAnimalLookup();
         }
 
         private async Task LoadSelectedAnimalsAsync()
@@ -289,9 +295,10 @@ namespace UI.ViewModels
 
             foreach (var animal in AllAnimals.Where(a => SelectedEvent.AnimalIds.Contains(a.Id)))
                 SelectedAnimals.Add(animal);
+            //EventDto.AnimalLookup = SelectedAnimals.ToDictionary(a => a.Id, a => a.Name);
         }
 
-        private void OnEdit()
+        private async Task OnEdit()
         {
             if (_selectedEvent != null)
             {
@@ -310,8 +317,8 @@ namespace UI.ViewModels
                     AnimalIds = _selectedEvent.AnimalIds?.ToList() ?? new()
                 };
 
-                LoadSelectableAnimalsAsync();
-                //    // Това е важното
+                await LoadSelectableAnimalsAsync();
+             
                 SelectedAnimals.Clear();
 
                 foreach (var animal in AllAnimals)
@@ -342,15 +349,16 @@ namespace UI.ViewModels
             if (EditingEvent == null) return;
 
             EditingEvent.AnimalIds = SelectableAnimals
-                .Where(animal => animal.IsSelected)
-                .Select(animal => animal.Animal.Id)
-                .ToList();
+             .Where(a => a.IsSelected)
+             .Select(a => a.Animal.Id)
+             .ToList();
+
 
             await _eventService.UpdateAsync(EditingEvent);
             await LoadEventsAsync();
-            SelectedEvent = Events.FirstOrDefault(eventA => eventA.Id == EditingEvent.Id);
+           
+ SelectedEvent = Events.FirstOrDefault(eventA => eventA.Id == EditingEvent.Id);
             IsEditMode = false;
-
         }
 
         private async Task LoadSelectableAnimalsAsync()
@@ -365,6 +373,7 @@ namespace UI.ViewModels
                 bool isSelected = EditingEvent.AnimalIds.Contains(animal.Id);
                 SelectableAnimals.Add(new AnimalSelectableViewModel(animal, isSelected));
             }
+           
         }
 
 
@@ -433,6 +442,86 @@ namespace UI.ViewModels
 
 
         }
+
+        private async Task HandleAnimalChangeAsync(AnimalChangedEventArgs args)
+        {
+            var animal = args.Animal;
+
+            switch (args.ChangeType)
+            {
+                case AnimalChangeType.Added:
+                    AllAnimals.Add(animal);
+                    EventDto.AnimalLookup[animal.Id] = animal.Name;
+
+                    AnimalFilters.Add(new AnimalCheckboxDto
+                    {
+                        Id = animal.Id,
+                        Name = animal.Name,
+                        IsSelected = false,
+                        SelectionChanged = async () => await LoadEventsAsync()
+                    });
+
+                    SelectableAnimals.Add(new AnimalSelectableViewModel(animal, false));
+                    break;
+
+                case AnimalChangeType.Updated:
+                    var index = AllAnimals.ToList().FindIndex(a => a.Id == animal.Id);
+                    if (index >= 0)
+                        AllAnimals[index] = animal;
+
+                    EventDto.AnimalLookup[animal.Id] = animal.Name;
+
+                    var filter = AnimalFilters.FirstOrDefault(f => f.Id == animal.Id);
+                    if (filter != null)
+                        filter.Name = animal.Name;
+
+                    foreach (var selectable in SelectableAnimals.Where(s => s.Animal.Id == animal.Id))
+                    {
+                        selectable.Animal.Name = animal.Name;
+                    }
+
+                    break;
+
+                case AnimalChangeType.Deleted:
+                    // 1. Премахване от AllAnimals
+                    var existing = AllAnimals.FirstOrDefault(a => a.Id == animal.Id);
+                    if (existing != null)
+                        AllAnimals.Remove(existing);
+
+                    // 2. Премахване от AnimalLookup
+                    EventDto.AnimalLookup.Remove(animal.Id);
+
+                    // 3. Премахване от филтри
+                    var deletedFilter = AnimalFilters.FirstOrDefault(f => f.Id == animal.Id);
+                    if (deletedFilter != null)
+                        AnimalFilters.Remove(deletedFilter);
+
+                    // 4. Премахване от SelectableAnimals
+                    var toRemove = SelectableAnimals
+                        .Where(s => s.Animal.Id == animal.Id)
+                        .ToList(); // избягваме модифициране по време на итерация
+
+                    foreach (var s in toRemove)
+                        SelectableAnimals.Remove(s);
+
+                    foreach (var ev in Events)
+                    {
+                        int indexx = ev.AnimalIds.IndexOf(animal.Id);
+                        if (indexx >= 0)
+                        {
+                            ev.AnimalIds.RemoveAt(indexx);
+                            // не е нужно да триеш AnimalNames – те се пресмятат динамично от AnimalIds
+                        }
+                    }
+                    break;
+
+
+            }
+        }
+
+
+
+
 
 
     }

@@ -17,6 +17,10 @@ namespace Data.Repositories
         {
             _context = context;
         }
+        public IQueryable<Event> GetAll()
+        {
+            return _context.Events;
+        }
 
         public async Task<IEnumerable<Event>> GetAllAsync()
         {
@@ -63,7 +67,12 @@ namespace Data.Repositories
             _context.Events.Update(ev);
             await _context.SaveChangesAsync();
         }
-
+        public async Task<Event> GetByIdWithAnimalsAsync(Guid id)
+        {
+            return await _context.Events
+                .Include(e => e.Animals)
+                .FirstOrDefaultAsync(e => e.Id == id);
+        }
         public async Task DeleteAsync(Event ev)
         {
             _context.Events.Remove(ev);

@@ -29,6 +29,12 @@ namespace BusinessLayer.DTOs
                 }
             }
         }
+        public void UpdateFrom(AnimalDto animal)
+        {
+            if (animal == null || animal.Id != Id) return;
+
+            Name = animal.Name + (string.IsNullOrWhiteSpace(animal.Name) ? " (изтрито)" : "");
+        }
 
         public Action? SelectionChanged { get; set; }
 

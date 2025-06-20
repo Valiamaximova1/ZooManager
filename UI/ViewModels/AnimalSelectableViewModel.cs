@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,14 @@ namespace UI.ViewModels
             Animal = animal;
             _isSelected = isSelected;
         }
+        public void UpdateFrom(AnimalDto animal)
+        {
+            if (animal == null || animal.Id != Animal.Id) return;
+
+            Animal.Name = animal.Name + (string.IsNullOrWhiteSpace(animal.Name) ? " (изтрито)" : "");
+            OnPropertyChanged(nameof(Name));
+        }
+
     }
 
 }

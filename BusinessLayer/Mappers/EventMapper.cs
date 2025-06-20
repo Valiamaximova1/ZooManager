@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using DocumentFormat.OpenXml.Vml.Office;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Models;
 using System;
@@ -22,8 +23,8 @@ namespace BusinessLayer.Mappers
                 Date = ev.Date,
                 Type = ev.Type,
                 AnimalIds = ev.Animals?.Select(a => a.Id).ToList() ?? new(),
-                AnimalNames = ev.Animals?.Select(a => a.Name).ToList() ?? new(),
-                TicketCount = ev.TicketTemplates?.Sum(t => t.AvailableQuantity) ?? 0
+                //AnimalNames = ev.Animals?.Select(a => a.Name).ToList() ?? new(),
+                 TicketCount = ev.TicketTemplates?.Sum(t => t.AvailableQuantity) ?? 0
             };
         }
 
@@ -57,13 +58,14 @@ namespace BusinessLayer.Mappers
             entity.Date = dto.Date;
             entity.Type = dto.Type;
 
-            entity.Animals.Clear();
-            foreach (var id in dto.AnimalIds.Distinct())
-            {
-                var animal = animals.FirstOrDefault(a => a.Id == id);
-                if (animal != null)
-                    entity.Animals.Add(animal);
-            }
+            //entity.Animals.Clear();
+
+            //foreach (var id in dto.AnimalIds.Distinct())
+            //{
+            //    var animal = animals.FirstOrDefault(a => a.Id == id);
+            //    if (animal != null)
+            //        entity.Animals.Add(animal);
+            //}
         }
     }
 }

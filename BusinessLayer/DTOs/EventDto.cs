@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.DTOs
@@ -27,7 +28,17 @@ namespace BusinessLayer.DTOs
 
         private List<Guid> _animalIds = new();
 
-        public List<string> AnimalNames { get; set; } = new();
+        //public List<string> AnimalNames { get; set; } = new();
+
+         public static Dictionary<Guid, string> AnimalLookup { get; set; } = new();
+        public List<string> AnimalNames =>
+       AnimalIds
+           .Where(id => AnimalLookup.ContainsKey(id)) // това скрива изтритите
+           .Select(id => AnimalLookup[id])
+           .ToList();
+
+
+
 
         public int TicketCount { get; set; }
 

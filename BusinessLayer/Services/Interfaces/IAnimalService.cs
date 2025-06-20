@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using BusinessLayer.Events;
 using Models;
 using Shared.Enums;
 using System;
@@ -11,7 +12,8 @@ namespace BusinessLayer.Services.Interfaces
 {
     public interface IAnimalService
     {
-        public event Action AnimalsChanged;
+        event EventHandler<AnimalChangedEventArgs> AnimalChanged;
+
         Task<IEnumerable<AnimalDto>> GetAllAsync();
         Task<IEnumerable<AnimalDto>> GetByCategoryAsync(AnimalCategory category);
         Task<AnimalDto> GetByIdAsync(Guid id);

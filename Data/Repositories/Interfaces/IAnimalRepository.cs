@@ -10,6 +10,7 @@ namespace Data.Repositories.Interfaces
 {
     public interface IAnimalRepository
     {
+        IQueryable<Animal> GetAll();
         Task<IEnumerable<Animal>> GetAllAsync();
         Task<IEnumerable<Animal>> GetByCategoryAsync(AnimalCategory category);
         Task<Animal> GetByIdAsync(Guid id);

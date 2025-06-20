@@ -73,6 +73,18 @@
               Margin="0 0 10 0"
               Grid.Column="0"
               IsReadOnly="True">
+
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Редактирай" 
+                                Command="{Binding PlacementTarget.DataContext.EditEventCommand, 
+                                          RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                        <MenuItem Header="Изтрий"
+                                Command="{Binding PlacementTarget.DataContext.DeleteEventCommand, 
+                                          RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                
                 <i:Interaction.Behaviors>
                     <behaviors:DataGridRightClickPopupBehavior />
                     <behaviors:DataGridDoubleClickBehavior Command="{Binding EditEventCommand}" />
@@ -86,26 +98,6 @@
                     <DataGridTextColumn Header="Дата" Binding="{Binding Date, StringFormat=dd.MM.yyyy}" Width="*" />
                 </DataGrid.Columns>
 
-
-
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                        <Setter Property="ContextMenu">
-                            <Setter.Value>
-                                <ContextMenu>
-                                    <!-- Предаваме обекта (реда) като CommandParameter -->
-                                    <MenuItem Header="Редактирай" Command="{Binding PlacementTarget.Tag.EditEventCommand, RelativeSource={RelativeSource Mode=Self}}"
-                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Mode=Self}}" />
-
-                                    <MenuItem Header="Изтрий"
-                              Command="{Binding PlacementTarget.DataContext.DeleteEventCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
-                                </ContextMenu>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </DataGrid.RowStyle>
 
 
 

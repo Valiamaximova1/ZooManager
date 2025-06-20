@@ -119,7 +119,6 @@ namespace UI.ViewModels
             if (!string.IsNullOrWhiteSpace(animal.SoundPath))
                 ImageHelper.DeleteFileFromAllLocations(animal.SoundPath, animal.SoundPath);
 
-            // Изтриване от базата и UI
             await _animalService.DeleteAsync(animal.Id);
             Animals.Remove(animal);
         }

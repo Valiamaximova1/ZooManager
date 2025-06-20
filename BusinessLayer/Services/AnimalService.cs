@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using BusinessLayer.Events;
 using BusinessLayer.Mappers;
 using BusinessLayer.Services.Interfaces;
 using Data.Repositories;
@@ -17,7 +18,7 @@ namespace BusinessLayer.Services
     {
         private readonly IAnimalRepository _repository;
 
-        public event Action AnimalsChanged;
+        public event EventHandler<AnimalChangedEventArgs> AnimalChanged;
 
         public AnimalService(IAnimalRepository repository)
         {
@@ -42,19 +43,19 @@ namespace BusinessLayer.Services
             return animal.ToDto();
         }
 
-        public async Task UpdateAsync(AnimalDto animal)
+        public async Task UpdateAsync(AnimalDto animalDto)
         {
-            var existingAnimal = await _repository.GetByIdAsync(animal.Id);
+            var existingAnimal = await _repository.GetByIdAsync(animalDto.Id);
             if (existingAnimal != null)
             {
-                existingAnimal.Name = animal.Name;
-                existingAnimal.Description = animal.Description;
-                existingAnimal.Category = animal.Category;
-                existingAnimal.ImagePath = animal.ImagePath;
-                existingAnimal.SoundPath = animal.SoundPath;
+                existingAnimal.Name = animalDto.Name;
+                existingAnimal.Description = animalDto.Description;
+                existingAnimal.Category = animalDto.Category;
+                existingAnimal.ImagePath = animalDto.ImagePath;
+                existingAnimal.SoundPath = animalDto.SoundPath;
 
                 await _repository.SaveChangesAsync();
-                AnimalsChanged?.Invoke();
+                AnimalChanged?.Invoke(this, new AnimalChangedEventArgs(animalDto, AnimalChangeType.Updated));
             }
         }
 
@@ -63,15 +64,16 @@ namespace BusinessLayer.Services
             var entity = animalDto.ToEntity(); 
             await _repository.AddAsync(entity);
             await _repository.SaveChangesAsync();
-            AnimalsChanged?.Invoke();
+            AnimalChanged?.Invoke(this, new AnimalChangedEventArgs(animalDto, AnimalChangeType.Added));
         }
         public async Task DeleteAsync(Guid id)
         {
             var animal = await _repository.GetByIdAsync(id);
             if (animal != null)
             {
+                var animalDto = animal.ToDto();
                 await _repository.DeleteAsync(animal);
-                AnimalsChanged?.Invoke();
+                AnimalChanged?.Invoke(this, new AnimalChangedEventArgs(animalDto, AnimalChangeType.Deleted));
             }
         }
     }

@@ -46,5 +46,11 @@ namespace Data.Repositories
             _context.Animals.Remove(animal);
             await _context.SaveChangesAsync();
         }
+  
+
+        public IQueryable<Animal> GetAll()
+        {
+            return _context.Animals;
+        }
     }
 }
