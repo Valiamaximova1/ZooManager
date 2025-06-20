@@ -82,25 +82,60 @@ namespace UI.ViewModels
                 Filter = "Image files (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png"
             };
 
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() != true)
+                return;
+
+            // Стар път (ако вече има записана снимка)
+            if (!string.IsNullOrWhiteSpace(EditingAnimal.ImagePath))
             {
-                var fileName = Path.GetFileName(dialog.FileName);
-                string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\"));
-                var destDir = Path.Combine(projectRoot, "Assets", "Images");
-                Directory.CreateDirectory(destDir);
+                string realImgPath = Path.Combine("Assets", EditingAnimal.ImagePath); 
+                string oldRelativePath = realImgPath.Replace('/', '\\'); // Превръщане в Windows формат
+                string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\.."));
+                string oldProjectPath = Path.Combine(projectRoot, oldRelativePath);
+                string oldBinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, oldRelativePath);
 
-                var destPath = Path.Combine(destDir, fileName);
-                File.Copy(dialog.FileName, destPath, true);
-
-                EditingAnimal.ImagePath = Path.Combine("Images", fileName);
-                _newImagePath = destPath;
-
-                OnPropertyChanged(nameof(EditingAnimal));
-
-                
-                SaveImmediatelyAsync();
-                
+                try
+                {
+                    if (File.Exists(oldProjectPath))
+                        File.Delete(oldProjectPath);
+                    if (File.Exists(oldBinPath))
+                        File.Delete(oldBinPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Грешка при изтриване на старата снимка:\n{ex.Message}", "Грешка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
+
+            // Копиране на новата снимка
+            string fileName = Path.GetFileName(dialog.FileName);
+            string relativePath = Path.Combine("Assets", "Images", fileName);
+            string databasePath = Path.Combine( "Images", fileName);
+            string newProjectPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..", relativePath));
+            string newBinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+
+            // Уникално име, ако файл вече съществува
+            if (File.Exists(newProjectPath) || File.Exists(newBinPath))
+            {
+                string uniqueName = Path.GetFileNameWithoutExtension(fileName) + "_" + Guid.NewGuid() + Path.GetExtension(fileName);
+                relativePath = Path.Combine("Assets", "Images", uniqueName);
+              databasePath = Path.Combine("Images", uniqueName);
+                newProjectPath = Path.Combine(Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..")), relativePath);
+                newBinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+            }
+
+            // Създай директории, ако ги няма
+            Directory.CreateDirectory(Path.GetDirectoryName(newProjectPath)!);
+            Directory.CreateDirectory(Path.GetDirectoryName(newBinPath)!);
+
+            File.Copy(dialog.FileName, newProjectPath, true);
+            File.Copy(dialog.FileName, newBinPath, true);
+
+            EditingAnimal.ImagePath = databasePath;
+            _newImagePath = newProjectPath;
+
+            OnPropertyChanged(nameof(EditingAnimal));
+            SaveImmediatelyAsync(); // няма нужда от await
         }
 
 

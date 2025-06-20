@@ -28,7 +28,7 @@ namespace Data
 
         private static void Seed(ZooDbContext context)
         {
-           
+
             if (!context.Users.Any())
             {
                 context.Users.AddRange(new List<User>
@@ -38,7 +38,7 @@ namespace Data
         });
             }
 
-    
+
             if (!context.Events.Any())
             {
                 context.Events.AddRange(new List<Event>
@@ -59,7 +59,7 @@ namespace Data
                 context.SaveChanges();
             }
 
-     
+
             if (!context.Animals.Any())
             {
                 context.Animals.AddRange(new List<Animal>
@@ -74,12 +74,16 @@ namespace Data
                 context.SaveChanges();
             }
 
-         
+
             var events = context.Events.Include(ev => ev.Animals).ToList();
             var animals = context.Animals.ToList();
 
             var eventByTitle = events.ToDictionary(ev => ev.Title);
-            var animalByName = animals.ToDictionary(animal => animal.Name);
+            //var animalByName = animals.ToDictionary(animal => animal.Name);
+            var animalByName = animals
+                .GroupBy(a => a.Name)
+                .Select(g => g.First())
+                .ToDictionary(a => a.Name);
 
             void AddAnimalToEvent(string eventTitle, string animalName)
             {
@@ -91,7 +95,7 @@ namespace Data
                 }
             }
 
-         
+
             AddAnimalToEvent("Обиколка с екскурзовод", "Лъв");
             AddAnimalToEvent("Обиколка с екскурзовод", "Папагал");
             AddAnimalToEvent("Демонстрация по хранене", "Лъв");

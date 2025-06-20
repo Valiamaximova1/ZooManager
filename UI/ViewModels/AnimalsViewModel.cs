@@ -1,25 +1,14 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interfaces;
-using Models;
 using Shared.Enums;
-using System;
-using System.Collections.Generic;
-using System.Windows.Controls;
 
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using UI.Commands;
-using BusinessLayer.Mappers;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Windows.UI.Xaml.Media.Imaging;
-using System.Windows.Media.Imaging;
+using UI.Helpers;
 
 namespace UI.ViewModels
 {
@@ -123,94 +112,17 @@ namespace UI.ViewModels
             if (result != MessageBoxResult.Yes)
                 return;
 
-            string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
+            if (!string.IsNullOrWhiteSpace(animal.ImagePath))
+                ImageHelper.DeleteFileFromAllLocations(animal.ImagePath, animal.FullImagePath);
 
-            string fullImagePath = string.IsNullOrEmpty(animal.ImagePath)
-                ? null
-                : Path.Combine(basePath, animal.ImagePath);
-
-            string fullSoundPath = string.IsNullOrEmpty(animal.SoundPath)
-                ? null
-                : Path.Combine(basePath, animal.SoundPath);
-
-            // Освобождаване на ImageSource (ако е заредено като BitmapImage)
-            if (!string.IsNullOrEmpty(fullImagePath))
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    foreach (Window window in Application.Current.Windows)
-                    {
-                        foreach (var image in FindVisualChildren<Image>(window))
-                        {
-                            if (image.Source is System.Windows.Media.Imaging.BitmapImage bmp)
-                            {
-                                if (bmp.UriSource != null &&
-                                    bmp.UriSource.LocalPath.Equals(fullImagePath, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    image.Source = null;
-                                }
-                            }
-
-                        }
-                    }
-                });
-            }
-
-            // Гарантирано събиране на ресурси
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-            try
-            {
-                if (!string.IsNullOrEmpty(fullImagePath) && File.Exists(fullImagePath))
-                    File.Delete(fullImagePath);
-
-                if (!string.IsNullOrEmpty(fullSoundPath) && File.Exists(fullSoundPath))
-                    File.Delete(fullSoundPath);
-            }
-            catch (IOException ex)
-            {
-                MessageBox.Show($"Грешка при изтриване на файл:\n{ex.Message}", "Грешка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            if (!string.IsNullOrWhiteSpace(animal.SoundPath))
+                ImageHelper.DeleteFileFromAllLocations(animal.SoundPath, animal.SoundPath);
 
             // Изтриване от базата и UI
             await _animalService.DeleteAsync(animal.Id);
             Animals.Remove(animal);
         }
 
-
-        //private async Task OnDeleteAnimalAsync(AnimalDto animal)
-        //{
-        //    if (animal == null) return;
-
-        //    var result = MessageBox.Show($"Сигурни ли сте, че искате да изтриете {animal.Name}?", "Изтриване", MessageBoxButton.YesNo);
-
-
-        //    if (result == MessageBoxResult.Yes)
-        //    {
-
-        //        string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
-
-        //        string fullImagePath = Path.Combine(basePath, animal.ImagePath);
-        //        string fullSoundPath = Path.Combine(basePath, animal.SoundPath);
-
-        //        if (File.Exists(fullImagePath))
-        //        {
-        //            animal.ImagePath.Source = null; // освободждава изображението от паметта
-        //            GC.Collect();              // събира боклука
-        //            GC.WaitForPendingFinalizers();
-        //            File.Delete(fullImagePath);
-        //        }
-
-
-        //        if (File.Exists(fullSoundPath))
-        //            File.Delete(fullSoundPath);
-
-        //        await _animalService.DeleteAsync(animal.Id);
-        //        Animals.Remove(animal);
-        //    }
-        //}
         public async Task<ObservableCollection<AnimalDto>> LoadAnimalsAsync()
         {
             Animals.Clear();
@@ -230,7 +142,6 @@ namespace UI.ViewModels
 
             return Animals;
         }
-
 
         private void PlaySound(AnimalDto animal)
         {
@@ -291,8 +202,7 @@ namespace UI.ViewModels
             }
         }
 
-
-
+     
     }
 
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace UI.Helpers
@@ -11,21 +12,31 @@ namespace UI.Helpers
 
     public static class ImageHelper
     {
-        public static BitmapImage LoadImageSafe(string path)
+        public static void DeleteFileFromAllLocations(string imgPath, string relativePath)
         {
-            if (!File.Exists(path))
-                return null;
+            imgPath = Path.Combine("Assets", imgPath);
 
-            var bitmap = new BitmapImage();
-            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return;
+
+            try
             {
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad; // зарежда всичко в паметта
-                bitmap.StreamSource = stream;
-                bitmap.EndInit();
+                // Изтриване от bin (output dir)
+                string outputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+                if (File.Exists(outputPath))
+                    File.Delete(outputPath);
+
+                // Изтриване от project root
+                string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", ".."));
+                string sourcePath = Path.Combine(projectRoot, imgPath);
+                if (File.Exists(sourcePath))
+                    File.Delete(sourcePath);
             }
-            bitmap.Freeze(); // прави го достъпен от други нишки и безопасен
-            return bitmap;
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Грешка при изтриване на файл:\n{ex.Message}", "Грешка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

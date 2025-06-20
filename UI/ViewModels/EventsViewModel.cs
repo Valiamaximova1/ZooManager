@@ -68,7 +68,6 @@ namespace UI.ViewModels
 
             LoadAllAnimalsAsync();
             LoadEventsAsync();
-            StartAnimalAutoReload(1000);
         }
 
         public bool IsPopupOpen
@@ -214,8 +213,6 @@ namespace UI.ViewModels
             foreach (var ev in events)
                 Events.Add(ev);
         }
-
-
 
         private async Task ClearFilters()
         {
@@ -370,23 +367,7 @@ namespace UI.ViewModels
             }
         }
 
-        private DispatcherTimer _animalReloadTimer;
-
-        public void StartAnimalAutoReload(int intervalMilliseconds = 3000)
-        {
-            _animalReloadTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(intervalMilliseconds)
-            };
-
-            _animalReloadTimer.Tick += async (s, e) =>
-            {
-                await LoadAllAnimalsAsync();
-            };
-
-            _animalReloadTimer.Start();
-        }
-
+       
         private async Task onExport()
         {
             try
