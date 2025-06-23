@@ -1,10 +1,12 @@
 ﻿using BusinessLayer.DTOs;
+using BusinessLayer.Factories;
 using BusinessLayer.Services;
 using BusinessLayer.Services.Interfaces;
 using Data;
 using Data.Repositories;
 using System.Windows.Input;
 using UI.Commands;
+using UI.ViewModels;
 
 namespace UI.ViewModels
 {
@@ -25,21 +27,24 @@ namespace UI.ViewModels
         private BaseViewModel _currentViewModel;
         private readonly UserDto _user;
         public event Action LogoutRequested;
+        private readonly FactoryProvider _factoryProvider;
 
-        public HomeViewModel(IAnimalService animalService, IEventService eventService, ITicketService ticketService, UserDto user, IUserService userService)
+        public HomeViewModel(IAnimalService animalService, IEventService eventService,
+            ITicketService ticketService, UserDto user, IUserService userService, FactoryProvider factoryProvider)
         {
             _animalService = animalService;
             _eventService = eventService;
             _ticketService = ticketService;
             _user = user;
             _userService = userService;
+            _factoryProvider = factoryProvider;
 
             ShowAnimalsCommand = new DelegateCommand(ShowAnimals);
             ShowEventsCommand = new DelegateCommand(ShowEvents);
             ShowTicketsCommand = new DelegateCommand(ShowTickets);
             ShowProfileCommand = new DelegateCommand(ShowProfile);
-
             ShowAddAnimalCommand = new DelegateCommand(ShowAddAnimalPage);
+            ShowAddEventCommand = new DelegateCommand(ShowAddEventPage);
 
             ShowAnimals();
 
@@ -64,12 +69,14 @@ namespace UI.ViewModels
                 OnPropertyChanged();
             }
         }
+        public static FactoryProvider FactoryProvider { get; private set; }
 
         public ICommand ShowAnimalsCommand { get; }
         public ICommand ShowEventsCommand { get; }
         public ICommand ShowTicketsCommand { get; }
         public ICommand ShowProfileCommand { get; }
         public ICommand ShowAddAnimalCommand { get; }
+        public ICommand ShowAddEventCommand { get; }
 
         private void ShowAnimals()
         {
@@ -86,6 +93,7 @@ namespace UI.ViewModels
             if (_eventViewModel == null)
             {
                 _eventViewModel = new EventsViewModel(_eventService, _animalService);
+                _eventViewModel.AddEventRequested += ShowAddEventPage;
             }
             CurrentViewModel = _eventViewModel;
             SelectedTab = "Events";
@@ -111,9 +119,10 @@ namespace UI.ViewModels
         }
         private void ShowAddAnimalPage()
         {
-            var addViewModel = new AddAnimalViewModel(_animalService, async () =>
+          
+            var addViewModel = new AddAnimalViewModel(_animalService, _factoryProvider.GetFactory<AnimalDto>(), async () =>
             {
-
+               
                 if (_animalViewModel == null)
                     _animalViewModel = new AnimalsViewModel(_animalService);
                 else
@@ -125,5 +134,25 @@ namespace UI.ViewModels
             CurrentViewModel = addViewModel;
 
         }
+        private void ShowAddEventPage()
+        {
+            var addViewModel = new AddEventViewModel(
+                _eventService,
+                _animalService,
+                _factoryProvider.GetFactory<EventDto>(), 
+                async () =>
+                {
+                    if (_eventViewModel == null)
+                        _eventViewModel = new EventsViewModel(_eventService, _animalService);
+                    else
+                        await _eventViewModel.LoadEventsAsync();
+
+                    CurrentViewModel = _eventViewModel;
+                });
+
+            CurrentViewModel = addViewModel;
+        }
+
+
     }
 }

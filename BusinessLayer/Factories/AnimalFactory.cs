@@ -2,6 +2,7 @@
 using BusinessLayer.Factories.Interfaces;
 using DocumentFormat.OpenXml.Presentation;
 using Models;
+using Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +19,14 @@ namespace BusinessLayer.Factories
             {
                 Id = Guid.NewGuid(),
                 Name = string.Empty,
+                Category = AnimalCategory.Неопределено,
                 ImagePath = string.Empty,
                 SoundPath = string.Empty,
-                //Category = Category,
                 Description = string.Empty
             };
         }
     }
+
 }
 
 

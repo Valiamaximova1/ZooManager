@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using BusinessLayer.Events;
 using BusinessLayer.Mappers;
 using BusinessLayer.Services.Interfaces;
 using Data.Repositories;
@@ -8,6 +9,7 @@ using Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +21,7 @@ namespace BusinessLayer.Services
         private readonly IEventRepository _eventRepository;
         private readonly IAnimalRepository _animalRepository;
 
+        public event EventHandler<EventChangedEventArgs>? EventChanged;
 
 
         public EventService(IEventRepository eventRepository, IAnimalRepository animalRepository)
@@ -93,6 +96,18 @@ namespace BusinessLayer.Services
             }
 
             await _eventRepository.UpdateAsync(existing);
+        }
+
+        public async Task CreateAsync(EventDto eventDto)
+        {
+            var animals = (await _animalRepository.GetAllAsync()).ToList();
+            var entity = eventDto.ToEntity(animals);
+
+
+            await _eventRepository.AddAsync(entity);
+
+            var createdDto = entity.ToDto();
+            EventChanged?.Invoke(this, new EventChangedEventArgs(createdDto));
         }
 
         public async Task DeleteAsync(Guid id)

@@ -13,6 +13,7 @@ namespace Data.Repositories.Interfaces
         Task AddAsync(Event ev);
         Task UpdateAsync(Event ev);
         Task DeleteAsync(Event ev);
+        Task SaveChangesAsync();
         IQueryable<Event> GetAllWithIncludes();
         Task<Event> GetByIdWithAnimalsAsync(Guid id);
     }

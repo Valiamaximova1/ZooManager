@@ -4,7 +4,6 @@
              xmlns:local="clr-namespace:UI"
              xmlns:viewmodels="clr-namespace:UI.ViewModels"
                xmlns:views="clr-namespace:UI.Views"
-             xmlns:locator="clr-namespace:UI.Locators"
              StartupUri="Views/MainWindow.xaml">
 
 
@@ -46,6 +45,10 @@
 
         <DataTemplate DataType="{x:Type viewmodels:AddAnimalViewModel}">
             <views:AddAnimalView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:AddEventViewModel}">
+            <views:AddEventView />
         </DataTemplate>
     </Application.Resources>
 

@@ -36,7 +36,6 @@ namespace BusinessLayer.Services
 
         public async Task RegisterAsync(UserRegisterDto registerDto)
         {
-            //тук връща грешка 
             if (registerDto.Password != registerDto.ConfirmPassword)
                 throw new ArgumentException("Паролите не съвпадат");
 

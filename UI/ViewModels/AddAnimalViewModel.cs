@@ -1,4 +1,6 @@
 ﻿using BusinessLayer.DTOs;
+using BusinessLayer.Factories;
+using BusinessLayer.Factories.Interfaces;
 using BusinessLayer.Services.Interfaces;
 using Shared.Enums;
 using System;
@@ -18,14 +20,18 @@ namespace UI.ViewModels
         private readonly IAnimalService _animalService;
         private readonly Action _goBack;
 
-        public AnimalDto NewAnimal { get; set; } = new AnimalDto();
+        private readonly IFactory<AnimalDto> _animalFactory;
+        public AnimalDto NewAnimal { get; set; }
         public ObservableCollection<AnimalCategory> Categories { get; set; }
 
 
-        public AddAnimalViewModel(IAnimalService animalService, Action goBack)
+        public AddAnimalViewModel(IAnimalService animalService, IFactory<AnimalDto> animalFactory, Action goBack)
         {
             _animalService = animalService;
+            _animalFactory = animalFactory;
             _goBack = goBack;
+
+            NewAnimal = _animalFactory.Create();
 
             Categories = new ObservableCollection<AnimalCategory>((AnimalCategory[])Enum.GetValues(typeof(AnimalCategory)));
 

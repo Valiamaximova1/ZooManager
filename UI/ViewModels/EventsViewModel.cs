@@ -17,6 +17,8 @@ namespace UI.ViewModels
 
     public class EventsViewModel : BaseViewModel
     {
+        private int _currentPage = 1;
+        private int _itemsPerPage = 10;
         private readonly IEventService _eventService;
         private readonly IAnimalService _animalService;
 
@@ -28,10 +30,14 @@ namespace UI.ViewModels
         private string _selectedType = "Всички";
         private DateTime? _selectedDate = null;
 
+        public event Action AddEventRequested;
+
+        public List<int> ItemsPerPageOptions { get; } = new List<int> { 5, 10, 20, 50 };
+
         public Array EventTypeValues => Enum.GetValues(typeof(EventType));
 
 
-        public ObservableCollection<EventDto> Events { get; } = new();
+        public ObservableCollection<EventDto> Events { get; private set; } = new();
 
         public ObservableCollection<string> EventTypes { get; } =
         new ObservableCollection<string>(new[] { "Всички" }.Concat(Enum.GetNames(typeof(EventType))));
@@ -69,9 +75,18 @@ namespace UI.ViewModels
             LoadEventsCommand = new AsyncDelegateCommand(LoadEventsAsync);
             ExportCommand = new AsyncDelegateCommand(onExport);
             ImportCommand = new AsyncDelegateCommand(OnImport);
+            AddEventCommand = new DelegateCommand(() => AddEventRequested?.Invoke());
+            PreviousPageCommand = new DelegateCommand(OnPreviousPage, CanGoToPreviousPage);
+            NextPageCommand = new DelegateCommand(OnNextPage, CanGoToNextPage);
 
-            Task.Run(LoadAllAnimalsAsync);
-            LoadEventsAsync();
+
+
+
+            Task.Run(async () =>
+            {
+                await LoadAllAnimalsAsync();
+                await LoadEventsAsync();
+            });
         }
 
         public bool IsPopupOpen
@@ -168,6 +183,40 @@ namespace UI.ViewModels
             }
         }
 
+        public int CurrentPage
+        {
+            get => _currentPage;
+            set
+            {
+                if (_currentPage != value)
+                {
+                    _currentPage = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(PageDisplay)); 
+                    UpdatePagedEvents();
+                }
+            }
+        }
+
+        public int ItemsPerPage
+        {
+            get => _itemsPerPage;
+            set
+            {
+                if (_itemsPerPage != value)
+                {
+                    _itemsPerPage = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(PageDisplay));
+                    UpdatePagedEvents();
+                }
+            }
+        }
+
+
+        public int TotalPages => (int)Math.Ceiling((double) FilteredEvents.Count / ItemsPerPage);
+        public string PageDisplay => $"Страница {CurrentPage} от {TotalPages}";
+
         public ObservableCollection<AnimalDto> AllAnimals
         {
             get => _allAnimals;
@@ -190,14 +239,17 @@ namespace UI.ViewModels
 
         public ICommand ClearCommand { get; }
         public ICommand EditEventCommand { get; }
+        public ICommand AddEventCommand { get; }
         public ICommand DeleteEventCommand { get; }
         public ICommand SaveEventCommand { get; }
         public ICommand LoadEventsCommand { get; }
         public ICommand ExportCommand { get; }
         public ICommand ImportCommand { get; }
+        public DelegateCommand PreviousPageCommand { get; }
+        public DelegateCommand NextPageCommand { get; }
 
 
-        private async Task LoadEventsAsync()
+        public async Task LoadEventsAsync()
         {
             Events.Clear();
 
@@ -225,10 +277,11 @@ namespace UI.ViewModels
 
 
             FilteredEvents = events.ToList();
+            CurrentPage = 1;
+            UpdatePagedEvents();
 
-
-            foreach (var ev in events)
-                Events.Add(ev);
+            //foreach (var ev in events)
+            //    Events.Add(ev);
         }
 
         private async Task ClearFilters()
@@ -308,7 +361,7 @@ namespace UI.ViewModels
                 };
 
                 await LoadSelectableAnimalsAsync();
-             
+
                 SelectedAnimals.Clear();
 
                 foreach (var animal in AllAnimals)
@@ -346,8 +399,8 @@ namespace UI.ViewModels
 
             await _eventService.UpdateAsync(EditingEvent);
             await LoadEventsAsync();
-           
- SelectedEvent = Events.FirstOrDefault(eventA => eventA.Id == EditingEvent.Id);
+
+            SelectedEvent = Events.FirstOrDefault(eventA => eventA.Id == EditingEvent.Id);
             IsEditMode = false;
         }
 
@@ -363,7 +416,7 @@ namespace UI.ViewModels
                 bool isSelected = EditingEvent.AnimalIds.Contains(animal.Id);
                 SelectableAnimals.Add(new AnimalSelectableViewModel(animal, isSelected));
             }
-           
+
         }
 
         private async Task onExport()
@@ -380,12 +433,7 @@ namespace UI.ViewModels
                 if (saveDialog.ShowDialog() == true)
                 {
                     var exporter = new ExcelExporter();
-
-                    //string startupPath = AppDomain.CurrentDomain.BaseDirectory;
-                    //string solutionPath = Path.GetFullPath(Path.Combine(startupPath, @"..\..\..\.."));
-                    //string filePath = Path.Combine(solutionPath, "EventsExport.xlsx");
-
-                    await exporter.ExportEventsToExcel(FilteredEvents, saveDialog.FileName);
+                    await exporter.ExportEventsToExcel(Events.ToList(), saveDialog.FileName);
 
                     MessageBox.Show("Успешен експорт на събития!", "Excel", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -506,10 +554,59 @@ namespace UI.ViewModels
 
             }
         }
+        private void UpdatePagedEvents()
+        {
+            if (FilteredEvents == null || FilteredEvents.Count == 0)
+            {
+                Events = new ObservableCollection<EventDto>();
+                _currentPage = 1;
+                OnPropertyChanged(nameof(Events));
+                OnPropertyChanged(nameof(PageDisplay));
+                PreviousPageCommand.RaiseCanExecuteChanged();
+                NextPageCommand.RaiseCanExecuteChanged();
+                return;
+            }
+
+            // Ensure total pages and current page are correct
+            int totalPages = (int)Math.Ceiling((double)FilteredEvents.Count / ItemsPerPage);
+            _currentPage = Math.Max(1, Math.Min(_currentPage, totalPages));
+
+            var pagedEvents = FilteredEvents
+                .Skip((CurrentPage - 1) * ItemsPerPage)
+                .Take(ItemsPerPage)
+                .ToList();
+
+            Events = new ObservableCollection<EventDto>(pagedEvents);
+
+            // Notify UI
+            OnPropertyChanged(nameof(Events));
+            OnPropertyChanged(nameof(PageDisplay));
+            PreviousPageCommand.RaiseCanExecuteChanged();
+            NextPageCommand.RaiseCanExecuteChanged();
+        }
 
 
+        private void OnPreviousPage()
+        {
+            if (CurrentPage > 1)
+                CurrentPage--;
+        }
 
+        private bool CanGoToPreviousPage()
+        {
+            return CurrentPage > 1;
+        }
 
+        private void OnNextPage()
+        {
+            if (CurrentPage < TotalPages)
+                CurrentPage++;
+        }
+
+        private bool CanGoToNextPage()
+        {
+            return CurrentPage < TotalPages;
+        }
 
 
     }

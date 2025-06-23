@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using BusinessLayer.Factories;
 using BusinessLayer.Services;
 using BusinessLayer.Services.Interfaces;
 using Data;
@@ -26,6 +27,8 @@ namespace UI.ViewModels
         private readonly ITicketService _ticketService;
 
         private UserDto _currentUser;
+        private readonly FactoryProvider _factoryProvider = new FactoryProvider();
+
 
 
         public MainViewModel()
@@ -83,7 +86,8 @@ namespace UI.ViewModels
             _currentUser = user;
             _userService.SetCurrentUser(user);
 
-            var homeVM = new HomeViewModel(_animalService, _eventService, _ticketService, user, _userService);
+            var homeVM = new HomeViewModel(_animalService, _eventService, _ticketService, user, _userService, _factoryProvider);
+
             //абонирам се за събитие
             homeVM.LogoutRequested += OnLogoutRequested;
 

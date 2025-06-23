@@ -75,7 +75,10 @@ namespace Data
             var events = context.Events.Include(ev => ev.Animals).ToList();
             var animals = context.Animals.ToList();
 
-            var eventByTitle = events.ToDictionary(ev => ev.Title);
+            var eventByTitle = events
+                 .GroupBy(ev => ev.Title)
+                 .Select(g => g.First())
+                 .ToDictionary(ev => ev.Title);
             //var animalByName = animals.ToDictionary(animal => animal.Name);
             var animalByName = animals
                 .GroupBy(a => a.Name)
@@ -214,8 +217,6 @@ namespace Data
                 }
             }
         }
-
-
 
     }
 

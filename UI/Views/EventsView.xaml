@@ -20,6 +20,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
@@ -34,14 +35,20 @@
                       Command="{Binding ClearCommand}"
                       Width="100"  Margin="0 0 10 0"  />
 
+            <Button Content="Добави събитие" Command="{Binding AddEventCommand}"  Margin="0 0 10 0"  />
+
+
+            <ComboBox ItemsSource="{Binding Path=ItemsPerPageOptions}"
+              SelectedItem="{Binding Path=ItemsPerPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+              Width="100"
+              Margin="0 0 10 0"/>
+
             <Button Content="Експортирай в Excel" Command="{Binding ExportCommand}"  Margin="0 0 10 0" />
             
             <Button Content="Импортирай" Command="{Binding ImportCommand}" />
 
 
         </StackPanel>
-
-
 
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding AnimalFilters}">
@@ -58,14 +65,12 @@
             </ItemsControl>
         </ScrollViewer>
 
-
-
-
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+             </Grid.ColumnDefinitions>
+          
 
             <DataGrid ItemsSource="{Binding Events}"
               SelectedItem="{Binding SelectedEvent, Mode=TwoWay}"
@@ -91,18 +96,16 @@
                     <behaviors:DataGridDeleteKeyBehavior Command="{Binding DeleteEventCommand}" />
                 </i:Interaction.Behaviors>
 
-
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Заглавие" Binding="{Binding Title}" Width="*" />
                     <DataGridTextColumn Header="Тип" Binding="{Binding Type}" Width="*" />
                     <DataGridTextColumn Header="Дата" Binding="{Binding Date, StringFormat=dd.MM.yyyy}" Width="*" />
                 </DataGrid.Columns>
 
-
-
-
             </DataGrid>
-
+           
+            
+           
             <Border Grid.Column="1"
             Visibility="{Binding IsDetailsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
             BorderThickness="1"
@@ -262,23 +265,25 @@
                 </StackPanel>
             </Border>
 
-       <!--   <Popup x:Name="RightClickPopup"
-           Placement="Mouse"
-           StaysOpen="False"
-           AllowsTransparency="True"
-           IsOpen="{Binding IsPopupOpen, Mode=TwoWay}">
-                <Border Background="White" Padding="5" BorderBrush="Gray" BorderThickness="1">
-                    <StackPanel>
-                        <Button Content="Редактирай" Margin="5"
-                        Command="{Binding EditEventCommand}"
-                        CommandParameter="{Binding SelectedEvent}" />
-                        <Button Content="Изтрий" Margin="5"
-                        Command="{Binding DeleteEventCommand}"
-                        CommandParameter="{Binding SelectedEvent}" />
-                    </StackPanel>
-                </Border>
-            </Popup>-->  
+         
         </Grid>
         
+       <!-- <StackPanel Grid.Row="3"
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            Margin="0,10,0,0">
+            <Button Content="Назад" Command="{Binding PreviousPageCommand}" Margin="5" />
+            <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5"/>
+            <Button Content="Напред" Command="{Binding NextPageCommand}" Margin="5" />
+        </StackPanel>-->
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button Content=" &lt; &lt;" Command="{Binding PreviousPageCommand}" Margin="5"/>
+            <TextBlock Text="{Binding PageDisplay}" VerticalAlignment="Center" Margin="5"/>
+            <Button Content="&gt;&gt;" Command="{Binding NextPageCommand}" Margin="5"/>
+        </StackPanel>
+
+
+
     </Grid>
 </UserControl>

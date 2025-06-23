@@ -120,11 +120,9 @@ namespace UI.ViewModels
 
         private void Logout()
         {
-            //  Изчистване на запомнения email
             Properties.Settings.Default.LastEmail = string.Empty;
             Properties.Settings.Default.Save();
 
-            // Връщане към login екрана
             _onLogout.Invoke();
         }
     }
