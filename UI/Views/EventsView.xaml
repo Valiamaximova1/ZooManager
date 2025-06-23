@@ -34,15 +34,16 @@
             <Button Content="Изчисти"
                       Command="{Binding ClearCommand}"
                       Width="100"  Margin="0 0 10 0"  />
+            
+             <ComboBox ItemsSource="{Binding Path=ItemsPerPageOptions}"
+                  SelectedItem="{Binding Path=ItemsPerPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  Width="100"
+                  Margin="0 0 10 0"/>
 
             <Button Content="Добави събитие" Command="{Binding AddEventCommand}"  Margin="0 0 10 0"  />
 
 
-            <ComboBox ItemsSource="{Binding Path=ItemsPerPageOptions}"
-              SelectedItem="{Binding Path=ItemsPerPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-              Width="100"
-              Margin="0 0 10 0"/>
-
+   
             <Button Content="Експортирай в Excel" Command="{Binding ExportCommand}"  Margin="0 0 10 0" />
             
             <Button Content="Импортирай" Command="{Binding ImportCommand}" />
