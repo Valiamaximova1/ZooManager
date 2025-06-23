@@ -10,7 +10,7 @@ namespace BusinessLayer.Mappers
 {
     public static class TicketTemplateMapper
     {
-        public static TicketTemplateDto ToDto(TicketTemplate entity)
+        public static TicketTemplateDto ToDto(this TicketTemplate entity)
         {
             return new TicketTemplateDto
             {
@@ -23,7 +23,7 @@ namespace BusinessLayer.Mappers
             };
         }
 
-        public static TicketTemplate ToEntity(TicketTemplateDto dto)
+        public static TicketTemplate ToEntity(this TicketTemplateDto dto)
         {
             return new TicketTemplate
             {

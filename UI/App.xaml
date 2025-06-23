@@ -10,7 +10,7 @@
 
     <Application.Resources>
 
-        <locator:ViewModelLocator x:Key="Locator" />
+    
 
         <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
             <views:LoginView />

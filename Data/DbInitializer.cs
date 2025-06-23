@@ -18,13 +18,10 @@ namespace Data
             var factory = new ZooDbContextFactory();
             using var context = factory.CreateDbContext(Array.Empty<string>());
 
-
-
             context.Database.EnsureCreated();
             //context.Database.Migrate();
             Seed(context);
         }
-
 
         private static void Seed(ZooDbContext context)
         {

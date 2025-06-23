@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Events;
+using BusinessLayer.Factories;
 using BusinessLayer.Services.Interfaces;
 using Data;
 using Shared;
@@ -23,7 +24,6 @@ namespace UI.ViewModels
 
         private bool _isClearingFilters = false;
         private bool _isRightClickSelection = false;
-        //private DispatcherTimer _animalsReloadTimer;
 
         private string _selectedType = "Всички";
         private DateTime? _selectedDate = null;
@@ -188,7 +188,6 @@ namespace UI.ViewModels
         }
 
 
-
         public ICommand ClearCommand { get; }
         public ICommand EditEventCommand { get; }
         public ICommand DeleteEventCommand { get; }
@@ -249,38 +248,29 @@ namespace UI.ViewModels
             await LoadEventsAsync();
         }
 
-
         private async Task LoadAllAnimalsAsync()
         {
             var animals = await _animalService.GetAllAsync();
             AllAnimals = new ObservableCollection<AnimalDto>(animals);
 
-            var previouslySelected = AnimalFilters.Where(a => a.IsSelected).Select(a => a.Id).ToHashSet();
-            var filters = new ObservableCollection<AnimalCheckboxDto>();
+            var previouslySelected = AnimalFilters
+                .Where(a => a.IsSelected)
+                .Select(a => a.Id)
+                .ToHashSet();
 
-            foreach (var animal in animals)
-            {
-                var filterItem = new AnimalCheckboxDto
-                {
-                    Id = animal.Id,
-                    Name = animal.Name
-                };
-
-                filterItem.SelectionChanged = async () =>
+            AnimalFilters = FilterFactory.CreateAnimalFilters(
+                animals,
+                async id =>
                 {
                     if (!_isClearingFilters)
                         await LoadEventsAsync();
-                };
+                });
 
-                // след като е зададен SelectionChanged — сетваме IsSelected
-                filterItem.IsSelected = previouslySelected.Contains(animal.Id);
-
-                filters.Add(filterItem);
+            // Възстановяваме селекцията
+            foreach (var filter in AnimalFilters)
+            {
+                filter.IsSelected = previouslySelected.Contains(filter.Id);
             }
-
-
-            AnimalFilters = filters;
-            //UpdateAnimalLookup();
         }
 
         private async Task LoadSelectedAnimalsAsync()
@@ -375,7 +365,6 @@ namespace UI.ViewModels
             }
            
         }
-
 
         private async Task onExport()
         {
@@ -483,20 +472,20 @@ namespace UI.ViewModels
                     break;
 
                 case AnimalChangeType.Deleted:
-                    // 1. Премахване от AllAnimals
+                    // Премахване от AllAnimals
                     var existing = AllAnimals.FirstOrDefault(a => a.Id == animal.Id);
                     if (existing != null)
                         AllAnimals.Remove(existing);
 
-                    // 2. Премахване от AnimalLookup
+                    // Премахване от AnimalLookup
                     EventDto.AnimalLookup.Remove(animal.Id);
 
-                    // 3. Премахване от филтри
+                    // Премахване от филтри
                     var deletedFilter = AnimalFilters.FirstOrDefault(f => f.Id == animal.Id);
                     if (deletedFilter != null)
                         AnimalFilters.Remove(deletedFilter);
 
-                    // 4. Премахване от SelectableAnimals
+                    //Премахване от SelectableAnimals
                     var toRemove = SelectableAnimals
                         .Where(s => s.Animal.Id == animal.Id)
                         .ToList(); // избягваме модифициране по време на итерация
@@ -510,7 +499,6 @@ namespace UI.ViewModels
                         if (indexx >= 0)
                         {
                             ev.AnimalIds.RemoveAt(indexx);
-                            // не е нужно да триеш AnimalNames – те се пресмятат динамично от AnimalIds
                         }
                     }
                     break;

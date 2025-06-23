@@ -15,17 +15,13 @@ namespace UI.ViewModels
 {
     public class AnimalEditViewModel : BaseViewModel
     {
+        private string _newImagePath;
+        private string _newSoundPath;
+
         private readonly IAnimalService _animalService;
         public ObservableCollection<AnimalCategory> Categories { get; set; }
 
         public AnimalDto EditingAnimal { get; set; }
-        private string _newImagePath;
-        private string _newSoundPath;
-
-        public ICommand SaveCommand { get; }
-        public ICommand CancelCommand { get; }
-        public ICommand BrowseImageCommand { get; }
-        public ICommand BrowseSoundCommand { get; }
 
         public event Action ClosePopupRequested;
         public event Action ReloadAnimalsRequested;
@@ -43,11 +39,15 @@ namespace UI.ViewModels
             BrowseSoundCommand = new DelegateCommand(OnBrowseSound);
         }
 
+        public ICommand SaveCommand { get; }
+        public ICommand CancelCommand { get; }
+        public ICommand BrowseImageCommand { get; }
+        public ICommand BrowseSoundCommand { get; }
+
         private async Task SaveAsync()
         {
             string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\")); // корен на проекта
 
-            // Копиране на снимката
             if (!string.IsNullOrEmpty(_newImagePath))
             {
                 var fileName = Path.GetFileName(_newImagePath);
@@ -58,7 +58,6 @@ namespace UI.ViewModels
                 EditingAnimal.ImagePath = Path.Combine("Images", fileName);
             }
 
-            // Копиране на звука
             if (!string.IsNullOrEmpty(_newSoundPath))
             {
                 var fileName = Path.GetFileName(_newSoundPath);
@@ -74,7 +73,6 @@ namespace UI.ViewModels
             ClosePopupRequested?.Invoke();
         }
 
-
         private void OnBrowseImage()
         {
             var dialog = new Microsoft.Win32.OpenFileDialog
@@ -85,11 +83,10 @@ namespace UI.ViewModels
             if (dialog.ShowDialog() != true)
                 return;
 
-            // Стар път (ако вече има записана снимка)
             if (!string.IsNullOrWhiteSpace(EditingAnimal.ImagePath))
             {
-                string realImgPath = Path.Combine("Assets", EditingAnimal.ImagePath); 
-                string oldRelativePath = realImgPath.Replace('/', '\\'); // Превръщане в Windows формат
+                string realImgPath = Path.Combine("Assets", EditingAnimal.ImagePath);
+                string oldRelativePath = realImgPath.Replace('/', '\\');
                 string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\.."));
                 string oldProjectPath = Path.Combine(projectRoot, oldRelativePath);
                 string oldBinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, oldRelativePath);
@@ -107,24 +104,21 @@ namespace UI.ViewModels
                 }
             }
 
-            // Копиране на новата снимка
             string fileName = Path.GetFileName(dialog.FileName);
             string relativePath = Path.Combine("Assets", "Images", fileName);
-            string databasePath = Path.Combine( "Images", fileName);
+            string databasePath = Path.Combine("Images", fileName);
             string newProjectPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..", relativePath));
             string newBinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
 
-            // Уникално име, ако файл вече съществува
             if (File.Exists(newProjectPath) || File.Exists(newBinPath))
             {
                 string uniqueName = Path.GetFileNameWithoutExtension(fileName) + "_" + Guid.NewGuid() + Path.GetExtension(fileName);
                 relativePath = Path.Combine("Assets", "Images", uniqueName);
-              databasePath = Path.Combine("Images", uniqueName);
+                databasePath = Path.Combine("Images", uniqueName);
                 newProjectPath = Path.Combine(Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..")), relativePath);
                 newBinPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
             }
 
-            // Създай директории, ако ги няма
             Directory.CreateDirectory(Path.GetDirectoryName(newProjectPath)!);
             Directory.CreateDirectory(Path.GetDirectoryName(newBinPath)!);
 
@@ -135,9 +129,8 @@ namespace UI.ViewModels
             _newImagePath = newProjectPath;
 
             OnPropertyChanged(nameof(EditingAnimal));
-            SaveImmediatelyAsync(); // няма нужда от await
+            SaveImmediatelyAsync();
         }
-
 
         private void OnBrowseSound()
         {
@@ -161,7 +154,7 @@ namespace UI.ViewModels
 
                 OnPropertyChanged(nameof(EditingAnimal));
 
-                
+
                 SaveImmediatelyAsync();
             }
         }
@@ -178,8 +171,6 @@ namespace UI.ViewModels
                 MessageBox.Show($"Грешка при автоматично запазване: {ex.Message}");
             }
         }
-
-
 
         private void ClosePopup()
         {

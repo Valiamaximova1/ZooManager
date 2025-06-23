@@ -33,7 +33,7 @@ namespace BusinessLayer.DTOs
          public static Dictionary<Guid, string> AnimalLookup { get; set; } = new();
         public List<string> AnimalNames =>
        AnimalIds
-           .Where(id => AnimalLookup.ContainsKey(id)) // това скрива изтритите
+           .Where(id => AnimalLookup.ContainsKey(id)) 
            .Select(id => AnimalLookup[id])
            .ToList();
 

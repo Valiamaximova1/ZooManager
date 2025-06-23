@@ -34,7 +34,14 @@ namespace UI.ViewModels
             _onLogout = onLogout;
              _userService = userService;
             _ticketService = ticketService;
-            _ticketService.TicketsChanged += async () => await LoadTickets();
+            _ticketService.TicketPurchased += async (ticket) =>
+            {
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    PurchasedTickets.Add(ticket); 
+                });
+            };
+
 
             Task.Run(LoadTickets);
 

@@ -22,12 +22,10 @@ namespace UI.Helpers
 
             try
             {
-                // Изтриване от bin (output dir)
                 string outputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
                 if (File.Exists(outputPath))
                     File.Delete(outputPath);
 
-                // Изтриване от project root
                 string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", ".."));
                 string sourcePath = Path.Combine(projectRoot, imgPath);
                 if (File.Exists(sourcePath))

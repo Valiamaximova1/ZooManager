@@ -10,12 +10,10 @@ namespace UI.ViewModels
 {
     public class HomeViewModel : BaseViewModel
     {
-
         private readonly IAnimalService _animalService;
         private readonly IEventService _eventService;
         private readonly ITicketService _ticketService;
         private readonly IUserService _userService;
-
 
         private AnimalsViewModel _animalViewModel;
         private EventsViewModel _eventViewModel;
@@ -27,8 +25,6 @@ namespace UI.ViewModels
         private BaseViewModel _currentViewModel;
         private readonly UserDto _user;
         public event Action LogoutRequested;
-
-
 
         public HomeViewModel(IAnimalService animalService, IEventService eventService, ITicketService ticketService, UserDto user, IUserService userService)
         {
@@ -44,7 +40,7 @@ namespace UI.ViewModels
             ShowProfileCommand = new DelegateCommand(ShowProfile);
 
             ShowAddAnimalCommand = new DelegateCommand(ShowAddAnimalPage);
-            // Зареждаме начално екрана с животни
+
             ShowAnimals();
 
         }
@@ -75,7 +71,6 @@ namespace UI.ViewModels
         public ICommand ShowProfileCommand { get; }
         public ICommand ShowAddAnimalCommand { get; }
 
-
         private void ShowAnimals()
         {
             if (_animalViewModel == null)
@@ -86,7 +81,6 @@ namespace UI.ViewModels
             CurrentViewModel = _animalViewModel;
             SelectedTab = "Animals";
         }
-
         private void ShowEvents()
         {
             if (_eventViewModel == null)
@@ -115,8 +109,6 @@ namespace UI.ViewModels
             CurrentViewModel = _profileViewModel;
             SelectedTab = "Profile";
         }
-
-
         private void ShowAddAnimalPage()
         {
             var addViewModel = new AddAnimalViewModel(_animalService, async () =>

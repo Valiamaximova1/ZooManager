@@ -17,8 +17,6 @@ namespace UI.ViewModels
         private string _password = string.Empty;
 
         private readonly AsyncDelegateCommand _loginCommand;
-        public ICommand LoginCommand => _loginCommand;
-        public ICommand NavigateToRegisterCommand { get; }
 
         public event Action<UserDto> LoginSuccessful;
         public event Action NavigateToRegisterRequested;
@@ -61,6 +59,10 @@ namespace UI.ViewModels
                 }
             }
         }
+
+        public ICommand LoginCommand => _loginCommand;
+        public ICommand NavigateToRegisterCommand { get; }
+
         private async Task LoginAsync()
         {
             try

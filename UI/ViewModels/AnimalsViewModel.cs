@@ -37,12 +37,9 @@ namespace UI.ViewModels
             PlaySoundCommand = new DelegateCommand<AnimalDto>(PlaySound);
             ShowAnimalDetailsCommand = new DelegateCommand<AnimalDto>(ShowAnimalDetails);
             ClosePopupCommand = new DelegateCommand(() => IsPopupOpen = false);
-
             EditAnimalCommand = new DelegateCommand<AnimalDto>(ShowEditPopup);
-
             OpenAddAnimalCommand = new DelegateCommand(() => AddAnimalRequested?.Invoke());
             DeleteAnimalCommand = new DelegateCommand<AnimalDto>(async (animal) => await OnDeleteAnimalAsync(animal));
-
             CloseEditPopupCommand = new DelegateCommand(() => IsEditPopupOpen = false);
 
             LoadAnimalsAsync();
@@ -63,14 +60,12 @@ namespace UI.ViewModels
             get => _selectedAnimal;
             set { _selectedAnimal = value; OnPropertyChanged(); }
         }
-
         public bool IsPopupOpen
         {
             get => _isPopupOpen;
             set { _isPopupOpen = value; OnPropertyChanged(); }
         }
         public string SelectedCategory { get; set; } = "Всички";
-
         public bool IsEditPopupOpen
         {
             get => _isEditPopupOpen;
@@ -98,30 +93,7 @@ namespace UI.ViewModels
                 OnPropertyChanged();
             }
         }
-       
 
-        private async Task OnDeleteAnimalAsync(AnimalDto animal)
-        {
-            if (animal == null) return;
-
-            var result = MessageBox.Show(
-                $"Сигурни ли сте, че искате да изтриете {animal.Name}?",
-                "Изтриване",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-
-            if (result != MessageBoxResult.Yes)
-                return;
-
-            if (!string.IsNullOrWhiteSpace(animal.ImagePath))
-                ImageHelper.DeleteFileFromAllLocations(animal.ImagePath, animal.FullImagePath);
-
-            if (!string.IsNullOrWhiteSpace(animal.SoundPath))
-                ImageHelper.DeleteFileFromAllLocations(animal.SoundPath, animal.SoundPath);
-
-            await _animalService.DeleteAsync(animal.Id);
-            Animals.Remove(animal);
-        }
 
         public async Task<ObservableCollection<AnimalDto>> LoadAnimalsAsync()
         {
@@ -176,7 +148,7 @@ namespace UI.ViewModels
 
         public void ShowEditPopup(AnimalDto animal)
         {
-            if (IsEditPopupOpen) return; // вече е отворен
+            if (IsEditPopupOpen) return;
 
             var editViewModel = new AnimalEditViewModel(_animalService, animal);
             editViewModel.ClosePopupRequested += () => IsEditPopupOpen = false;
@@ -185,24 +157,28 @@ namespace UI.ViewModels
             IsEditPopupOpen = true;
         }
 
-
-
-        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        private async Task OnDeleteAnimalAsync(AnimalDto animal)
         {
-            if (depObj == null) yield break;
+            if (animal == null) return;
 
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-            {
-                var child = VisualTreeHelper.GetChild(depObj, i);
-                if (child is T t)
-                    yield return t;
+            var result = MessageBox.Show(
+                $"Сигурни ли сте, че искате да изтриете {animal.Name}?",
+                "Изтриване",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
 
-                foreach (var childOfChild in FindVisualChildren<T>(child))
-                    yield return childOfChild;
-            }
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            if (!string.IsNullOrWhiteSpace(animal.ImagePath))
+                ImageHelper.DeleteFileFromAllLocations(animal.ImagePath, animal.FullImagePath);
+
+            if (!string.IsNullOrWhiteSpace(animal.SoundPath))
+                ImageHelper.DeleteFileFromAllLocations(animal.SoundPath, animal.SoundPath);
+
+            await _animalService.DeleteAsync(animal.Id);
+            Animals.Remove(animal);
         }
-
-     
     }
 
 

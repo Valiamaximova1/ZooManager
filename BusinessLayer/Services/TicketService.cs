@@ -19,7 +19,8 @@ namespace BusinessLayer.Services
         private readonly ITicketTemplateRepository _templateRepo;
         private readonly ITicketPurchaseRepository _purchaseRepo;
 
-        public event Action TicketsChanged;
+        public event Func<UserTicketDto, Task> TicketPurchased;
+
 
         public TicketService(ITicketTemplateRepository templateRepo, ITicketPurchaseRepository purchaseRepo)
         {
@@ -37,7 +38,7 @@ namespace BusinessLayer.Services
         {
             var template = await _templateRepo.GetByIdAsync(templateId);
             if (template == null || template.AvailableQuantity < quantity)
-                throw new InvalidOperationException("Няма налични билети.");
+                throw new InvalidOperationException("Няма достатъчно налични билети.");
 
             template.AvailableQuantity -= quantity;
             await _templateRepo.UpdateAsync(template);
@@ -45,16 +46,21 @@ namespace BusinessLayer.Services
             var purchase = new TicketPurchase
             {
                 Id = Guid.NewGuid(),
-                TicketTemplateId = templateId,
                 UserId = userId,
+                TicketTemplateId = templateId,
                 Quantity = quantity,
                 PurchasedAt = DateTime.Now,
                 Price = template.Price
-
             };
 
             await _purchaseRepo.AddAsync(purchase);
-            TicketsChanged?.Invoke();
+
+            var userTicketDto = UserTicketMapper.ToUserTicketDto(purchase);
+
+            if (TicketPurchased != null)
+            {
+                await TicketPurchased.Invoke(userTicketDto);
+            }
         }
 
         public async Task<List<UserTicketDto>> GetUserTicketsAsync(Guid userId)

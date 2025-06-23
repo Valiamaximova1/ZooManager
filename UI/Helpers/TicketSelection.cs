@@ -10,9 +10,13 @@ namespace UI.Helpers
 {
     public class TicketSelection : INotifyPropertyChanged
     {
+        private int _quantity;
+
         public TicketTemplateDto Template { get; set; }
 
-        private int _quantity;
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event Action QuantityChanged;
+
         public int Quantity
         {
             get => _quantity;
@@ -22,13 +26,10 @@ namespace UI.Helpers
                 {
                     _quantity = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Quantity)));
-                    QuantityChanged?.Invoke(); 
+                    QuantityChanged?.Invoke();
                 }
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public event Action QuantityChanged; 
     }
 
 }

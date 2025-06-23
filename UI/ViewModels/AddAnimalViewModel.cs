@@ -12,19 +12,15 @@ namespace UI.ViewModels
 {
     public class AddAnimalViewModel : BaseViewModel
     {
+        private string _imagePath;
+        private string _soundPath;
+
         private readonly IAnimalService _animalService;
         private readonly Action _goBack;
 
         public AnimalDto NewAnimal { get; set; } = new AnimalDto();
         public ObservableCollection<AnimalCategory> Categories { get; set; }
 
-        private string _imagePath;
-        private string _soundPath;
-
-        public ICommand SaveCommand { get; }
-        public ICommand BrowseImageCommand { get; }
-        public ICommand BrowseSoundCommand { get; }
-        public ICommand GoBackCommand { get; }
 
         public AddAnimalViewModel(IAnimalService animalService, Action goBack)
         {
@@ -38,6 +34,11 @@ namespace UI.ViewModels
             BrowseSoundCommand = new DelegateCommand(BrowseSound);
             GoBackCommand = new DelegateCommand(() => _goBack?.Invoke());
         }
+
+        public ICommand SaveCommand { get; }
+        public ICommand BrowseImageCommand { get; }
+        public ICommand BrowseSoundCommand { get; }
+        public ICommand GoBackCommand { get; }
 
         private void BrowseImage()
         {
@@ -53,7 +54,6 @@ namespace UI.ViewModels
             string sourcePath = Path.Combine(projectRoot, relativePath);
             string outputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
 
-            // Уникално име ако файл вече съществува
             if (File.Exists(sourcePath) || File.Exists(outputPath))
             {
                 string uniqueName = Path.GetFileNameWithoutExtension(fileName) + "_" + Guid.NewGuid() + Path.GetExtension(fileName);
@@ -72,7 +72,6 @@ namespace UI.ViewModels
             NewAnimal.ImagePath = _imagePath;
             OnPropertyChanged(nameof(NewAnimal));
         }
-
 
         private void BrowseSound()
         {
@@ -106,8 +105,6 @@ namespace UI.ViewModels
             NewAnimal.SoundPath = _soundPath;
             OnPropertyChanged(nameof(NewAnimal));
         }
-
-
 
         private async Task SaveAsync()
         {

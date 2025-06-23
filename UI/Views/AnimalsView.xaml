@@ -44,7 +44,6 @@
                     <DataTemplate>
                         <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Margin="10" Padding="10" Width="200">
                             <Grid>
-                                <!-- Delete Button -->
                                 <Button Content="✖"
                                     Width="25" Height="25"
                                     HorizontalAlignment="Right"

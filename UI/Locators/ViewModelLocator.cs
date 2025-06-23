@@ -26,16 +26,16 @@ namespace UI.Locators
 
             var animalRepository = new AnimalRepository(context);
             var eventRepository = new EventRepository(context);
-         
+
 
             // Add Services (manually constructed because we don't use scoped lifetime here)
             var animalService = new AnimalService(animalRepository);
             var eventService = new EventService(eventRepository, animalRepository);
-            
+
             // Register ViewModels
             services.AddSingleton<IAnimalService>(animalService);
             services.AddSingleton<IEventService>(eventService);
-           
+
             services.AddSingleton<EventsViewModel>();
             services.AddSingleton<AnimalsViewModel>();
             services.AddSingleton<HomeViewModel>();
