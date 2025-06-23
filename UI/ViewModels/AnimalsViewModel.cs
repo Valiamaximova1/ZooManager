@@ -19,6 +19,8 @@ namespace UI.ViewModels
         private AnimalEditViewModel _animalEditViewModel;
 
         public ObservableCollection<AnimalDto> Animals { get; } = new();
+
+        private string _selectedCategory = "Всички";
         public ObservableCollection<string> Categories { get; } =
             new ObservableCollection<string>(new[] { "Всички" }.Concat(Enum.GetNames(typeof(AnimalCategory))));
 
@@ -33,7 +35,6 @@ namespace UI.ViewModels
         {
             _animalService = animalService;
 
-            SearchCommand = new AsyncDelegateCommand(LoadAnimalsAsync);
             PlaySoundCommand = new DelegateCommand<AnimalDto>(PlaySound);
             ShowAnimalDetailsCommand = new DelegateCommand<AnimalDto>(ShowAnimalDetails);
             ClosePopupCommand = new DelegateCommand(() => IsPopupOpen = false);
@@ -45,7 +46,21 @@ namespace UI.ViewModels
             LoadAnimalsAsync();
         }
 
-        public ICommand SearchCommand { get; }
+        public string SelectedCategory
+        {
+            get => _selectedCategory;
+            set
+            {
+                if (_selectedCategory != value)
+                {
+                    _selectedCategory = value;
+                    OnPropertyChanged();
+                    LoadAnimalsAsync(); 
+                }
+            }
+        }
+
+        
         public ICommand PlaySoundCommand { get; }
         public ICommand ShowAnimalDetailsCommand { get; }
         public ICommand ClosePopupCommand { get; }
@@ -54,6 +69,10 @@ namespace UI.ViewModels
         public ICommand OpenAddAnimalCommand { get; }
         public ICommand CloseEditPopupCommand { get; }
         public ICommand DeleteAnimalCommand { get; }
+        public ICommand ClearFilterCommand => new DelegateCommand(() =>
+        {
+            SelectedCategory = "Всички";
+        });
 
         public AnimalDto SelectedAnimal
         {
@@ -65,7 +84,7 @@ namespace UI.ViewModels
             get => _isPopupOpen;
             set { _isPopupOpen = value; OnPropertyChanged(); }
         }
-        public string SelectedCategory { get; set; } = "Всички";
+        //public string SelectedCategory { get; set; } = "Всички";
         public bool IsEditPopupOpen
         {
             get => _isEditPopupOpen;

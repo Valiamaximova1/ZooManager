@@ -24,7 +24,7 @@
                       ItemsSource="{Binding Categories}"
                       SelectedItem="{Binding SelectedCategory}" 
                       Margin="0 0 10 0" />
-            <Button Content="Търси" Command="{Binding SearchCommand}"  />
+            <Button Content="Изчисти" Command="{Binding ClearFilterCommand }"  />
             <Button Content="Добави животно"
                 Command="{Binding OpenAddAnimalCommand}"
                HorizontalAlignment="Right"

@@ -213,7 +213,6 @@ namespace UI.ViewModels
             }
         }
 
-
         public int TotalPages => (int)Math.Ceiling((double) FilteredEvents.Count / ItemsPerPage);
         public string PageDisplay => $"Страница {CurrentPage} от {TotalPages}";
 
@@ -280,8 +279,6 @@ namespace UI.ViewModels
             CurrentPage = 1;
             UpdatePagedEvents();
 
-            //foreach (var ev in events)
-            //    Events.Add(ev);
         }
 
         private async Task ClearFilters()
@@ -567,7 +564,6 @@ namespace UI.ViewModels
                 return;
             }
 
-            // Ensure total pages and current page are correct
             int totalPages = (int)Math.Ceiling((double)FilteredEvents.Count / ItemsPerPage);
             _currentPage = Math.Max(1, Math.Min(_currentPage, totalPages));
 
@@ -578,7 +574,6 @@ namespace UI.ViewModels
 
             Events = new ObservableCollection<EventDto>(pagedEvents);
 
-            // Notify UI
             OnPropertyChanged(nameof(Events));
             OnPropertyChanged(nameof(PageDisplay));
             PreviousPageCommand.RaiseCanExecuteChanged();
