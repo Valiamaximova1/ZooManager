@@ -13,8 +13,6 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </UserControl.Resources>
 
-
-
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -42,12 +40,9 @@
 
             <Button Content="Добави събитие" Command="{Binding AddEventCommand}"  Margin="0 0 10 0"  />
 
-
-   
             <Button Content="Експортирай в Excel" Command="{Binding ExportCommand}"  Margin="0 0 10 0" />
             
             <Button Content="Импортирай" Command="{Binding ImportCommand}" />
-
 
         </StackPanel>
 
@@ -268,23 +263,11 @@
 
          
         </Grid>
-        
-       <!-- <StackPanel Grid.Row="3"
-            Orientation="Horizontal"
-            HorizontalAlignment="Center"
-            Margin="0,10,0,0">
-            <Button Content="Назад" Command="{Binding PreviousPageCommand}" Margin="5" />
-            <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5"/>
-            <Button Content="Напред" Command="{Binding NextPageCommand}" Margin="5" />
-        </StackPanel>-->
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
             <Button Content=" &lt; &lt;" Command="{Binding PreviousPageCommand}" Margin="5"/>
             <TextBlock Text="{Binding PageDisplay}" VerticalAlignment="Center" Margin="5"/>
             <Button Content="&gt;&gt;" Command="{Binding NextPageCommand}" Margin="5"/>
         </StackPanel>
-
-
-
     </Grid>
 </UserControl>

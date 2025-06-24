@@ -36,7 +36,6 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-
             <StackPanel Orientation="Horizontal" Margin="0,10">
                 <Button Content="Запази"  Command="{Binding CreateCommand}"  Margin="0,0,10,0"/>
                 <Button Content="Назад" Command="{Binding CancelCommand}"/>

@@ -13,21 +13,14 @@ namespace UI.ViewModels
     {
         private readonly IUserService _userService;
 
-
         private string _firstName = string.Empty;
         private string _lastName = string.Empty;
         private string _email = string.Empty;
         private string _password = string.Empty;
-
         private string _confirmPassword = string.Empty;
 
         private readonly AsyncDelegateCommand _registerCommand;
         private readonly AsyncDelegateCommand _navigateToLoginCommand;
-
-        public ICommand RegisterCommand => _registerCommand;
-
-
-        public ICommand NavigateToLoginCommand => _navigateToLoginCommand;
 
         public event Action NavigateToLoginRequested;
 
@@ -39,6 +32,7 @@ namespace UI.ViewModels
             _navigateToLoginCommand = new AsyncDelegateCommand(() => Task.Run(() => NavigateToLoginRequested.Invoke()));
 
         }
+
         public string FirstName
         {
             get => _firstName;
@@ -106,6 +100,11 @@ namespace UI.ViewModels
                 }
             }
         }
+
+        public ICommand RegisterCommand => _registerCommand;
+        public ICommand NavigateToLoginCommand => _navigateToLoginCommand;
+
+
         private async Task RegisterAsync()
         {
             try

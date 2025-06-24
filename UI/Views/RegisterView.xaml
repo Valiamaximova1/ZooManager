@@ -22,17 +22,11 @@
          helpers:PasswordBoxHelper.BindPassword="True"
          helpers:PasswordBoxHelper.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   />
 
-        
-        
         <TextBlock Text="Повтори Парола"></TextBlock>
-
-
         <PasswordBox  Margin="0 5"
-     helpers:PasswordBoxHelper.BindPassword="True"
-     helpers:PasswordBoxHelper.BoundPassword="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   />
-
-        
-      
+             helpers:PasswordBoxHelper.BindPassword="True"
+             helpers:PasswordBoxHelper.BoundPassword="{Binding ConfirmPassword, 
+                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"   />
 
         <Button Content="Регистрация" Margin="0 10"
                 Command="{Binding RegisterCommand}" />

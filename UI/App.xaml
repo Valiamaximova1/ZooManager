@@ -8,9 +8,6 @@
 
 
     <Application.Resources>
-
-    
-
         <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
             <views:LoginView />
         </DataTemplate>
@@ -38,7 +35,7 @@
         <DataTemplate DataType="{x:Type viewmodels:TicketsViewModel}">
             <views:TicketsView />
         </DataTemplate>
-        
+
         <DataTemplate DataType="{x:Type viewmodels:AnimalEditViewModel}">
             <views:AnimalEditView />
         </DataTemplate>
@@ -51,6 +48,4 @@
             <views:AddEventView />
         </DataTemplate>
     </Application.Resources>
-
-
 </Application>

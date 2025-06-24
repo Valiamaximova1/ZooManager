@@ -19,6 +19,7 @@ namespace UI.ViewModels
     {
         private readonly ITicketService _ticketService;
         private readonly Guid _currentUserId;
+        private TicketType? _selectedType;
 
         public ObservableCollection<TicketTemplateDto> AllTemplates { get; set; } = new();
         public ObservableCollection<TicketTemplateDto> FilteredTemplates { get; set; } = new();
@@ -26,18 +27,6 @@ namespace UI.ViewModels
 
         public ObservableCollection<TicketType> TicketTypes { get; set; } =
             new(Enum.GetValues(typeof(TicketType)).Cast<TicketType>());
-
-        private TicketType? _selectedType;
-        public TicketType? SelectedType
-        {
-            get => _selectedType;
-            set
-            {
-                _selectedType = value;
-                OnPropertyChanged();
-                ApplyFilter();
-            }
-        }
 
         public AsyncDelegateCommand PurchaseCommand { get; }
         public DelegateCommand ClearFilterCommand { get; }
@@ -51,6 +40,17 @@ namespace UI.ViewModels
             ClearFilterCommand = new DelegateCommand(() => SelectedType = null);
 
             LoadTemplates();
+        }
+
+        public TicketType? SelectedType
+        {
+            get => _selectedType;
+            set
+            {
+                _selectedType = value;
+                OnPropertyChanged();
+                ApplyFilter();
+            }
         }
 
         private async void LoadTemplates()

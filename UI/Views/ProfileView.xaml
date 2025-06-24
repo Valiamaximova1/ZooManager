@@ -31,7 +31,7 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Width="250" >
-                
+
                 <TextBlock Text="Смени парола" FontSize="24" FontWeight="Bold" Margin="0 0 0 20"/>
                 <TextBlock Text="Стара Парола"></TextBlock>
                 <PasswordBox Margin="0 5"
@@ -45,7 +45,7 @@
                  helpers:PasswordBoxHelper.BindPassword="True"
                  helpers:PasswordBoxHelper.BoundPassword="{Binding NewPassword, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" />
 
-             
+
                 <TextBlock Text="Повтори Парола"></TextBlock>
 
                 <PasswordBox  Margin="0 5"
@@ -56,13 +56,11 @@
                     Command="{Binding ChangePasswordCommand}" />
 
             </StackPanel>
-
         </Grid>
-      
-        
+
           <TextBlock Text="Купени билети:" FontWeight="Bold" Margin="10 10 0 5"/>
-      
-            <DataGrid ItemsSource="{Binding PurchasedTickets}" 
+
+        <DataGrid ItemsSource="{Binding PurchasedTickets}" 
                       AutoGenerateColumns="False" 
                       IsReadOnly="True" 
                       CanUserAddRows="False" 
@@ -70,18 +68,17 @@
                       HeadersVisibility="Column"
                       Height="450"
                       Margin="0 0 0 10">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Заглавие" Binding="{Binding TicketTitle}" Width="2*"/>
-                    <DataGridTextColumn Header="Тип" Binding="{Binding Type}" Width="*" />
-                    <DataGridTextColumn Header="Количество" Binding="{Binding Quantity}" Width="*" />
-                    <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:F2}}" Width="*"  />
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Заглавие" Binding="{Binding TicketTitle}" Width="2*"/>
+                <DataGridTextColumn Header="Тип" Binding="{Binding Type}" Width="*" />
+                <DataGridTextColumn Header="Количество" Binding="{Binding Quantity}" Width="*" />
+                <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:F2}}" Width="*"  />
 
-                    <DataGridTextColumn Header="Общо" Binding="{Binding Total, StringFormat={}{0:F2}}" Width="*"  />
+                <DataGridTextColumn Header="Общо" Binding="{Binding Total, StringFormat={}{0:F2}}" Width="*"  />
 
                 <DataGridTextColumn Header="Дата на покупка" Binding="{Binding PurchasedAt, StringFormat=dd.MM.yyyy}"  Width="*"/>
-                </DataGrid.Columns>
-            </DataGrid>
-     
-
+            </DataGrid.Columns>
+        </DataGrid>
+        
     </StackPanel>
 </UserControl>

@@ -26,9 +26,9 @@
                       Margin="0 0 10 0" />
             <Button Content="Изчисти" Command="{Binding ClearFilterCommand }"  />
             <Button Content="Добави животно"
-                Command="{Binding OpenAddAnimalCommand}"
-               HorizontalAlignment="Right"
-               Margin="10 0 0 0"/>       
+                    Command="{Binding OpenAddAnimalCommand}"
+                    HorizontalAlignment="Right"
+                    Margin="10 0 0 0"/>       
 
         </StackPanel>
 
@@ -42,7 +42,12 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Margin="10" Padding="10" Width="200">
+                        <Border BorderBrush="Gray" 
+                                BorderThickness="1" 
+                                CornerRadius="8" 
+                                Margin="10" 
+                                Padding="10" 
+                                Width="200">
                             <Grid>
                                 <Button Content="✖"
                                     Width="25" Height="25"
@@ -53,26 +58,26 @@
                                     BorderThickness="0"
                                     FontWeight="Bold"
                                     ToolTip="Изтрий животното"
-                                    Command="{Binding DataContext.DeleteAnimalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}" /> 
+                                    Command="{Binding DataContext.DeleteAnimalCommand, 
+                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              CommandParameter="{Binding}" />
 
-                             
+
                                 <StackPanel Margin="0 20 0 0">
 
                                     <Image Source="{Binding FullImagePath, Converter={StaticResource ImageConverter}}"
                                           Width="200" Height="200" Stretch="UniformToFill" Margin="0 0 0 10"/>
 
-
                                     <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" />
                                     <TextBlock Text="{Binding Category}" Margin="0 5 0 5" />
 
                                     <Button Content="Пусни звук" 
-                        Command="{Binding DataContext.PlaySoundCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        CommandParameter="{Binding}" />
+                                        Command="{Binding DataContext.PlaySoundCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
 
                                     <Button Content="Детайли"
-                        Command="{Binding DataContext.ShowAnimalDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        CommandParameter="{Binding}" Margin="0 5 0 0" />
+                                        Command="{Binding DataContext.ShowAnimalDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Margin="0 5 0 0" />
 
                                     <Button 
                                         Content="Редакция"
@@ -82,32 +87,14 @@
                             </Grid>
                         </Border>
                     </DataTemplate>
-
-                    <!--  <DataTemplate>
-                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Margin="10" Padding="10" Width="200">
-                            <StackPanel>
-                                <Image Source="{Binding FullImagePath}" Width="200" Height="200" Stretch="UniformToFill" Margin="0 0 0 10"/>
-
-                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" />
-                                <TextBlock Text="{Binding Category}" Margin="0 5 0 5" />
-                                <Button Content="Пусни звук" 
-                                        Command="{Binding DataContext.PlaySoundCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                        CommandParameter="{Binding}" />
-                                <Button Content="Детайли"
-                                        Command="{Binding DataContext.ShowAnimalDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                        CommandParameter="{Binding}" Margin="0 5 0 0" />
-                                <Button Content="Редакция"
-                                        Command="{Binding DataContext.EditAnimalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                        CommandParameter="{Binding}" Margin="0 5 0 0" />
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>--> 
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        
         <Popup IsOpen="{Binding IsPopupOpen}" StaysOpen="False" Placement="Center">
             <views:AnimalDetailsView DataContext="{Binding}" />
         </Popup>
+        
         <Popup IsOpen="{Binding IsEditPopupOpen}" StaysOpen="False" Placement="Center">
             <ContentControl Content="{Binding EditViewModel}" />
         </Popup>
