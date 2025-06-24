@@ -15,30 +15,17 @@ namespace BusinessLayer.DTOs
     public class EventDto : INotifyPropertyChanged
     {
         public Guid Id { get; set; }
-
         private string _title;
-
         private string _description;
-
         private DateTime _date;
-
-        private EventType _type; 
-        
+        private EventType _type;
         private bool _isEditMode;
 
         private List<Guid> _animalIds = new();
-
         public List<string> AnimalNamesCollection { get; set; } = new();
+        public static Dictionary<Guid, string> AnimalLookup { get; set; } = new();
 
-         public static Dictionary<Guid, string> AnimalLookup { get; set; } = new();
-        public List<string> AnimalNames =>
-       AnimalIds
-           .Where(id => AnimalLookup.ContainsKey(id)) 
-           .Select(id => AnimalLookup[id])
-           .ToList();
-
-
-
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public int TicketCount { get; set; }
 
@@ -60,13 +47,11 @@ namespace BusinessLayer.DTOs
             set { _date = value; OnPropertyChanged(); }
         }
 
-
         public Shared.Enums.EventType Type
         {
             get => _type;
             set { _type = value; OnPropertyChanged(); }
         }
-
 
         public List<Guid> AnimalIds
         {
@@ -74,14 +59,11 @@ namespace BusinessLayer.DTOs
             set { _animalIds = value; OnPropertyChanged(); }
         }
 
-
         public bool IsEditMode
         {
             get => _isEditMode;
             set { _isEditMode = value; OnPropertyChanged(); }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string name = "")
         {

@@ -39,7 +39,6 @@ namespace BusinessLayer.Mappers
         {
             if (string.IsNullOrWhiteSpace(path)) return null;
 
-            // Премахва "Assets/" или "Assets\"
             var cleaned = path.Replace("\\", "/");
             if (cleaned.StartsWith("Assets/"))
                 cleaned = cleaned.Substring("Assets/".Length);

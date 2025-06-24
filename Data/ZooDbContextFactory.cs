@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Data
 {
-
     public class ZooDbContextFactory : IDesignTimeDbContextFactory<ZooDbContext>
     {
         public ZooDbContext CreateDbContext(string[] args)

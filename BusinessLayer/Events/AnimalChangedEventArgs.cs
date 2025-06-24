@@ -13,7 +13,6 @@ namespace BusinessLayer.Events
         Updated,
         Deleted
     }
-
     public class AnimalChangedEventArgs : EventArgs
     {
         public AnimalDto Animal { get; }

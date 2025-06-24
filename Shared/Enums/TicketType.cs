@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Shared.Enums
 {
-   public enum TicketType
+    public enum TicketType
     {
-
         Редовен,
         Ученически,
         Семеен

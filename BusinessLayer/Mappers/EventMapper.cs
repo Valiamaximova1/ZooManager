@@ -50,22 +50,5 @@ namespace BusinessLayer.Mappers
 
             return entity;
         }
-
-        public static void UpdateEntity(this Event entity, EventDto dto, List<Animal> animals)
-        {
-            entity.Title = dto.Title;
-            entity.Description = dto.Description;
-            entity.Date = dto.Date;
-            entity.Type = dto.Type;
-
-            //entity.Animals.Clear();
-
-            //foreach (var id in dto.AnimalIds.Distinct())
-            //{
-            //    var animal = animals.FirstOrDefault(a => a.Id == id);
-            //    if (animal != null)
-            //        entity.Animals.Add(animal);
-            //}
-        }
     }
 }

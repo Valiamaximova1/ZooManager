@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Media;
-//using Windows.UI.Xaml.Media.Imaging;
 
 
 namespace BusinessLayer.DTOs
@@ -20,14 +19,7 @@ namespace BusinessLayer.DTOs
         public AnimalCategory Category { get; set; }
 
         public bool isCheckedAnimal;
-        //public BitmapImage FullImagePath
-        //{
-        //    get
-        //    {
-        //        var uri = new Uri($"ms-appx:///Assets/{ImagePath}");
-        //        return new BitmapImage(uri);
-        //    }
-        //}
+      
         public string FullImagePath
         {
             get
@@ -38,7 +30,6 @@ namespace BusinessLayer.DTOs
                 return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", ImagePath);
             }
         }
-      
     }
 }
 

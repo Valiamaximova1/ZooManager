@@ -3,6 +3,7 @@ using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Shared.Enums;
+using Shared.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,8 +31,8 @@ namespace Data
             {
                 context.Users.AddRange(new List<User>
         {
-            new User { Email = "admin@zoo.bg", PasswordHash = "123", FirstName = "Admin", LastName = "Zookeeper" },
-            new User { Email = "val", PasswordHash = "123", FirstName = "Val", LastName = "Max" }
+            new User { Email = "a", PasswordHash =  PasswordHasher.Hash("1"), FirstName = "Admin", LastName = "Zookeeper" },
+            new User { Email = "val", PasswordHash =  PasswordHasher.Hash("1"), FirstName = "Val", LastName = "Max" }
         });
             }
 
@@ -79,7 +80,7 @@ namespace Data
                  .GroupBy(ev => ev.Title)
                  .Select(g => g.First())
                  .ToDictionary(ev => ev.Title);
-            //var animalByName = animals.ToDictionary(animal => animal.Name);
+            
             var animalByName = animals
                 .GroupBy(a => a.Name)
                 .Select(g => g.First())

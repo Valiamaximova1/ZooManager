@@ -17,10 +17,8 @@ namespace BusinessLayer.Services.Interfaces
         Task<IEnumerable<EventDto>> GetFilteredAsync(EventType? type, DateTime? date);
         Task<IEnumerable<EventDto>> GetFilteredDateAsync( DateTime? date);
         Task<IEnumerable<EventDto>> GetFilteredCombinedAsync(EventType? type, DateTime? date, List<Guid> animalIds);
-
         Task UpdateAsync(EventDto dto);
         Task CreateAsync(EventDto eventDto);
-
         Task DeleteAsync(Guid id);
     }
 }

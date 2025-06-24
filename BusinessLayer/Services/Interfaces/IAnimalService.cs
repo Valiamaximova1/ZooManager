@@ -13,7 +13,6 @@ namespace BusinessLayer.Services.Interfaces
     public interface IAnimalService
     {
         event EventHandler<AnimalChangedEventArgs> AnimalChanged;
-
         Task<IEnumerable<AnimalDto>> GetAllAsync();
         Task<IEnumerable<AnimalDto>> GetByCategoryAsync(AnimalCategory category);
         Task<AnimalDto> GetByIdAsync(Guid id);

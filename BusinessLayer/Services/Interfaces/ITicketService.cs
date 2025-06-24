@@ -11,14 +11,10 @@ namespace BusinessLayer.Services.Interfaces
 {
     public interface ITicketService
     {
-        //event Func<TicketPurchaseDto, Task> TicketPurchased;
          event Func<UserTicketDto, Task> TicketPurchased;
-
 
         Task<IEnumerable<TicketTemplateDto>> GetAllTemplatesAsync();
         Task PurchaseTicketAsync(Guid userId, Guid templateId, int quantity);
         Task<List<UserTicketDto>> GetUserTicketsAsync(Guid userId);
-
-
     }
 }

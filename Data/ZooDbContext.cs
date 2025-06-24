@@ -21,24 +21,20 @@ namespace Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Many-to-Many: Animal <-> Event
             modelBuilder.Entity<Animal>()
                 .HasMany(a => a.Events)
                 .WithMany(e => e.Animals);
 
-            // One-to-Many: Event -> TicketTemplate
             modelBuilder.Entity<TicketTemplate>()
                 .HasOne(tt => tt.Event)
                 .WithMany(e => e.TicketTemplates)
                 .HasForeignKey(tt => tt.EventId);
 
-            // One-to-Many: User -> TicketPurchase
             modelBuilder.Entity<TicketPurchase>()
                 .HasOne(tp => tp.User)
                 .WithMany(u => u.TicketPurchases)
                 .HasForeignKey(tp => tp.UserId);
 
-            // One-to-Many: TicketTemplate -> TicketPurchase
             modelBuilder.Entity<TicketPurchase>()
                 .HasOne(tp => tp.TicketTemplate)
                 .WithMany(tt => tt.TicketPurchases)

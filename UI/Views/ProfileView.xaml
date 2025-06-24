@@ -10,8 +10,8 @@
     <StackPanel Margin="20">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" MinWidth="300"/>
+                <ColumnDefinition Width="*" MinWidth="200"/>
             </Grid.ColumnDefinitions>
            
               <StackPanel Grid.Column="0" >
@@ -78,7 +78,7 @@
 
                     <DataGridTextColumn Header="Общо" Binding="{Binding Total, StringFormat={}{0:F2}}" Width="*"  />
 
-                    <DataGridTextColumn Header="Дата на покупка" Binding="{Binding PurchasedAt, StringFormat=dd.MM.yyyy}" />
+                <DataGridTextColumn Header="Дата на покупка" Binding="{Binding PurchasedAt, StringFormat=dd.MM.yyyy}"  Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
      
